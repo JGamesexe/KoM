@@ -40,7 +40,7 @@ public class DBDefault
   {
     try
     {
-      String endereco = "jdbc:mysql://149.56.29.230:3306/bungee?autoReconnect=true";
+      String endereco = "jdbc:mysql://localhost:3306/bungee?autoReconnect=true";
       try
       {
         Class.forName("com.mysql.jdbc.Driver").newInstance();

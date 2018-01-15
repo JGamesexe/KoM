@@ -1,8 +1,8 @@
 package nativelevel.mercadinho.listeners;
 
 //<editor-fold defaultstate="collapsed" desc="imports">
-import cashgame.loja.TipoCompra;
-import cashgame.principal.VipManiaEpic;
+//import cashgame.loja.TipoCompra;
+//import cashgame.principal.VipManiaEpic;
 import java.util.UUID;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
@@ -127,7 +127,8 @@ public class GeralListenerSemSync extends KomSystem {
             }
         }
 
-        if ((!vip && ClanLand.econ.getBalance(p.getName()) >= preco) || (vip && VipManiaEpic.databaseCodigos.has(p, (int) preco))) {
+       // if ((!vip && ClanLand.econ.getBalance(p.getName()) >= preco) || (vip && VipManiaEpic.databaseCodigos.has(p, (int) preco))) {
+        if ((!vip && ClanLand.econ.getBalance(p.getName()) >= preco)) {
             if (p.getInventory().firstEmpty() != -1) {
                 MarketItem mi = new MarketItem(DonoItemClick, ev.getCurrentItem(), preco, nickdono, shopid, vip);
                 if (MercadoSQL.ExisteProduto(mi) && MercadoSQL.RemoverProduto(mi)) {
@@ -135,7 +136,7 @@ public class GeralListenerSemSync extends KomSystem {
                     if (!vip) {
                         ClanLand.econ.withdrawPlayer(p.getName(), (int) preco);
                     } else {
-                        VipManiaEpic.databaseCodigos.gastaCash(p, TipoCompra.ITEM, "Mercado:" + ev.getCurrentItem().getType().name(), 1,(int)preco);
+                       // VipManiaEpic.databaseCodigos.gastaCash(p, TipoCompra.ITEM, "Mercado:" + ev.getCurrentItem().getType().name(), 1,(int)preco);
                     }
 
                     Player recebeu = Bukkit.getPlayer(DonoItemClick);
@@ -146,7 +147,7 @@ public class GeralListenerSemSync extends KomSystem {
                     if (!vip) {
                         MercadoSQL.addRetorno(DonoItemClick, (int) preco);
                     } else {
-                        VipManiaEpic.databaseCodigos.addCash(DonoItemClick.toString(), (int) preco);
+                        //VipManiaEpic.databaseCodigos.addCash(DonoItemClick.toString(), (int) preco);
                     }
                     
                     p.getInventory().addItem(comprando);

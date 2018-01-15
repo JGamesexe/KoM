@@ -1,6 +1,6 @@
 package nativelevel.scores;
 
-import cashgame.principal.VipManiaEpic;
+//import cashgame.principal.VipManiaEpic;
 import java.text.DecimalFormat;
 import nativelevel.Comandos.ComandoScore;
 import nativelevel.KoM;
@@ -65,7 +65,8 @@ public class SBCore {
             return;
         }
         ScoreboardManager.setScoreLine(p, i--, ChatColor.GREEN + "" + ChatColor.BOLD + "Cash");
-        ScoreboardManager.setScoreLine(p, i--, "" + VipManiaEpic.databaseCodigos.getCash(p));
+        //ScoreboardManager.setScoreLine(p, i--, "" + VipManiaEpic.databaseCodigos.getCash(p));
+        ScoreboardManager.setScoreLine(p, i--, "TEM NADA SEU POBRE");
         ScoreboardManager.setScoreLine(p, i--, " ");
         ScoreboardManager.setScoreLine(p, i--, ChatColor.AQUA + "" + ChatColor.BOLD + "Mana");
         Mana mana = Mana.getMana(p);
