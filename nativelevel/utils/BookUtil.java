@@ -22,6 +22,7 @@ import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.integration.BungeeCordKom;
 import nativelevel.sisteminhas.BookPortal;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -139,7 +140,11 @@ public class BookUtil {
                                 if (ev.getPlayer().isOp() && !ev.getPlayer().isSneaking()) {
                                     return;
                                 }
-                                BungeeCordKom.tp(ev.getPlayer(), l);
+                                if (m.getPageCount() == 6) {
+                                    BungeeCordKom.tp(ev.getPlayer(), l);
+                                } else {
+                                    BungeeCordKom.tp(ev.getPlayer(), l, BookPortal.getTitle(coisa), BookPortal.getSubtitle(coisa));
+                                }
                                 ev.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE + "* poof *");
                                 //PlayEffect.play(VisualEffect.FIREWORK, l, "color:purple type:burst");
                             } else {

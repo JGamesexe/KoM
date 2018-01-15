@@ -21,6 +21,7 @@ import java.io.IOException;
 //import mania.net32.kombungeehomes.LocBungeeCord;
 import nativelevel.KoM;
 import nativelevel.utils.BungLocation;
+import nativelevel.utils.TitleAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -64,6 +65,11 @@ public class BungeeCordKom {
     
      public static void tp(Player p, BungLocation l) {
         tp(p,l.mundo,l.x,l.y,l.z,l.pitch,l.yaw);
+    }
+
+    public static void tp(Player p, BungLocation l, String title, String subtitle) {
+        tp(p,l.mundo,l.x,l.y,l.z,l.pitch,l.yaw);
+        TitleAPI.sendTitle(p, 20, 60, 20, title, subtitle);
     }
     
     

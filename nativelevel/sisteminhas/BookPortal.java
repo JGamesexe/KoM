@@ -16,12 +16,12 @@ package nativelevel.sisteminhas;
 
 import nativelevel.utils.BungLocation;
 import nativelevel.utils.BookUtil;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -55,18 +55,37 @@ public class BookPortal {
             double x = Double.valueOf(pages.get(1))+0.5;
             double y = Double.valueOf(pages.get(2));
             double z = Double.valueOf(pages.get(3))+0.5;
-            l = new BungLocation(mundo,x,y,z,0,0);
-            if(pages.size()>4) {
-                int pitch = Integer.valueOf(pages.get(4));
-                int yaw = Integer.valueOf(pages.get(5));
-                l.pitch = pitch;
-                l.yaw = yaw;
-            }
+            float pitch = Float.valueOf(pages.get(4));
+            float yam = Float.valueOf(pages.get(5));
+            l = new BungLocation(mundo,x,y,z,pitch,yam);
+//            Todos livros tem pitch e yam =V
+//            if(pages.size() > 4) {
+//                int pitch = Integer.valueOf(pages.get(4));
+//                int yaw = Integer.valueOf(pages.get(5));
+//                l.pitch = pitch;
+//                l.yaw = yaw;
+//            }
         } catch (Exception e) {
 
         }
         return l;
 
+    }
+
+    public static String getTitle(ItemStack livro){
+        List<String> pages = BookUtil.getPages(livro);
+        if (pages.size() > 6) {
+            return ChatColor.translateAlternateColorCodes('&', pages.get(6));
+        }
+        return "";
+    }
+
+    public static String getSubtitle(ItemStack livro){
+        List<String> pages = BookUtil.getPages(livro);
+        if (pages.size() > 7) {
+            return ChatColor.translateAlternateColorCodes('&', pages.get(7));
+        }
+        return "";
     }
 
 }
