@@ -65,6 +65,30 @@ import org.bukkit.plugin.RegisteredServiceProvider;
  */
 public class ClanLand {
 
+    private static int[] zonas = new int[]{
+            25,
+            49,
+            72,
+            94,
+            115,
+            135,
+            154,
+            172,
+            189,
+            205,
+            220,
+            235,
+            249,
+            263,
+            276,
+            289,
+            301,
+            313,
+            324,
+            335,
+            345
+    };
+
     public static ClanManager manager;
     public static StorageManager storage;
     public static ClanLand plug;
@@ -631,7 +655,7 @@ public class ClanLand {
                 return 1;
             }
             int distancia = getChunkDistanceFromSpawn(l);
-            return ((distancia >> 3) / 2);// / 2;
+            return calcZona(distancia);
         } else {
             while (set.iterator().hasNext()) {
                 ProtectedRegion regiao = set.iterator().next();
@@ -639,11 +663,22 @@ public class ClanLand {
                     return regiao.getPriority();
                 } else {
                     int distancia = getChunkDistanceFromSpawn(l);
-                    return (distancia >> 3) / 2;
+                    return calcZona(distancia);
                 }
             }
             return 0;
         }
+    }
+
+    private static int calcZona(int distFromSpawn){
+        int zona = 0;
+        for (int dist : zonas){
+            if(distFromSpawn <= dist){
+                return zona;
+            }
+            zona++;
+        }
+        return 666;
     }
 
     public static boolean isSafeZone(Location l) {
