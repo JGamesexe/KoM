@@ -481,7 +481,7 @@ public class KoM extends JavaPlugin {
         Bukkit.getPluginCommand("anuncio").setExecutor(new CmdAnuncio());
         Bukkit.getPluginCommand("like").setExecutor(new ComandoLike());
         Bukkit.getPluginCommand("dislike").setExecutor(new ComandoDislike());
-        Bukkit.getPluginCommand("kom").setExecutor(new Kom());
+        Bukkit.getPluginCommand("komx").setExecutor(new Kom());
         Bukkit.getPluginCommand("limpamobs").setExecutor(new LimpaMobs());
         Bukkit.getPluginCommand("gerador").setExecutor(new CmdGerador());
         Bukkit.getPluginCommand("setarbloco").setExecutor(new SetarBloco());

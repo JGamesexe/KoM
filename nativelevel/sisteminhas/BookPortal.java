@@ -14,9 +14,11 @@
  */
 package nativelevel.sisteminhas;
 
+import nativelevel.scores.Title;
 import nativelevel.utils.BungLocation;
 import nativelevel.utils.BookUtil;
 
+import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,15 +34,39 @@ public class BookPortal {
         BookUtil.setTitle(livro, "TP");
         BookUtil.setAuthor(livro, "Senhor Dos Portais");
         String[] page = {
-            p.getWorld().getName(),
-            "" + p.getLocation().getBlockX(),
-            "" + p.getLocation().getBlockY(),
-            "" + p.getLocation().getBlockZ(),
-            "" + p.getLocation().getPitch(),
-            "" + p.getLocation().getYaw()
+                p.getWorld().getName(),
+                "" + p.getLocation().getBlockX(),
+                "" + p.getLocation().getBlockY(),
+                "" + p.getLocation().getBlockZ(),
+                "" + p.getLocation().getPitch(),
+                "" + p.getLocation().getYaw()
 
         };
         BookUtil.setPages(livro, Arrays.asList(page));
+        return livro;
+    }
+
+    public static ItemStack criaLivroPortal(Player p, String title) {
+
+        ItemStack livro = criaLivroPortal(p);
+        List<String> pages = new ArrayList<>(BookUtil.getPages(livro));
+
+        pages.add("" + title.replaceAll("_", " "));
+
+        BookUtil.setPages(livro, pages);
+
+        return livro;
+    }
+
+    public static ItemStack criaLivroPortal(Player p, String title, String subtitle) {
+
+        ItemStack livro = criaLivroPortal(p, title);
+        List<String> pages = new ArrayList<>(BookUtil.getPages(livro));
+
+        pages.add("" + subtitle.replaceAll("_", " "));
+
+        BookUtil.setPages(livro, pages);
+
         return livro;
     }
 
@@ -52,12 +78,12 @@ public class BookPortal {
         }
         try {
             String mundo = pages.get(0);
-            double x = Double.valueOf(pages.get(1))+0.5;
+            double x = Double.valueOf(pages.get(1)) + 0.5;
             double y = Double.valueOf(pages.get(2));
-            double z = Double.valueOf(pages.get(3))+0.5;
+            double z = Double.valueOf(pages.get(3)) + 0.5;
             float pitch = Float.valueOf(pages.get(4));
             float yam = Float.valueOf(pages.get(5));
-            l = new BungLocation(mundo,x,y,z,pitch,yam);
+            l = new BungLocation(mundo, x, y, z, pitch, yam);
 //            Todos livros tem pitch e yam =V
 //            if(pages.size() > 4) {
 //                int pitch = Integer.valueOf(pages.get(4));
@@ -72,7 +98,7 @@ public class BookPortal {
 
     }
 
-    public static String getTitle(ItemStack livro){
+    public static String getTitle(ItemStack livro) {
         List<String> pages = BookUtil.getPages(livro);
         if (pages.size() > 6) {
             return ChatColor.translateAlternateColorCodes('&', pages.get(6));
@@ -80,7 +106,7 @@ public class BookPortal {
         return "";
     }
 
-    public static String getSubtitle(ItemStack livro){
+    public static String getSubtitle(ItemStack livro) {
         List<String> pages = BookUtil.getPages(livro);
         if (pages.size() > 7) {
             return ChatColor.translateAlternateColorCodes('&', pages.get(7));

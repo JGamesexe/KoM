@@ -625,7 +625,6 @@ public class Kom implements CommandExecutor {
                         p.sendMessage(ChatColor.GREEN + L.m("| " + ChatColor.GOLD + "/kom resetaspec <player>"));
                         p.sendMessage(ChatColor.GREEN + L.m("| " + ChatColor.GOLD + "/kom nivelaqui"));
                         p.sendMessage(ChatColor.GREEN + L.m("| " + ChatColor.GOLD + "/kom checkip <nome>"));
-                        p.sendMessage(ChatColor.GREEN + L.m("| " + ChatColor.GOLD + "/kom tper"));
                         p.sendMessage(ChatColor.GREEN + L.m("| " + ChatColor.GOLD + "/kom sorteio"));
                         p.sendMessage(ChatColor.GREEN + L.m("| " + ChatColor.GOLD + "/kom nomesorteio <nome>"));
                         p.sendMessage(ChatColor.GREEN + L.m("| " + ChatColor.GOLD + "/kom itemsorteio <nome>"));
@@ -867,48 +866,6 @@ public class Kom implements CommandExecutor {
                         }
                         p.sendMessage(L.m("transformei " + ct + " de war pra wild"));
                     } else if (args[0].equalsIgnoreCase("sincroniza") && p.isOp()) {
-
-                    } else if (args[0].equalsIgnoreCase("tper") && p.isOp()) {
-
-                        if (p.getItemInHand().getType() == Material.BOOK_AND_QUILL) {
-                            BungLocation local = BookPortal.getLocationFromBook(p.getItemInHand());
-                            if (local == null) {
-                                p.sendMessage(ChatColor.RED + L.m("ou ce fica cum livro de portal ou cas mao vazia mero mortal !"));
-                            } else {
-
-                                ApplicableRegionSet set = KoM.worldGuard.getRegionManager(p.getWorld()).getApplicableRegions(p.getLocation());
-                                if (set.size() > 0) {
-
-                                    Iterator<ProtectedRegion> i = set.iterator();
-                                    while (i.hasNext()) {
-                                        ProtectedRegion regiao = i.next();
-                                        if (regiao.getId().contains("barco-") || regiao.getId().contains("balao-")) {
-
-                                            com.sk89q.worldedit.Location localWE = BukkitUtil.toLocation(local.toLocation());
-                                            regiao.setFlag(DefaultFlag.SPAWN_LOC, localWE);
-
-                                            p.sendMessage("Local destino do transporte setado !");
-                                            return true;
-                                        }
-                                        break;
-                                    }
-                                }
-
-                                Block ondeTaONego = p.getLocation().getBlock();
-                                ondeTaONego.setType(Material.WOOD_PLATE);
-                                Block bau = ondeTaONego.getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN);
-                                bau.setType(Material.CHEST);
-                                Chest c = (Chest) bau.getState();
-                                c.getBlockInventory().addItem(p.getItemInHand());
-                                p.sendMessage(ChatColor.GREEN + L.m("Teleporter criado !"));
-                            }
-                        } else if (p.getItemInHand() != null && p.getItemInHand().getType() != Material.AIR) {
-                            p.sendMessage(ChatColor.RED + L.m("ou ce fica cum livro de portal ou cas mao vazia mero mortal !"));
-                        } else {
-                            ItemStack livro = BookPortal.criaLivroPortal(p);
-                            p.setItemInHand(livro);
-                            p.sendMessage(ChatColor.GREEN + L.m("O poderoso livro do portal foi conjurado ! Use o poder do comando novamente para criar o teleporter !"));
-                        }
 
                     } else if (args[0].equalsIgnoreCase("silencio")) {
 

@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
 public abstract class Comando extends Command {
 
     public void showSubCommands(CommandSender cs) {
-          cs.sendMessage(ChatColor.YELLOW+"|________________oO "+getName()+" Oo_____________");
+          cs.sendMessage(ChatColor.YELLOW+".________________oO "+getName()+" Oo_____________");
              for(SubCmd cmd : subs) {
                  if(cmd.type!=CommandType.OP) {
                      cs.sendMessage(ChatColor.YELLOW+"|"+ChatColor.GREEN+" - /"+getName()+" "+cmd.cmd);

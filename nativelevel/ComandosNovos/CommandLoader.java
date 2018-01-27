@@ -55,7 +55,7 @@ public class CommandLoader {
             return null;
         }
         name = name.replace(".class", "");
-        if (!name.contains("ComandosNovos.list")) {
+        if (!name.contains("ComandosNovos.list") && !name.contains("ComandosNovos.komx")) {
             return null;
         }
         Class c;
@@ -69,7 +69,6 @@ public class CommandLoader {
         if (Comando.class.isAssignableFrom(c)) {
             Comando w = null;
             try {
-
                 w = (Comando) c.newInstance();
                 return w;
 
