@@ -31,7 +31,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.messaging.PluginMessageRecipient;
 
 /**
- *
  * @author usuario
  */
 public class BungeeCordKom {
@@ -39,49 +38,50 @@ public class BungeeCordKom {
     public static void tp(Player p, String mundo, double x, double y, double z, float pitch, float yaw) {
         World w = Bukkit.getWorld(mundo);
         // tem esse mundo aki então é pro mesmo servidor
-        if(w!=null) {
-            Location l = new Location(w, x,y,z);
+        if (w != null) {
+            Location l = new Location(w, x, y, z);
             l.setPitch(pitch);
             l.setYaw(yaw);
-             if(x==0 & y==0 && z==0 && pitch == 0 && yaw==0) {
-                 l=w.getSpawnLocation();
-             }
+            if (x == 0 & y == 0 && z == 0 && pitch == 0 && yaw == 0) {
+                l = w.getSpawnLocation();
+            }
             //p.teleport(l);
+            //TODO Aparentemente mesmo com a causa sendo o plugin ele cancela o TP.... [O AntiHack do Spigot ta pegando o tp como Move Wrongly]
             p.teleport(l, PlayerTeleportEvent.TeleportCause.PLUGIN);
         } else {
             // faz tp do bungee entre servidores sei la como eu
-           
-            if(x==0 & y==0 && z==0 && pitch == 0 && yaw==0) {
+
+            if (x == 0 & y == 0 && z == 0 && pitch == 0 && yaw == 0) {
                 // teleporta pro spawn do mundo
                 // BungeeHomesAPI.sendPlayerToWorld(p, new LocBungeeCord(mundo, mundo, x, y, z, yaw, pitch));
             } else {
                 // bungeia o kra pras coords passadas
                 // BungeeHomesAPI.sendPlayerToLocBungeeCord(p, new LocBungeeCord(mundo, mundo, x, y, z, yaw, pitch));
             }
-                   
+
             //p.sendMessage("Chame um staff deu bug !");
         }
     }
-    
-     public static void tp(Player p, BungLocation l) {
-        tp(p,l.mundo,l.x,l.y,l.z,l.pitch,l.yaw);
+
+    public static void tp(Player p, BungLocation l) {
+        tp(p, l.mundo, l.x, l.y, l.z, l.pitch, l.yaw);
     }
 
     public static void tp(Player p, BungLocation l, String title, String subtitle) {
-        tp(p,l.mundo,l.x,l.y,l.z,l.pitch,l.yaw);
+        tp(p, l.mundo, l.x, l.y, l.z, l.pitch, l.yaw);
         TitleAPI.sendTitle(p, 20, 60, 20, title, subtitle);
     }
-    
-    
-        public static void TeleportarTPBG(String server, Player sender) {
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            DataOutputStream out = new DataOutputStream(b);
-            try {
-                out.writeUTF("Connect");
-                out.writeUTF(server);
-            } catch (IOException localIOException) {
-            }
-            ((PluginMessageRecipient) sender).sendPluginMessage(KoM._instance, "BungeeCord", b.toByteArray());
+
+
+    public static void TeleportarTPBG(String server, Player sender) {
+        ByteArrayOutputStream b = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(b);
+        try {
+            out.writeUTF("Connect");
+            out.writeUTF(server);
+        } catch (IOException localIOException) {
+        }
+        ((PluginMessageRecipient) sender).sendPluginMessage(KoM._instance, "BungeeCord", b.toByteArray());
     }
-    
+
 }
