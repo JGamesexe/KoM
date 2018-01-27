@@ -2,6 +2,7 @@ package nativelevel.Listeners;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import me.asofold.bpl.simplyvanish.SimplyVanish;
 import me.asofold.bpl.simplyvanish.config.VanishConfig;
 import nativelevel.Auras.Aura;
@@ -28,6 +29,7 @@ import nativelevel.ComandosNovos.list.KomSubs.CmdOE;
 import nativelevel.ComandosNovos.list.KomSubs.CraftSubs.CmdCraftCheck;
 import nativelevel.ComandosNovos.list.KomSubs.HarvestSubs.CmdHarvestCheck;
 import nativelevel.Custom.Items.BussolaMagica;
+import nativelevel.guis.GUIsHelp;
 import nativelevel.skills.SkillMaster;
 import nativelevel.sisteminhas.ClanLand;
 import org.bukkit.Bukkit;
@@ -57,7 +59,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 /**
- *
  * @author Ziden
  */
 public class InventoryEvents implements Listener {
@@ -79,6 +80,8 @@ public class InventoryEvents implements Listener {
             KoM.database.setBanco(ev.getPlayer().getUniqueId(), items.toArray(new ItemStack[items.size()]));
         }
         CmdOE.invClick(ev);
+
+        GUIsHelp.fechaInv(ev);
     }
 
     public static void checkArmorEquippin(InventoryClickEvent ev) {
@@ -156,10 +159,11 @@ public class InventoryEvents implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void pegaItem(final InventoryClickEvent event) {
 
+        GUIsHelp.clickNoInv(event);
+        if (event.isCancelled()) return;
+
         CmdHarvestCheck.invClick(event);
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
 
         CmdCraftCheck.invClick(event);
         if (event.isCancelled()) {
@@ -167,9 +171,8 @@ public class InventoryEvents implements Listener {
         }
 
         BussolaMagica.incClick(event);
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
+
 
         CapaInvisvel.aparece((Player) event.getWhoClicked());
 
@@ -402,8 +405,7 @@ public class InventoryEvents implements Listener {
                 && event.getCurrentItem().getType() != Material.LADDER
                 && event.getCurrentItem().getType() != Material.STONE_BUTTON) {
 
-            
-           
+
         }
         //
         // COLOCAR BANNER EM CIMA DE ESCUDO PINTA O ESCUDO
