@@ -4,13 +4,16 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import nativelevel.scores.Title;
 import nativelevel.utils.TitleAPI;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import me.asofold.bpl.simplyvanish.SimplyVanish;
 import me.asofold.bpl.simplyvanish.config.VanishConfig;
 import me.blackvein.quests.Quest;
@@ -18,7 +21,9 @@ import nativelevel.Attributes.Health;
 import nativelevel.CFG;
 import nativelevel.Classes.Farmer;
 import nativelevel.Crafting.CraftEvents;
+
 import static nativelevel.Crafting.CraftEvents.addInfoItem;
+
 import nativelevel.Custom.Buildings.Portal;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.Armadilha;
@@ -29,8 +34,10 @@ import nativelevel.Custom.Items.PedraDoPoder;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
+
 import static nativelevel.Listeners.GeneralListener.loots;
 import static nativelevel.Listeners.GeneralListener.taPelado;
+
 import nativelevel.Classes.Mage.spelllist.Paralyze;
 import nativelevel.Custom.Items.SeguroDeItems;
 import nativelevel.Equipment.EquipManager;
@@ -63,6 +70,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -82,7 +90,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 /**
- *
  * @author Ziden
  */
 public class PlayerEvents implements Listener {
@@ -171,21 +178,21 @@ public class PlayerEvents implements Listener {
             SBCore.setLevelPoints(ev.getPlayer(), ev.getPlayer().getLevel());
             ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Level Up! Voce esta no nivel " + ChatColor.YELLOW + ChatColor.BOLD + "%", ev.getNewLevel()));
             String quests = "";
-            for(Quest q  : KoM.quests.quests) {
+            for (Quest q : KoM.quests.quests) {
                 if (q.customRequirements != null && q.customRequirements.containsKey("Nivel KoM")) {
                     Map<String, Object> mapa = q.customRequirements.get("Nivel KoM");
                     if (mapa != null) {
                         int nivel = Integer.valueOf((String) mapa.get("Level"));
-                        if(nivel==ev.getNewLevel()) {
-                            quests += "- "+q.name+"   ";
+                        if (nivel == ev.getNewLevel()) {
+                            quests += "- " + q.name + "   ";
                         }
                     }
 
                 }
             }
-            if(quests.length() > 2) {
-                ev.getPlayer().sendMessage(ChatColor.GREEN+"!!! Novas Missões Disponíveis !!!");
-                ev.getPlayer().sendMessage(ChatColor.YELLOW+quests);
+            if (quests.length() > 2) {
+                ev.getPlayer().sendMessage(ChatColor.GREEN + "!!! Novas Missões Disponíveis !!!");
+                ev.getPlayer().sendMessage(ChatColor.YELLOW + quests);
             }
             ev.getPlayer().sendMessage(ChatColor.GREEN + "+Dano: " + ChatColor.YELLOW + " +0.5% " + ChatColor.GREEN + "  +Vida: " + ChatColor.YELLOW + "0.2");
             List<String> primarias = Jobs.getPrimarias(ev.getPlayer());
@@ -211,7 +218,7 @@ public class PlayerEvents implements Listener {
         }
     }
 
-    @EventHandler(priority=EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void pressNumberHotkey(final PlayerItemHeldEvent ev) {
         if (ev.getPlayer().hasMetadata("disarm")) {
             final int slot = ev.getPreviousSlot();
@@ -429,21 +436,10 @@ public class PlayerEvents implements Listener {
 
         int mobLevel1 = ClanLand.getMobLevel(event.getFrom());
         int mobLevel2 = ClanLand.getMobLevel(event.getTo());
-        if (mobLevel2 > 20) {
-            if (!CFG.dungeons.contains(event.getPlayer().getWorld().getName()) && !CFG.safeMaps.contains(event.getPlayer().getWorld().getName()) && !CFG.warMaps.contains(event.getPlayer().getWorld().getName())) {
-                event.getPlayer().sendMessage(ChatColor.RED + L.m("Voce chegou no limite deste mundo !"));
-                event.setCancelled(true);
-            }
-        }
         String type = ClanLand.getTypeAt(event.getTo());
         if (mobLevel1 != mobLevel2) {
             if (mobLevel2 > 20 && event.getTo().getWorld().getName().equalsIgnoreCase(CFG.mundoGuilda)) {
-                if (!CFG.dungeons.contains(event.getPlayer().getWorld().getName()) && !CFG.safeMaps.contains(event.getPlayer().getWorld().getName()) && !CFG.warMaps.contains(event.getPlayer().getWorld().getName())) {
-                    event.getPlayer().sendMessage(ChatColor.RED + L.m("Voce chegou no limite deste mundo !"));
-                    event.setCancelled(true);
-                }
-                //mobLevel2 = 666;
-                //event.getPlayer().sendMessage(ChatColor.AQUA + "~ Zona de nível " + mobLevel2 + ChatColor.RED + " [PERIGO NIVEL MÀXIMO!]");
+                TitleAPI.sendTitle(event.getPlayer(), 10, 10, 120, "§4~ Zona de nivel §l" + (mobLevel2), "§cPerigo, Zona §oM§co§or§ct§oa§c!");
             } else {
                 if (type.equalsIgnoreCase("WILD")) {
                     TitleAPI.sendTitle(event.getPlayer(), 10, 10, 120, ChatColor.AQUA + "~ Zona de nivel " + (mobLevel2 * 5), "");
@@ -600,7 +596,7 @@ public class PlayerEvents implements Listener {
                 p.getInventory().setChestplate(s);
                 continue;
             }
-            if (((s.getType()==Material.PUMPKIN && s.getAmount()==1) || (s.getType()==Material.SKULL_ITEM) || s.getType().name().contains("HELMET")) && (p.getInventory().getHelmet() == null || p.getInventory().getHelmet().getType() == Material.AIR)) {
+            if (((s.getType() == Material.PUMPKIN && s.getAmount() == 1) || (s.getType() == Material.SKULL_ITEM) || s.getType().name().contains("HELMET")) && (p.getInventory().getHelmet() == null || p.getInventory().getHelmet().getType() == Material.AIR)) {
                 p.getInventory().setHelmet(s);
                 continue;
             }
@@ -868,9 +864,12 @@ public class PlayerEvents implements Listener {
         if (ev.getTo().getWorld().getName().equalsIgnoreCase(CFG.mundoGuilda)) {
             int level = ClanLand.getMobLevel(ev.getTo());
             if (level > 20) {
-                ev.getPlayer().sendMessage(ChatColor.RED + "Seu teleporte ia te levar a uma zona fora do mundo...");
-                ev.setCancelled(true);
-                return;
+                if (!ev.getTo().getWorld().getWorldBorder().isInside(ev.getTo())) {
+                    ev.getPlayer().sendMessage(ChatColor.RED + "Seu teleporte ia te levar a uma zona fora do mundo...");
+                    ev.getPlayer().getWorld().strikeLightning(ev.getPlayer().getLocation());
+                    ev.setCancelled(true);
+                    return;
+                }
             }
         }
 
