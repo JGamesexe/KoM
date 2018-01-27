@@ -39,7 +39,7 @@ commands:
     falar:
     reinicio:
     g:
-    kom:
+    komx:
         description: Comando KoM
         usage: /kom
     lobby:

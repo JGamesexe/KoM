@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 public class KoMx extends Comando {
 
     public KoMx() {
-        super("komx", CommandType.TODOS);
+        super("kom", CommandType.TODOS);
         subs.add(new CmdTper());
         subs.add(new CmdTeste());
     }
