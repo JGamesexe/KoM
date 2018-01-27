@@ -57,6 +57,10 @@ STAFF:
  */
 package nativelevel;
 
+import me.dpohvar.powernbt.PowerNBT;
+import me.dpohvar.powernbt.api.NBTManager;
+import nativelevel.utils.EntityHelp;
+import nativelevel.utils.GUI;
 import nativelevel.utils.LogsKom;
 import nativelevel.sisteminhas.Boat;
 import nativelevel.sisteminhas.ClanLand;
@@ -70,16 +74,15 @@ import genericos.komzin.libzinha.comandos.ComandoL;
 import genericos.komzin.libzinha.comandos.ComandoR;
 import genericos.komzin.libzinha.comandos.ComandoTell;
 import io.lumine.xikage.mythicmobs.MythicMobs;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Logger;
+
 import me.blackvein.quests.Quests;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
@@ -250,6 +253,8 @@ import org.bukkit.util.Vector;
  */
 public class KoM extends JavaPlugin {
 
+    public static NBTManager nbtManager = PowerNBT.getApi();
+
     public static final String tag = "§7§l[§6§lK§e§lo§6§lM§7§l]";
     public static String camila = "camila"; // S2
     public static boolean serverTestes = false;
@@ -296,7 +301,6 @@ public class KoM extends JavaPlugin {
         }
     }
 
-   
 
     public static ItemStack addGlow(ItemStack item) {
         net.minecraft.server.v1_12_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
@@ -409,7 +413,7 @@ public class KoM extends JavaPlugin {
             }
         };
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, r4, 20 * 60 * 60 * 2, 20 * 60 * 60 * 2);
-        
+
         // Bukkit.getScheduler().scheduleSyncRepeatingTask(this, r2, 20 * 60 * 30, 20 * 60 * 30);
         Runnable r3 = new Runnable() {
             @Override
@@ -476,7 +480,7 @@ public class KoM extends JavaPlugin {
         Bukkit.getPluginCommand("l").setExecutor(new ComandoL());
         Bukkit.getPluginCommand("tell").setExecutor(new ComandoTell());
         Bukkit.getPluginCommand("r").setExecutor(new ComandoR());
-        
+
         Bukkit.getPluginCommand("chatbb").setExecutor(new ComandoChatbb());
         Bukkit.getPluginCommand("anuncio").setExecutor(new CmdAnuncio());
         Bukkit.getPluginCommand("like").setExecutor(new ComandoLike());
@@ -548,6 +552,8 @@ public class KoM extends JavaPlugin {
         RankDB.calculaRankings();
         RankCache.loadTops();
 
+        EntityHelp.separaMobs();
+
     }
 
     private static CommandMap cmap;
@@ -612,7 +618,7 @@ public class KoM extends JavaPlugin {
         reiniciando = true;
 
         komq.onDisable();
-        
+
         for (UUID u : GeneralListener.loots.keySet()) {
             List<ItemStack> items = GeneralListener.loots.get(u);
             ItemStack[] ss = items.toArray(new ItemStack[items.size()]);
@@ -729,7 +735,7 @@ public class KoM extends JavaPlugin {
         ItemStack[] c = inv.getContents();
         for (int x = 0; x < c.length; x++) {
             ItemStack is = c[x];
-            if (is != null && is.isSimilar(ss) && is.getAmount()==ss.getAmount()) {
+            if (is != null && is.isSimilar(ss) && is.getAmount() == ss.getAmount()) {
                 c[x] = null;
                 p.getInventory().setContents(c);
                 p.updateInventory();
@@ -799,6 +805,7 @@ public class KoM extends JavaPlugin {
         }
         return gastou;
     }
+
     public static boolean safeMode = false;
 
     public static void efeitoBlocos(Entity e, Material m) {
@@ -975,11 +982,11 @@ public class KoM extends JavaPlugin {
         final Block txx = tocha;
         PlayEffect.play(VisualEffect.SPELL_INSTANT, air.getLocation().add(0.5, 0, 0.5), "num:1");
         Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-            @Override
-            public void run() {
-                txx.setTypeIdAndData(ida, datai, false);
-            }
-        },
+                    @Override
+                    public void run() {
+                        txx.setTypeIdAndData(ida, datai, false);
+                    }
+                },
                 1
         );
         tocha.getState()
@@ -1093,10 +1100,11 @@ public class KoM extends JavaPlugin {
             ev.setCancelled(true);
         }
     }
+
     public boolean[] attacking
             = {
-                false, false, false, false
-            };
+            false, false, false, false
+    };
 
     public Clan getClan(String s) {
         return ClanLand.getClan(s);
