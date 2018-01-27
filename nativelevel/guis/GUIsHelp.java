@@ -50,7 +50,7 @@ public class GUIsHelp {
 
         if (player.isOp() || player.hasPermission("kom.editspawner")) {
             if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                if (event.getClickedBlock().equals(Material.MOB_SPAWNER)) {
+                if (event.getClickedBlock().getType().equals(Material.MOB_SPAWNER)) {
                     event.setCancelled(true);
                     GUI gui = new SpawnerGUIMain((CreatureSpawner) event.getClickedBlock().getState());
                     GUI.open(player, gui);
