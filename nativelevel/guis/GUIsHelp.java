@@ -44,7 +44,7 @@ public class GUIsHelp {
 
     }
 
-    public static void abreSpawnerGUI(PlayerInteractEvent event) {
+    public static void interact(PlayerInteractEvent event) {
 
         Player player = event.getPlayer();
 

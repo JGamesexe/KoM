@@ -30,6 +30,7 @@ import nativelevel.Attributes.Stamina;
 import nativelevel.bencoes.TipoBless;
 import nativelevel.ComandosNovos.list.KomSubs.CmdOE;
 import nativelevel.Jobs.TipoClasse;
+import nativelevel.guis.GUIsHelp;
 import nativelevel.integration.BungeeCordKom;
 import nativelevel.integration.SimpleClanKom;
 import nativelevel.integration.WorldGuardKom;
@@ -347,6 +348,9 @@ public class InteractEvents implements Listener {
 
     @EventHandler
     public void interageDenovo(PlayerInteractEvent ev) {
+
+        GUIsHelp.interact(ev);
+        if (ev.isCancelled()) return;
 
         interageLow(ev);
 
