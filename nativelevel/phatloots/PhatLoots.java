@@ -1,39 +1,14 @@
 package nativelevel.phatloots;
 
+import com.google.common.io.Files;
+import nativelevel.KoM;
+import nativelevel.phatloots.commands.*;
 import nativelevel.phatloots.events.ChestRespawnEvent.RespawnReason;
 import nativelevel.phatloots.gui.InventoryListener;
+import nativelevel.phatloots.listeners.*;
+import nativelevel.phatloots.loot.*;
 import nativelevel.phatloots.regions.RegionHook;
 import nativelevel.phatloots.regions.WorldGuardRegionHook;
-import com.google.common.io.Files;
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import nativelevel.KoM;
-import nativelevel.phatloots.commands.CommandHandler;
-import nativelevel.phatloots.commands.LootCommand;
-import nativelevel.phatloots.commands.ManageLootCommand;
-import nativelevel.phatloots.commands.ManageMoneyLootCommand;
-import nativelevel.phatloots.commands.VariableLootCommand;
-import nativelevel.phatloots.listeners.CitizensListener;
-import nativelevel.phatloots.listeners.DispenserListener;
-import nativelevel.phatloots.listeners.FishingListener;
-import nativelevel.phatloots.listeners.LootBagListener;
-import nativelevel.phatloots.listeners.LootingBonusListener;
-import nativelevel.phatloots.listeners.MobDeathListener;
-import nativelevel.phatloots.listeners.MobListener;
-import nativelevel.phatloots.listeners.MobSpawnListener;
-import nativelevel.phatloots.listeners.PhatLootsListener;
-import nativelevel.phatloots.loot.CommandLoot;
-import nativelevel.phatloots.loot.Experience;
-import nativelevel.phatloots.loot.Item;
-import nativelevel.phatloots.loot.LootCollection;
-import nativelevel.phatloots.loot.Message;
-import nativelevel.phatloots.loot.Money;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -42,9 +17,20 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.*;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Loads Plugin and manages Data/Listeners/etc.
@@ -77,12 +63,17 @@ public class PhatLoots {
         }
     }
 
-    public void onEnable () {
+    public void onEnable() {
         plugin = KoM._instance;
         logger = plugin.getLogger();
         
         /* Create data folders */
-        File dir = plugin.getDataFolder();
+        File dir = new File(plugin.getDataFolder().getPath() + "/PhatLoots");
+
+        Bukkit.getLogger().info("!=- _PATH,LOOTS");
+        Bukkit.getLogger().info(dir.toString());
+        Bukkit.getLogger().info("!=- _PATH,LOOTS");
+
         if (!dir.isDirectory()) {
             dir.mkdir();
         }
@@ -272,7 +263,7 @@ public class PhatLoots {
             MobDeathListener listener = new MobDeathListener();
             listener.mobWorlds = plugin.getConfig().getBoolean("WorldMobDropLoot");
             listener.mobRegions = plugin.getConfig().getBoolean("RegionMobDropLoot")
-                                  && MobListener.regionHook != null;
+                    && MobListener.regionHook != null;
             if (listener.mobWorlds) {
                 sb.append(" w/ MultiWorld support");
             } else if (isDebug()) {
@@ -294,7 +285,7 @@ public class PhatLoots {
             MobSpawnListener listener = new MobSpawnListener();
             listener.mobWorlds = plugin.getConfig().getBoolean("WorldMobSpawnLoot");
             listener.mobRegions = plugin.getConfig().getBoolean("RegionMobSpawnLoot")
-                                  && MobListener.regionHook != null;
+                    && MobListener.regionHook != null;
             if (listener.mobWorlds) {
                 sb.append(" w/ MultiWorld support");
             } else if (isDebug()) {
@@ -361,8 +352,8 @@ public class PhatLoots {
 
                 //Ensure the PhatLoot name matches the file name
                 PhatLoot phatLoot = (PhatLoot) config.get(config.contains(name)
-                                                          ? name
-                                                          : config.getKeys(false).iterator().next());
+                        ? name
+                        : config.getKeys(false).iterator().next());
                 if (!phatLoot.name.equals(name)) {
                     if (isDebug()) {
                         debug("PhatLoot name (" + phatLoot.name + ") does not match file name (" + name + "), renaming PhatLoot to " + name);
@@ -445,7 +436,7 @@ public class PhatLoots {
      * Returns a List of all PhatLoots that are linked to the given Block
      * PhatLoots which the given Player does not have permission to loot are not returned
      *
-     * @param block The given Block
+     * @param block  The given Block
      * @param player The given Player
      * @return The LinkedList of PhatLoots
      */
@@ -492,8 +483,8 @@ public class PhatLoots {
             if (map != null) {
                 String world = block.getWorld().getName();
                 String pNameList = map.containsKey(world)
-                                 ? map.get(world)
-                                 : map.get("all");
+                        ? map.get(world)
+                        : map.get("all");
                 if (pNameList != null) {
                     for (String pName : pNameList.split("; ")) {
                         PhatLoot phatLoot = PhatLoots.getPhatLoot(pName);

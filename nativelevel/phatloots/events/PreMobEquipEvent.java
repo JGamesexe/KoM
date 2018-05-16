@@ -16,7 +16,7 @@ public class PreMobEquipEvent extends PreLootEvent {
     /**
      * Creates a new event with the given data
      *
-     * @param mob The mob whose equipment was modified
+     * @param mob          The mob whose equipment was modified
      * @param lootingBonus The bonus amount of looting probability
      */
     public PreMobEquipEvent(LivingEntity mob, double lootingBonus) {

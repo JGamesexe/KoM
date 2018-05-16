@@ -6,7 +6,6 @@
 package farmcraft.titulos;
 
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.material.MaterialData;
 

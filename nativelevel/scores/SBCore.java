@@ -1,27 +1,20 @@
 package nativelevel.scores;
 
-//import cashgame.principal.VipManiaEpic;
-import java.text.DecimalFormat;
-import nativelevel.Comandos.ComandoScore;
-import nativelevel.KoM;
+import cashgame.principal.VipManiaEpic;
 import nativelevel.Attributes.Mana;
 import nativelevel.Attributes.Stamina;
+import nativelevel.Comandos.ComandoScore;
+import nativelevel.KoM;
 import nativelevel.karma.Criminoso;
-import nativelevel.scores.ScoreboardManager;
 import nativelevel.titulos.Sexo;
 import nativelevel.titulos.TituloDB;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
-import ru.tehkode.permissions.PermissionGroup;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 /**
- *
  * @author NeT32
- *
  */
 public class SBCore {
 
@@ -65,8 +58,8 @@ public class SBCore {
             return;
         }
         ScoreboardManager.setScoreLine(p, i--, ChatColor.GREEN + "" + ChatColor.BOLD + "Cash");
-        //ScoreboardManager.setScoreLine(p, i--, "" + VipManiaEpic.databaseCodigos.getCash(p));
-        ScoreboardManager.setScoreLine(p, i--, "TEM NADA SEU POBRE");
+        ScoreboardManager.setScoreLine(p, i--, "" + VipManiaEpic.databaseCodigos.getCash(p));
+//        ScoreboardManager.setScoreLine(p, i--, "TEM NADA SEU POBRE");
         ScoreboardManager.setScoreLine(p, i--, " ");
         ScoreboardManager.setScoreLine(p, i--, ChatColor.AQUA + "" + ChatColor.BOLD + "Mana");
         Mana mana = Mana.getMana(p);
@@ -86,8 +79,8 @@ public class SBCore {
         int feitas = KoM.quests.getQuester(p.getUniqueId()).completedQuests.size();
 
         int pct = (100 * feitas) / quests;
-        
+
         ScoreboardManager.setScoreLine(p, i--, ChatColor.BLUE + "" + ChatColor.BOLD + "Quests");
-        ScoreboardManager.setScoreLine(p, i--, feitas +" / "+quests +" ("+pct+"%)");
+        ScoreboardManager.setScoreLine(p, i--, feitas + " / " + quests + " (" + pct + "%)");
     }
 }

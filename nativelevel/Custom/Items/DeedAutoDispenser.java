@@ -14,17 +14,9 @@
  */
 package nativelevel.Custom.Items;
 
-import nativelevel.Custom.Buildings.AutoDispenser;
 import nativelevel.Custom.CustomItem;
-import nativelevel.Jobs;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Lang.L;
-import net.sacredlabyrinth.phaed.simpleclans.Clan;
-import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 public class DeedAutoDispenser extends CustomItem {
@@ -50,7 +42,7 @@ public class DeedAutoDispenser extends CustomItem {
             cla = cp.getTag();
         }
         
-        if(player.getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if(player.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             player.sendMessage(ChatColor.RED+"Voce nao pode usar isto aqui");
             return false;
         }
@@ -65,10 +57,10 @@ public class DeedAutoDispenser extends CustomItem {
         disp.constroi(onde);
         player.teleport(player.getLocation().add(0, 3, 0));
         player.playSound(player.getLocation(), Sound.ANVIL_LAND, 10, 0);
-        if (player.getItemInHand().getAmount() == 1) {
+        if (player.getInventory().getItemInMainHand().getAmount() == 1) {
             player.setItemInHand(null);
         } else {
-            player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
+            player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
         }
         player.sendMessage(ChatColor.GOLD + L.m("Voce construiu o dispenser automatico !"));
         return false;

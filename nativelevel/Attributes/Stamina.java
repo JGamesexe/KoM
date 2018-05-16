@@ -1,7 +1,5 @@
 package nativelevel.Attributes;
 
-import java.util.HashMap;
-import java.util.UUID;
 import nativelevel.Equipment.Atributo;
 import nativelevel.Equipment.EquipManager;
 import nativelevel.Equipment.EquipMeta;
@@ -9,6 +7,9 @@ import nativelevel.Lang.L;
 import nativelevel.scores.SBCore;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class Stamina {
 
@@ -26,12 +27,12 @@ public class Stamina {
     }
 
     public static int getMax(Player p) {
-        
-          EquipMeta equip = EquipManager.getPlayerEquipmentMeta(p);
-            int stat = (int)equip.getAttribute(Atributo.Stamina);
-        
+
+        EquipMeta equip = EquipManager.getPlayerEquipmentMeta(p);
+        int stat = (int) equip.getAttribute(Atributo.Stamina);
+
         return p.getLevel() * 2 + 100 + stat;
-        
+
     }
 
     public static void enxe(Player p) {

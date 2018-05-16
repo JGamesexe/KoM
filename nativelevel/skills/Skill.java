@@ -3,11 +3,10 @@ package nativelevel.skills;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.bukkit.inventory.ItemStack;
 
 public class Skill {
 
-    
+
     public Skill(String nome, int nivel, boolean precisaPrimaria) {
         this.nome = nome;
         this.nivel = nivel;
@@ -18,7 +17,7 @@ public class Skill {
         return lore;
     }
 
-    public void setLore(String [] lore) {
+    public void setLore(String[] lore) {
         this.lore = Arrays.asList(lore);
     }
 
@@ -29,7 +28,7 @@ public class Skill {
     public void setNome(String nome) {
         this.nome = nome;
     }
-    
+
     public int getNivel() {
         return nivel;
     }
@@ -59,5 +58,5 @@ public class Skill {
     private int nivel;
     private boolean precisaPrimaria = false;
     private boolean skillDeCraft = false;
-    
+
 }

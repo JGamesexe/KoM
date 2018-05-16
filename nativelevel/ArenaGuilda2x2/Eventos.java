@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 public class Eventos implements Listener {
-    
+
     @EventHandler
     public void negoMorre(PlayerDeathEvent ev) {
         if (!ev.getEntity().getWorld().getName().equalsIgnoreCase("Arena")) {
@@ -29,7 +29,7 @@ public class Eventos implements Listener {
         }
         Arena2x2.sql.jogadorMorre(ev.getEntity());
     }
-    
+
     @EventHandler
     public void negoKita(PlayerQuitEvent ev) {
         if (!ev.getPlayer().getWorld().getName().equalsIgnoreCase("Arena")) {
@@ -51,7 +51,7 @@ public class Eventos implements Listener {
             }
         }
     }
-    
+
     @EventHandler
     public void negoFoge(PlayerTeleportEvent ev) {
         if (!ev.getPlayer().getWorld().getName().equalsIgnoreCase("Arena")) {
@@ -61,5 +61,5 @@ public class Eventos implements Listener {
             ev.setCancelled(true);
         }
     }
-    
+
 }

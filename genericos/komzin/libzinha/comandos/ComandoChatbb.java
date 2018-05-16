@@ -14,7 +14,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- *
  * @author Gabriel
  */
 public class ComandoChatbb implements CommandExecutor {

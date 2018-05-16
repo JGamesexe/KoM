@@ -3,26 +3,19 @@ package nativelevel.Listeners;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
-import java.util.ArrayList;
-import java.util.List;
 import nativelevel.Classes.Mage.spelllist.Paralyze;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Classes.Paladin;
 import nativelevel.Classes.Thief;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.ItemRaroAleatorio;
 import nativelevel.Custom.Items.SeguroDeItems;
-import nativelevel.sisteminhas.Deuses;
-import nativelevel.sisteminhas.Mobs;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
-import nativelevel.Language.MSG;
 import nativelevel.MetaShit;
 import nativelevel.karma.Criminoso;
 import nativelevel.karma.Karma;
-import nativelevel.sisteminhas.IronGolem;
-import nativelevel.sisteminhas.XP;
+import nativelevel.sisteminhas.*;
 import nativelevel.spec.PlayerSpec;
 import nativelevel.utils.BookUtil;
 import net.minecraft.server.v1_12_R1.EntityPlayer;
@@ -45,8 +38,10 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author Ziden
  */
 public class DeathEvents implements Listener {
@@ -57,19 +52,19 @@ public class DeathEvents implements Listener {
         event.setDeathMessage(null);
         event.setDroppedExp(0);
 
-        if(Criminoso.isCriminoso(event.getEntity()))
+        if (Criminoso.isCriminoso(event.getEntity()))
             Criminoso.setCriminoso(event.getEntity());
-        
-        if(Paralyze.isParalizado(event.getEntity())) {
+
+        if (Paralyze.isParalizado(event.getEntity())) {
             Paralyze.removeParalize(event.getEntity());
         }
-        
+
         int level = ((Player) event.getEntity()).getLevel();
         int prox = level - perdaDeLvl;
         if (prox < 1) {
             prox = 1;
         }
-        
+
         event.setNewLevel(event.getEntity().getLevel());
         int soulPoints = KoM.database.getAlmas(event.getEntity().getUniqueId().toString());
         if (soulPoints > 0) {
@@ -167,19 +162,19 @@ public class DeathEvents implements Listener {
             boolean seguro = false;
 
             if (ClanLand.permission.has(p, "kom.vip")) {
-                if (p.getWorld().getName().equalsIgnoreCase("dungeon")) {
+                if (p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                     naoPerdeItem = true;
                     KoM.debug("vip em dungeon nao eprde item");
                 }
                 naoPerdeLevel = true;
             }
-            
-            
-            if(ev.getEntity().getLastDamageCause() != null && ev.getEntity().getLastDamageCause().getCause()==DamageCause.SUFFOCATION) {
+
+
+            if (ev.getEntity().getLastDamageCause() != null && ev.getEntity().getLastDamageCause().getCause() == DamageCause.SUFFOCATION) {
                 naoPerdeLevel = true;
                 naoPerdeItem = true;
             }
-            
+
             if (tipo.equalsIgnoreCase("WARZ")) {
                 naoPerdeLevel = true;
             }
@@ -195,7 +190,7 @@ public class DeathEvents implements Listener {
                 seguro = true;
                 naoPerdeLevel = true;
             }
-            if (p.getWorld().getName().equalsIgnoreCase("dungeon")) {
+            if (p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                 ApplicableRegionSet set = KoM.worldGuard.getRegionManager(p.getWorld()).getApplicableRegions(p.getLocation());
                 if (set != null && set.size() > 0) {
                     if (set.getFlag(DefaultFlag.ITEM_DROP) == StateFlag.State.DENY) {
@@ -223,7 +218,7 @@ public class DeathEvents implements Listener {
 
                     }
                 }
-                if ((ev.getEntity().getWorld().getName().equalsIgnoreCase("dungeon") && naoPerdeItem) || seguro || ev.getEntity().getWorld().getName().equalsIgnoreCase("dungeon") || ClanLand.isWarZone(ev.getEntity().getLocation())) {
+                if ((ev.getEntity().getWorld().getName().equalsIgnoreCase("NewDungeon") && naoPerdeItem) || seguro || ev.getEntity().getWorld().getName().equalsIgnoreCase("NewDungeon") || ClanLand.isWarZone(ev.getEntity().getLocation())) {
                     ArrayList<ItemStack> listaItems = new ArrayList<ItemStack>();
                     for (ItemStack ss : p.getInventory().getContents()) {
                         if (ss != null && (Jobs.rnd.nextInt(8) != 1

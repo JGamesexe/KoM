@@ -1,6 +1,5 @@
 package nativelevel.ArenaGuilda2x2;
 
-import java.util.List;
 import nativelevel.sisteminhas.ClanLand;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.ChatColor;
@@ -9,6 +8,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class CmdArena implements CommandExecutor {
 
@@ -64,11 +65,11 @@ public class CmdArena implements CommandExecutor {
                     Arena2x2.sql.deletaArena(args[1]);
                     p.sendMessage("Arena " + args[1] + " deletada");
                 } else if (args[0].equalsIgnoreCase("setspawn1") && p.isOp()) {
-                  String arena = args[1];
-                  Arena2x2.sql.setSpawn1(arena, p.getLocation());
+                    String arena = args[1];
+                    Arena2x2.sql.setSpawn1(arena, p.getLocation());
                 } else if (args[0].equalsIgnoreCase("setspawn2") && p.isOp()) {
-                  String arena = args[1];
-                  Arena2x2.sql.setSpawn2(arena, p.getLocation());
+                    String arena = args[1];
+                    Arena2x2.sql.setSpawn2(arena, p.getLocation());
                 } else if (args[0].equalsIgnoreCase("tp") && p.isOp()) {
                     Location l = Arena2x2.sql.getArena(args[1]);
                     if (l != null) {

@@ -5,8 +5,6 @@
  */
 package nativelevel.Comandos;
 
-import java.util.HashSet;
-import java.util.UUID;
 import nativelevel.scores.SBCore;
 import nativelevel.scores.ScoreboardManager;
 import nativelevel.utils.Cooldown;
@@ -16,8 +14,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 
+import java.util.HashSet;
+import java.util.UUID;
+
 /**
- *
  * @author Carlos
  */
 public class ComandoScore implements CommandExecutor {

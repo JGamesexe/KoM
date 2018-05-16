@@ -14,75 +14,51 @@
  */
 package nativelevel.Classes.Mage;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import me.asofold.bpl.simplyvanish.SimplyVanish;
-import me.asofold.bpl.simplyvanish.config.VanishConfig;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.sisteminhas.ClanLand;
+import nativelevel.Attributes.Mana;
+import nativelevel.Classes.Thief;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.CajadoElemental;
-import org.bukkit.block.EnchantingTable;
+import nativelevel.Equipment.Atributo;
+import nativelevel.Equipment.EquipManager;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.Listeners.GeneralListener;
 import nativelevel.Menu.Menu;
 import nativelevel.MetaShit;
-import nativelevel.Attributes.AttributeInfo;
-import nativelevel.Attributes.Mana;
-import nativelevel.Classes.Thief;
-import nativelevel.Equipment.Atributo;
-import nativelevel.Equipment.EquipManager;
-import nativelevel.Equipment.EquipMeta;
-import nativelevel.Equipment.ItemAttributes;
 import nativelevel.bencoes.TipoBless;
 import nativelevel.integration.SimpleClanKom;
-import nativelevel.integration.WG;
+import nativelevel.sisteminhas.ClanLand;
+import nativelevel.sisteminhas.Tralhas;
 import nativelevel.skills.SkillMaster;
 import nativelevel.spec.PlayerSpec;
-import nativelevel.utils.Targeter;
-import nativelevel.sisteminhas.Tralhas;
 import net.minecraft.server.v1_12_R1.ContainerEnchantTable;
 import net.minecraft.server.v1_12_R1.EntityPlayer;
 import net.minecraft.server.v1_12_R1.StatisticList;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.inventory.EnchantingInventory;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.EnchantingTable;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.LightningStrike;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.SmallFireball;
-import org.bukkit.entity.Snowball;
-import org.bukkit.event.block.Action;
+import org.bukkit.entity.*;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EnchantingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class Wizard {
 
@@ -115,15 +91,74 @@ public class Wizard {
     public static String LIGHT = ChatColor.YELLOW + "☼";
     public static String TERRA = ChatColor.GREEN + "☢";
 
+    public static void onHit(EntityDamageByEntityEvent ev) {
+
+        Player attacker = (Player) ev.getDamager();
+        ItemStack weapon = attacker.getInventory().getItemInMainHand();
+
+        if (!CajadoElemental.isCajadoElemental(weapon)) return;
+        if (SkillMaster.temSkill(attacker, "Mago", "Cajados elementais")) {
+            attacker.sendMessage("§cVocê ainda não tem a habilidade necessaria para usar este item");
+            ev.setCancelled(true);
+            return;
+        }
+
+        String elemento = CajadoElemental.getElemento(weapon).trim();
+        LivingEntity entity = (LivingEntity) ev.getEntity();
+        if (elemento.equalsIgnoreCase("Fogo")) entity.setFireTicks(30);
+        else if (elemento.equalsIgnoreCase("Agua")) entity.setVelocity(entity.getVelocity().setY(-0.25));
+        else if (elemento.equalsIgnoreCase("Raio")) entity.setVelocity(entity.getVelocity().setY(+0.25));
+        else if (elemento.equalsIgnoreCase("Veneno"))
+            entity.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 25, 1), true);
+        else return;
+
+        if (!(entity instanceof Player)) return;
+
+        Player reciver = (Player) entity;
+
+        double damageOld = ev.getDamage();
+
+        if (elemento.equalsIgnoreCase("Fogo")) {
+            if (Jobs.getPrimarias(reciver).contains("Ferreiro")) ev.setDamage(ev.getDamage() * 0.6);
+            else if (Jobs.getPrimarias(reciver).contains("Fazendeiro")) ev.setDamage(ev.getDamage() * 1.4);
+        } else if (elemento.equalsIgnoreCase("Agua")) {
+            if (Jobs.getPrimarias(reciver).contains("Fazendeiro")) ev.setDamage(ev.getDamage() * 0.8);
+            else if (Jobs.getPrimarias(reciver).contains("Ferreiro")) ev.setDamage(ev.getDamage() * 2);
+        } else if (elemento.equalsIgnoreCase("Raio")) {
+            if (Jobs.getPrimarias(reciver).contains("Engenheiro")) ev.setDamage(ev.getDamage() * 0.6);
+            else if (Jobs.getPrimarias(reciver).contains("Paladino")) ev.setDamage(ev.getDamage() * 1.4);
+        } else if (elemento.equalsIgnoreCase("Veneno")) {
+            if (Jobs.getPrimarias(reciver).contains("Alquimista")) ev.setDamage(ev.getDamage() * 0.6);
+            else if (Jobs.getPrimarias(reciver).contains("Ladino")) ev.setDamage(ev.getDamage() * 1.4);
+        }
+
+        if (damageOld < ev.getDamage()) {
+            reciver.getWorld().spawnParticle(Particle.CRIT_MAGIC, reciver.getLocation().add(0, 1.1, 0), 15, 0.1, 0.4, 0.1, 0.2);
+        } else {
+            reciver.getWorld().spawnParticle(Particle.SMOKE_NORMAL, reciver.getLocation().add(0, 1.1, 0), 15, 0.1, 0.4, 0.1, 0.06);
+        }
+
+    }
+
+    public static void noHit(EntityDamageByEntityEvent ev) {
+        Player attacker = (Player) ev.getDamager();
+        ItemStack weapon = attacker.getInventory().getItemInMainHand();
+
+        if (CajadoElemental.isCajadoElemental(weapon)) {
+            ev.setCancelled(true);
+            attacker.sendMessage("§cApenas ladinos conseguem conseguem utilizar Adagas");
+        }
+    }
+
     public static void blink(Player p) {
-        if (p.getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             p.sendMessage(ChatColor.RED + L.m("Esta magia parece nao funcionar aqui !"));
             return;
         }
 
         double magia = EquipManager.getPlayerAttribute(Atributo.Magia, p);
-        
-        int distance = (int)Math.round(8 + (p.getLevel() / 10) * (1+magia/100/2));
+
+        int distance = (int) Math.round(8 + (p.getLevel() / 10) * (1 + magia / 100 / 2));
         HashSet<Material> m = null;
         Block b = p.getTargetBlock(m, 12);
         if (b == null) {
@@ -153,7 +188,7 @@ public class Wizard {
     }
 
     public static void castRepel(Player p, int intel) {
-        if (p.getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             p.sendMessage(ChatColor.RED + L.m("Esta magia parece nao funcionar aqui !"));
             return;
         }
@@ -309,16 +344,15 @@ public class Wizard {
 
         event.setExpLevelCost(0);
 
-        int sucesso = Jobs.hasSuccess(dificuldade, "Mago", p);
-        if (sucesso == Jobs.success) {
+        if (Jobs.hasSuccess(dificuldade, "Mago", p)) {
             // int jobLevel = Jobs.getJobLevel("Mago", p);
             // if (jobLevel == 0) {
-            
-            EnchantingTable table = (EnchantingTable)event.getEnchantBlock().getState();
-            
+
+            EnchantingTable table = (EnchantingTable) event.getEnchantBlock().getState();
+
             //event.setCancelled(true);
-            
-            if(event.getEnchantsToAdd().size()==0) {
+
+            if (event.getEnchantsToAdd().size() == 0) {
                 event.getEnchantsToAdd().put(Enchantment.DURABILITY, 1);
                 KoM.debug("Nao tinha enchants");
             }
@@ -330,7 +364,7 @@ public class Wizard {
             }
             event.getEnchantsToAdd().clear();
             */
-            
+
             GeneralListener.givePlayerExperience(xp, p);
             ItemMeta meta = event.getItem().getItemMeta();
             List<String> lore = meta.getLore();
@@ -362,11 +396,11 @@ public class Wizard {
             p.sendMessage(ChatColor.GOLD + L.m("Voce falhou ao tentar encantar o item e acabou transformando o item em polvora !"));
             p.closeInventory();
         }
-        
+
         EntityPlayer player = ((CraftPlayer) p).getHandle();
         ContainerEnchantTable enchant = (ContainerEnchantTable) player.activeContainer;
         //player.enchantDone(0);
-       
+
         player.enchantDone(CraftItemStack.asNMSCopy(event.getItem()), 0);
         player.b(StatisticList.W);
         //player.b(StatisticList.W);
@@ -392,7 +426,7 @@ public class Wizard {
                 if (e instanceof LivingEntity) {
                     if (e.getType() == EntityType.PLAYER) {
                         Player alvo = (Player) e;
-                        String ci = CustomItem.getCustomItem(alvo.getItemInHand());
+                        String ci = CustomItem.getCustomItem(alvo.getInventory().getItemInMainHand());
                         if (ci != null && ci.equalsIgnoreCase(L.m("Para Raio")) && Jobs.getJobLevel("Engenheiro", alvo) == 1) {
                             if (Mana.spendMana(alvo, 30)) {
                                 alvo.sendMessage(ChatColor.GREEN + L.m("Seu para raios segurou o raio !"));
@@ -417,7 +451,7 @@ public class Wizard {
                         }
                     }
                     LivingEntity le = ((LivingEntity) e);
-                    if (le instanceof Player && le.getLocation().getWorld().getName().equalsIgnoreCase("dungeon")) {
+                    if (le instanceof Player && le.getLocation().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                     } else {
                         if (!ClanLand.isSafeZone(le.getLocation())) {
                             if (le.getType() == EntityType.PLAYER) {
@@ -425,11 +459,11 @@ public class Wizard {
                                 if (job == 1) {
                                     continue;
                                 }
-                                ItemStack mao = ((Player) le).getItemInHand();
+                                ItemStack mao = ((Player) le).getInventory().getItemInMainHand();
                                 String ci = CustomItem.getCustomItem(mao);
                                 String cajadoElemental = null;
                                 if (ci != null && ci.equalsIgnoreCase("Cajado Elemental") && Jobs.getJobLevel("Mago", (Player) le) == 1) {
-                                    cajadoElemental = CajadoElemental.getElemento(p.getItemInHand());
+                                    cajadoElemental = CajadoElemental.getElemento(p.getInventory().getItemInMainHand());
                                     if (cajadoElemental == null) {
                                         cajadoElemental = "Nulo";
                                     }
@@ -443,7 +477,7 @@ public class Wizard {
                             }
                             double damage = 6D;
                             double magia = EquipManager.getPlayerAttribute(Atributo.Magia, p);
-                            damage *= 1+(magia/100);
+                            damage *= 1 + (magia / 100);
                             if (PlayerSpec.temSpec(p, PlayerSpec.Sabio)) {
                                 damage *= 1.3;
                             } else if (PlayerSpec.temSpec(p, PlayerSpec.Sacerdote)) {
@@ -454,7 +488,7 @@ public class Wizard {
                                 if (Jobs.getJobLevel("Paladino", (Player) le) == 1) {
                                     damage = damage * 1.4;
                                 }
-                                if (Thief.taInvisivel((Player) le));
+                                if (Thief.taInvisivel((Player) le)) ;
                                 Thief.revela((Player) le);
                             }
 
@@ -507,7 +541,7 @@ public class Wizard {
     //public int velocidadeFogo = 4;
     //HashSet<Player> fireImmunity = new HashSet<Player>();
     public void soltaFireNova(Player p) {
-        if (p.getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             p.sendMessage(ChatColor.RED + L.m("Esta magia parece nao funcionar aqui !"));
             return;
         }
@@ -523,7 +557,7 @@ public class Wizard {
                     continue;
                 }
             }
-            e.setFireTicks((int)Math.round(20 * 5 * (1+magia/100/2)));
+            e.setFireTicks((int) Math.round(20 * 5 * (1 + magia / 100 / 2)));
             PlayEffect.play(VisualEffect.LAVA, e.getLocation(), "num:10");
             if (e.getType() == EntityType.PLAYER) {
                 ((Player) e).sendMessage(ChatColor.RED + p.getName() + " fez seu corpo arder em chamas");
@@ -546,7 +580,7 @@ public class Wizard {
                 } else if (PlayerSpec.temSpec(p, PlayerSpec.Sacerdote)) {
                     duracao += 100;
                 }
-                if (!p.getWorld().getName().equalsIgnoreCase("dungeon")) {
+                if (!p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                     pl.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, (int) duracao, 0));
                 }
                 pl.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, (int) duracao, 0));
@@ -661,11 +695,12 @@ public class Wizard {
         //}
         fb.setShooter(player);
     }
+
     public HashSet<Block> teiasCriadas = new HashSet<Block>();
 
     public void prende(Player p) {
 
-        if (p.getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             p.sendMessage(ChatColor.RED + L.m("Esta magia parece nao funcionar aqui !"));
             return;
         }

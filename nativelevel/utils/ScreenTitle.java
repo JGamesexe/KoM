@@ -5,13 +5,10 @@
  */
 package nativelevel.utils;
 
-import java.lang.reflect.Field;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
- *
  * @author User
  */
 public class ScreenTitle {

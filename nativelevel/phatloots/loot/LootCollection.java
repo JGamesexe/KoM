@@ -6,7 +6,6 @@ import nativelevel.phatloots.PhatLootsConfig;
 import nativelevel.phatloots.PhatLootsUtil;
 import nativelevel.phatloots.gui.Button;
 import nativelevel.phatloots.gui.InventoryListener;
-import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -14,6 +13,8 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.*;
 
 /**
  * A Collection is a list of Loots which has a unique name
@@ -77,7 +78,7 @@ public class LootCollection extends Loot {
     /**
      * Constructs a new LootCollection with the given name and range
      *
-     * @param name The given name
+     * @param name               The given name
      * @param lowerNumberOfLoots The lower bound of the range
      * @param upperNumberOfLoots The upper bound of the range
      */
@@ -114,7 +115,7 @@ public class LootCollection extends Loot {
     /**
      * Rolls for each Loot within the collection
      *
-     * @param lootBundle The loot that has been rolled for
+     * @param lootBundle   The loot that has been rolled for
      * @param lootingBonus The increased chance of getting rarer loots
      */
     @Override
@@ -130,8 +131,8 @@ public class LootCollection extends Loot {
         } else { //Roll for all Loot collectively
             //Roll for the amount of loots
             int numberOfLoots = lowerNumberOfLoots == upperNumberOfLoots
-                                ? lowerNumberOfLoots
-                                : PhatLootsUtil.rollForInt(lowerNumberOfLoots, upperNumberOfLoots);
+                    ? lowerNumberOfLoots
+                    : PhatLootsUtil.rollForInt(lowerNumberOfLoots, upperNumberOfLoots);
             //Make sure there are items that will be looted before entering the loop
             if (!lootList.isEmpty()) {
                 //Sort the loot from lowest probability to highest
@@ -220,7 +221,7 @@ public class LootCollection extends Loot {
      * Modifies the amount associated with the Loot
      *
      * @param amount The amount to modify by (may be negative)
-     * @param both true if both lower and upper ranges should be modified, false for only the upper range
+     * @param both   true if both lower and upper ranges should be modified, false for only the upper range
      * @return true if the Loot InfoStack should be refreshed
      */
     @Override

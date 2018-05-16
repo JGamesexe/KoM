@@ -1,26 +1,22 @@
 package nativelevel.sisteminhas;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Logger;
 import nativelevel.KoM;
-import nativelevel.sisteminhas.KomSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class CoisasDaVida extends KomSystem {
 
@@ -35,8 +31,8 @@ public class CoisasDaVida extends KomSystem {
         acontecemCoisasEmNossasVidas();
         Runnable r = new Runnable() {
             public void run() {
-                Player random = (Player) Bukkit.getServer().getOnlinePlayers().toArray()[rnd.nextInt(Bukkit.getServer().getOnlinePlayers().toArray().length)];
-                if (random != null) {
+                if (!Bukkit.getServer().getOnlinePlayers().isEmpty()) {
+                    Player random = (Player) Bukkit.getServer().getOnlinePlayers().toArray()[rnd.nextInt(Bukkit.getServer().getOnlinePlayers().toArray().length)];
                     Acontecimento rolou = (Acontecimento) acontecimentos.get(rnd.nextInt(acontecimentos.size()));
                     rolou.acontece(random);
                 }
@@ -53,7 +49,7 @@ public class CoisasDaVida extends KomSystem {
         }
     }
 
-    
+
     List<Acontecimento> acontecimentos = new ArrayList();
 
     public void acontecemCoisasEmNossasVidas() {

@@ -5,14 +5,10 @@
  */
 package nativelevel.Attributes.Buffs;
 
-import java.util.UUID;
 import nativelevel.Equipment.EquipMeta;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 
 /**
- *
  * @author User
  */
 public abstract class Buff {
@@ -44,7 +40,7 @@ public abstract class Buff {
     }
 
     public boolean hasEnded() {
-        if(getDurationSeconds()<=0)
+        if (getDurationSeconds() <= 0)
             return false;
         long now = System.currentTimeMillis() / 1000;
         long finishIn = started + getDurationSeconds();

@@ -17,8 +17,8 @@ public class PreMobDropLootEvent extends PreLootEvent {
     /**
      * Creates a new event with the given data
      *
-     * @param mob The mob that was killed
-     * @param killer The Player who killed the mob or null if the mob died of natural causes
+     * @param mob          The mob that was killed
+     * @param killer       The Player who killed the mob or null if the mob died of natural causes
      * @param lootingBonus The bonus amount of looting probability
      */
     public PreMobDropLootEvent(LivingEntity mob, Player killer, double lootingBonus) {

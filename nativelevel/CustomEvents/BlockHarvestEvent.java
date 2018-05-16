@@ -14,7 +14,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- *
  * @author User
  */
 public class BlockHarvestEvent extends Event implements Cancellable {

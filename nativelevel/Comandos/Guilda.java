@@ -15,12 +15,13 @@
 package nativelevel.Comandos;
 
 import nativelevel.CFG;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.MetaShit;
+import nativelevel.guis.guilda.GuildaGUI;
+import nativelevel.sisteminhas.ClanLand;
+import nativelevel.utils.GUI;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -58,7 +59,10 @@ public class Guilda implements CommandExecutor {
                     Clan clan = ClanLand.manager.getClanByPlayerName(p.getName());
                     if (args.length == 1) {
                         if (args[0].equalsIgnoreCase("info")) {
-                            p.chat("/gld profile");
+                            if (ClanLand.manager.getClanPlayer(p) != null)
+                                GUI.open(p, new GuildaGUI(p, ClanLand.manager.getClanPlayer(p).getClan()));
+                            else p.sendMessage("§cVocê possui guilda para executar este comando.");
+
                             return true;
                         } else if (args[0].equalsIgnoreCase("ranking")) {
                             p.chat("/gld ranking");
@@ -66,10 +70,10 @@ public class Guilda implements CommandExecutor {
                         } else if (args[0].equalsIgnoreCase("home")) {
                             p.chat("/gld casa");
                             return true;
-                        }  else if (args[0].equalsIgnoreCase("setrank")) {
+                        } else if (args[0].equalsIgnoreCase("setrank")) {
                             p.chat("/gld setrank");
                             return true;
-                        }else if (args[0].equalsIgnoreCase("conquistar")) {
+                        } else if (args[0].equalsIgnoreCase("conquistar")) {
                             p.chat("/terreno conquistar");
                             return true;
                         } else if (args[0].equalsIgnoreCase("desconquistar")) {
@@ -118,10 +122,11 @@ public class Guilda implements CommandExecutor {
                                 return true;
                             }
                             int poder = ClanLand.getPoder(clan.getTag());
-                            int qtdTerrenos = ClanLand.getQtdTerrenos(clan.getTag());
-                            p.sendMessage(ChatColor.GREEN + L.m("Guilda  : %", clan.getTagLabel(false) + " " + clan.getName()));
-                            p.sendMessage(ChatColor.GREEN + L.m("Poder   : %", (poder + CFG.landMax)));
-                            p.sendMessage(ChatColor.GREEN + L.m("Terrenos: %", qtdTerrenos));
+                            p.sendMessage("§aInfo's da Guilda     , " + clan.getTagLabel(false) + " §b" + clan.getName());
+                            p.sendMessage("§aPoder Disponível    , " + (poder + CFG.landMax));
+                            p.sendMessage("§aTotal de Terrenos  , " + ClanLand.getQtdTerrenos(clan.getTag()));
+                            p.sendMessage("§aTerrenos Primários, " + ClanLand.getQtdTerrenos(clan.getTag(), true));
+                            p.sendMessage("§aTerrenos de Poder, " + ClanLand.getQtdTerrenos(clan.getTag(), false));
                             return true;
                         } else if (args[0].equalsIgnoreCase("conquistar")) {
                             p.chat("terreno conquistar");

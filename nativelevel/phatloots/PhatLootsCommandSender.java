@@ -1,6 +1,5 @@
 package nativelevel.phatloots;
 
-import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -8,6 +7,8 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
+
+import java.util.Set;
 
 /**
  * Dispatches Commands for the PhatLoots Plugin
@@ -25,7 +26,7 @@ public class PhatLootsCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String[] strings) {
-        for (String string: strings) {
+        for (String string : strings) {
             sendMessage(string);
         }
     }

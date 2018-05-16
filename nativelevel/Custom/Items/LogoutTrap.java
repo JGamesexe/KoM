@@ -14,13 +14,14 @@
  */
 package nativelevel.Custom.Items;
 
-import java.util.HashSet;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Lang.L;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import java.util.HashSet;
 
 public class LogoutTrap extends CustomItem {
 

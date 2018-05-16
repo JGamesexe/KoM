@@ -5,13 +5,10 @@
 package nativelevel.Custom.Items;
 
 /**
- *
  * @author usuario
- * 
  */
 
 public class PocaoDeTeia {
-    
-    
-    
+
+
 }

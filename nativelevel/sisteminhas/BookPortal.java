@@ -14,20 +14,52 @@
  */
 package nativelevel.sisteminhas;
 
-import nativelevel.scores.Title;
-import nativelevel.utils.BungLocation;
+import nativelevel.KoM;
+import nativelevel.integration.BungeeCordKom;
 import nativelevel.utils.BookUtil;
+import nativelevel.utils.BungLocation;
+import nativelevel.utils.Fireworks;
+import nativelevel.utils.JotaGUtils;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.block.Chest;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.*;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 public class BookPortal {
+
+    public static void teleport(Chest chest, Player player) {
+        ItemStack livro = chest.getBlockInventory().getItem(0);
+        if (livro != null && livro.getType().equals(Material.BOOK_AND_QUILL)) {
+            BookMeta m = (BookMeta) livro.getItemMeta();
+            if (m.getTitle() != null && m.getTitle().equalsIgnoreCase("TP")) {
+                BungLocation l = BookPortal.getLocationFromBook(livro);
+
+                ItemStack podeTp = chest.getBlockInventory().getItem(8);
+
+                if (podeTp != null && !podeTp.getType().equals(Material.AIR) && !podeTeleporta(player, podeTp)) return;
+
+                if (m.getPageCount() == 6) BungeeCordKom.tp(player, l);
+                else BungeeCordKom.tp(player, l, BookPortal.getTitle(livro), BookPortal.getSubtitle(livro));
+
+                ItemStack setaSpawn = chest.getBlockInventory().getItem(4);
+
+                if (setaSpawn != null && setaSpawn.getType().equals(Material.WOOL) && setaSpawn.getDurability() == 14) ;
+                else if (l.mundo.equalsIgnoreCase("NewDungeon"))
+                    player.setBedSpawnLocation(BungLocation.toLocation(l), true);
+
+                player.sendMessage(ChatColor.LIGHT_PURPLE + "* poof *");
+                Fireworks.purpleFirework((Firework) player.getWorld().spawnEntity(player.getLocation().add(0, -0.6, 0), EntityType.FIREWORK));
+            }
+        }
+    }
 
     public static ItemStack criaLivroPortal(Player p) {
         ItemStack livro = new ItemStack(Material.BOOK_AND_QUILL, 1);
@@ -112,6 +144,66 @@ public class BookPortal {
             return ChatColor.translateAlternateColorCodes('&', pages.get(7));
         }
         return "";
+    }
+
+    private static boolean podeTeleporta(Player player, ItemStack itemStack) {
+        if (itemStack.getType().equals(Material.WRITTEN_BOOK)) {
+            BookMeta bm = (BookMeta) itemStack.getItemMeta();
+            if (bm.getTitle().equalsIgnoreCase("hasQuest*")) {
+                if (!KoM.quests.getQuester(player.getUniqueId()).completedQuests.contains(bm.getPage(1)) && !JotaGUtils.onQuest(player.getUniqueId(), bm.getPage(1))) {
+                    if (bm.getPageCount() >= 2)
+                        player.sendMessage(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', bm.getPage(2)));
+                    else
+                        player.sendMessage("§cVocê precisar estar fazendo ou ter concluido a quest: §n" + bm.getPage(1));
+                    return false;
+                }
+            } else if (bm.getTitle().equalsIgnoreCase("onQuest")) {
+                if (!JotaGUtils.onQuest(player.getUniqueId(), bm.getPage(1))) {
+                    if (bm.getPageCount() >= 2)
+                        player.sendMessage(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', bm.getPage(2)));
+                    else player.sendMessage("§cVocê precisar estar fazendo a quest: §n" + bm.getPage(1));
+                    return false;
+                }
+            } else if (bm.getTitle().equalsIgnoreCase("onQuestStage")) {
+                if (!JotaGUtils.onQuestStage(player.getUniqueId(), bm.getPage(1), Integer.valueOf(bm.getPage(2)))) {
+                    if (bm.getPageCount() >= 3)
+                        player.sendMessage(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', bm.getPage(3)));
+                    else
+                        player.sendMessage("§cVocê precisar estar em um momento especifico da quest: §n" + bm.getPage(1));
+                    return false;
+                }
+            } else if (bm.getTitle().equalsIgnoreCase("btwQuestStages")) {
+                if (!JotaGUtils.betweenQuestStages(player.getUniqueId(), bm.getPage(1), Integer.valueOf(bm.getPage(2)), Integer.valueOf(bm.getPage(3)))) {
+                    if (bm.getPageCount() >= 4)
+                        player.sendMessage(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', bm.getPage(4)));
+                    else
+                        player.sendMessage("§cVocê precisar estar em um momento especifico da quest: §n" + bm.getPage(1));
+                    return false;
+                }
+            } else if (bm.getTitle().equalsIgnoreCase("completedQuest")) {
+                if (!KoM.quests.getQuester(player.getUniqueId()).completedQuests.contains(bm.getPage(1))) {
+                    if (bm.getPageCount() >= 2)
+                        player.sendMessage(net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', bm.getPage(2)));
+                    else player.sendMessage("§cVocê precisar ter concluido a quest: §n" + bm.getPage(1));
+                    return false;
+                }
+            }
+        } else {
+            boolean temItemChave = false;
+            for (ItemStack item : player.getInventory().getContents()) {
+                if (item != null && !item.getType().equals(Material.AIR)) {
+                    temItemChave = itemStack.getType().equals(item.getType());
+                    if (temItemChave && itemStack.getItemMeta() != null)
+                        temItemChave = itemStack.getItemMeta().equals(item.getItemMeta());
+                    if (temItemChave) break;
+                }
+            }
+            if (!temItemChave) {
+                player.sendMessage("§cEsse teleporte aparenta precisar de algo mais para funcionar...");
+                return false;
+            }
+        }
+        return true;
     }
 
 }

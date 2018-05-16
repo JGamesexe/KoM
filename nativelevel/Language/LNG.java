@@ -1,13 +1,12 @@
 package nativelevel.Language;
 
 /**
- *
  * @author Nosliw
  */
 public enum LNG {
-    EN("English"), 
+    EN("English"),
     PT("Portuguese");
-    
+
     private final String fullName;
 
     private LNG(String fullName) {

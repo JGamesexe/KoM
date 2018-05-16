@@ -5,17 +5,13 @@
  */
 package nativelevel.Custom.Potions;
 
-import nativelevel.Lang.L;
 import nativelevel.Custom.CustomPotion;
 import nativelevel.KoM;
+import nativelevel.Lang.L;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.Effect;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -25,9 +21,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 /**
- *
  * @author User
- * 
  */
 
 public class Protect extends CustomPotion {
@@ -37,7 +31,7 @@ public class Protect extends CustomPotion {
     public Protect() {
         super(L.m("Poção de Proteção Fraca"), L.m("Te protege"), PotionType.INSTANT_HEAL, false);
     }
-    
+
     public Color cor() {
         return Color.AQUA;
     }
@@ -55,9 +49,9 @@ public class Protect extends CustomPotion {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            new ItemStack(Material.APPLE, 1),
-            new ItemStack(Material.STONE, 1),
-            new ItemStack(Material.SAND, 1)};
+                new ItemStack(Material.APPLE, 1),
+                new ItemStack(Material.STONE, 1),
+                new ItemStack(Material.SAND, 1)};
     }
 
     @Override

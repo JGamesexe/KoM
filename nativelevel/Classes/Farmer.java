@@ -14,101 +14,84 @@
  */
 package nativelevel.Classes;
 
-import nativelevel.Classes.Blacksmithy.Blacksmith;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.Equipment.Generator.EquipGenerator;
-import nativelevel.Listeners.GeneralListener;
-import nativelevel.sisteminhas.Mobs;
-import nativelevel.Jobs;
-import nativelevel.Lang.PT;
-import nativelevel.Menu.Menu;
-import nativelevel.MetaShit;
-import nativelevel.KoM;
-import nativelevel.sisteminhas.ClanLand;
+import nativelevel.Attributes.Mana;
+import nativelevel.Attributes.Stamina;
+import nativelevel.Classes.Blacksmithy.Blacksmith;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.FolhaDeMana;
 import nativelevel.CustomEvents.BlockHarvestEvent;
-import nativelevel.CustomEvents.BlockPlantEvent;
 import nativelevel.CustomEvents.FinishCraftEvent;
-import nativelevel.Lang.L;
-import nativelevel.Language.MSG;
-import nativelevel.Menu.MenuItem;
-import nativelevel.Attributes.Mana;
-import nativelevel.Attributes.Stamina;
+import nativelevel.Equipment.Generator.EquipGenerator;
+import nativelevel.Jobs;
 import nativelevel.Jobs.TipoClasse;
+import nativelevel.KoM;
+import nativelevel.Lang.L;
 import nativelevel.Lang.LangMinecraft;
-import nativelevel.bencoes.TipoBless;
-import nativelevel.config.ConfigKom;
-import nativelevel.config.ItemJob;
+import nativelevel.Lang.PT;
+import nativelevel.Listeners.GeneralListener;
+import nativelevel.Menu.Menu;
+import nativelevel.MetaShit;
 import nativelevel.gemas.Raridade;
-import nativelevel.integration.SimpleClanKom;
 import nativelevel.integration.WorldGuardKom;
-import nativelevel.rankings.Estatistica;
-import nativelevel.rankings.RankDB;
+import nativelevel.sisteminhas.*;
 import nativelevel.spec.PlayerSpec;
-import nativelevel.sisteminhas.Horses;
-import nativelevel.sisteminhas.KomSystem;
-import nativelevel.sisteminhas.Tralhas;
-import nativelevel.sisteminhas.XP;
-import nativelevel.utils.Cooldown;
-import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.CropState;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NetherWartsState;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.AnimalTamer;
-import org.bukkit.entity.Chicken;
-import org.bukkit.entity.Cow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.MushroomCow;
-import org.bukkit.entity.Ocelot;
-import org.bukkit.entity.Pig;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Rabbit;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Spider;
-import org.bukkit.entity.Tameable;
-import org.bukkit.entity.Wolf;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTameEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
-import org.bukkit.material.Crops;
-import org.bukkit.material.NetherWarts;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
 public class Farmer extends KomSystem {
+
+    public static final String name = "Fazendeiro";
+
+    public static void onHit(EntityDamageByEntityEvent ev) {
+
+        Player attacker = (Player) ev.getDamager();
+        ItemStack weapon = attacker.getInventory().getItemInMainHand();
+
+        if (weapon.getType().toString().contains("HOE")) {
+
+            if (weapon.getType().name().contains("GOLD")) ev.setDamage(ev.getDamage() + 0.5);
+
+            ev.setDamage(ev.getDamage() * 1.10);
+
+        }
+
+    }
+
+    public static void onDamaged(EntityDamageEvent ev) {
+
+        Player damaged = (Player) ev.getEntity();
+
+        if (ev.getCause().equals(EntityDamageEvent.DamageCause.FIRE) || ev.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK)) {
+            if (!((ev.getDamage() * 1.5) >= damaged.getHealth())) ev.setDamage(ev.getDamage() * 1.5);
+        }
+
+    }
 
     public static void tameWolf(EntityTameEvent event) {
         int jobLvl = Jobs.getJobLevel("Fazendeiro", ((Player) event.getOwner()));
@@ -124,7 +107,7 @@ public class Farmer extends KomSystem {
 
     public static void poisonaSlimeball(PlayerPickupItemEvent ev) {
 
-        if (!ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon") && Jobs.getJobLevel("Fazendeiro", ev.getPlayer()) != 1) {
+        if (!ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon") && Jobs.getJobLevel("Fazendeiro", ev.getPlayer()) != 1) {
             ev.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 200, 3));
             ev.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.POISON, 200, 3));
             ev.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 200, 0));
@@ -150,7 +133,7 @@ public class Farmer extends KomSystem {
         if (folha.hasMetadata("jogadorpois")) {
             return;
         }
-        if (p.getItemInHand() != null && p.getItemInHand().getType() == Material.SHEARS) {
+        if (p.getInventory().getItemInMainHand() != null && p.getInventory().getItemInMainHand().getType() == Material.SHEARS) {
             return;
         }
         int level = Jobs.getJobLevel("Fazendeiro", p);
@@ -165,6 +148,7 @@ public class Farmer extends KomSystem {
             GeneralListener.givePlayerExperience(2, p);
         }
     }
+
     public static final Enchantment[] enchantsRandom = {Enchantment.LOOT_BONUS_MOBS, Enchantment.DURABILITY, Enchantment.LOOT_BONUS_MOBS, Enchantment.PROTECTION_EXPLOSIONS, Enchantment.WATER_WORKER, Enchantment.PROTECTION_ENVIRONMENTAL, Enchantment.PROTECTION_PROJECTILE, Enchantment.PROTECTION_FIRE};
 
     public static void blockHarvest(BlockHarvestEvent ev) {
@@ -173,13 +157,13 @@ public class Farmer extends KomSystem {
 
     @EventHandler
     public static void interageCavalo(PlayerInteractEntityEvent ev) {
-        
-         if (ev.getRightClicked() != null && ev.getRightClicked().getType() == EntityType.DONKEY) {
-             ev.setCancelled(true);
-             return;
-         }
-        
-        
+
+        if (ev.getRightClicked() != null && ev.getRightClicked().getType() == EntityType.DONKEY) {
+            ev.setCancelled(true);
+            return;
+        }
+
+
         if (ev.getRightClicked() != null && ev.getRightClicked().getType() == EntityType.HORSE) {
             Horse h = (Horse) ev.getRightClicked();
             if (h.getOwner() != null && h.getOwner().getUniqueId() == ev.getPlayer().getUniqueId()) {
@@ -284,12 +268,13 @@ public class Farmer extends KomSystem {
 
         if (ev.getHand() == EquipmentSlot.OFF_HAND) {
             ev.setCancelled(true);
+            KoM.debug("Cancelado em handleEgg");
             return;
         }
 
-        SpawnEggMeta meta = (SpawnEggMeta) ev.getPlayer().getItemInHand().getItemMeta();
+        SpawnEggMeta meta = (SpawnEggMeta) ev.getPlayer().getInventory().getItemInMainHand().getItemMeta();
 
-        KoM.debug("hangleEgg: " + ev.getPlayer().getItemInHand().getType().name() + " - " + ev.getPlayer().getItemInHand().getDurability());
+        KoM.debug("hangleEgg: " + ev.getPlayer().getInventory().getItemInMainHand().getType().name() + " - " + ev.getPlayer().getInventory().getItemInMainHand().getDurability());
 
         if (ClanLand.getTypeAt(ev.getPlayer().getLocation()).equalsIgnoreCase("SAFE") && meta.getSpawnedType() != EntityType.HORSE) {
             ev.getPlayer().sendMessage(ChatColor.AQUA + Menu.getSimbolo("Fazendeiro") + " " + L.m("Voce nao pode fazer isto em uma Cidade"));
@@ -297,7 +282,7 @@ public class Farmer extends KomSystem {
             return;
         }
 
-        if (!ev.getPlayer().isOp() && ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (!ev.getPlayer().isOp() && ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             ev.getPlayer().sendMessage(ChatColor.RED + L.m("Voce nao pode botar ovos aqui !"));
             ev.setCancelled(true);
             return;
@@ -305,7 +290,7 @@ public class Farmer extends KomSystem {
 
         // villager
         /*
-         if (ev.getPlayer().getItemInHand().getDurability() == 120 && ev.getClickedBlock() != null) {
+         if (ev.getPlayer().getInventory().getItemInMainHand().getDurability() == 120 && ev.getClickedBlock() != null) {
          String aqui = ClanLand.getTypeAt(ev.getClickedBlock().getLocation());
          if (!aqui.equalsIgnoreCase("Safe")) {
          ev.getPlayer().sendMessage(L.m("Voce nao pode fazer isto aqui !"));
@@ -333,7 +318,7 @@ public class Farmer extends KomSystem {
     }
 
     public static void pesca(PlayerFishEvent ev) {
-        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             return;
         }
 
@@ -378,7 +363,7 @@ public class Farmer extends KomSystem {
                     return;
                 }
 
-                if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon") || WorldGuardKom.ehSafeZone(hooked.getLocation())) {
+                if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon") || WorldGuardKom.ehSafeZone(hooked.getLocation())) {
                     ev.getPlayer().removeMetadata("hook", KoM._instance);
                     return;
                 }
@@ -418,12 +403,11 @@ public class Farmer extends KomSystem {
         if (!(e.getEntityType() == EntityType.FISHING_HOOK)) {
             return;
         }
-        if(e.getEntity().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (e.getEntity().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             return;
         }
-        
-  
-        
+
+
         Player atirador = null;
         if (e.getEntity().getShooter() instanceof Player) {
             atirador = (Player) e.getEntity().getShooter();
@@ -432,13 +416,13 @@ public class Farmer extends KomSystem {
         if (atirador == null) {
             return;
         }
-        
-              if(Thief.taInvisivel(atirador))
-                  Thief.revela(atirador);
 
-        if(e.getHitBlock().getType().name().contains("DOOR"))
+        if (Thief.taInvisivel(atirador))
+            Thief.revela(atirador);
+
+        if (e.getHitBlock().getType().name().contains("DOOR"))
             return;
-        
+
         for (Entity entity : Bukkit.getWorld(e.getEntity().getLocation().getWorld().getName()).getNearbyEntities(e.getEntity().getLocation(), 2, 2, 2)) {
             if (!(entity instanceof Player)) {
                 continue;
@@ -508,13 +492,13 @@ public class Farmer extends KomSystem {
     public static void fixLeatherArmor(PlayerInteractEvent ev) {
         if (Jobs.getJobLevel("Fazendeiro", ev.getPlayer()) == 1) {
             if (ev.getPlayer().getInventory().contains(Material.LEATHER)) {
-                if (ev.getPlayer().getItemInHand().getDurability() == 0) {
+                if (ev.getPlayer().getInventory().getItemInMainHand().getDurability() == 0) {
                     ev.getPlayer().sendMessage(ChatColor.RED + "Este item esta como novo");
                 } else {
                     if (Mana.spendMana(ev.getPlayer(), 50)) {
                         PlayEffect.play(VisualEffect.SPELL_INSTANT, ev.getPlayer().getLocation(), "num:40");
                         ev.getPlayer().sendMessage(ChatColor.GREEN + "Voce arrumou a armadura");
-                        ev.getPlayer().getItemInHand().setDurability((short) 0);
+                        ev.getPlayer().getInventory().getItemInMainHand().setDurability((short) 0);
                         KoM.removeInventoryItems(ev.getPlayer().getInventory(), Material.LEATHER, 1);
                     }
                 }
@@ -545,7 +529,7 @@ public class Farmer extends KomSystem {
         }
 
         if (!animal.hasMetadata("recurso")) {
-            if (p.getItemInHand().getType() != Material.SHEARS) {
+            if (p.getInventory().getItemInMainHand().getType() != Material.SHEARS) {
                 KoM.msgUnica(p, ChatColor.GREEN + L.m("Bata no animal com uma tesoura para obter recursos extras !"));
                 return false;
             }
@@ -560,8 +544,7 @@ public class Farmer extends KomSystem {
         }
         int exp = XP.getExpPorAcao(p.getLevel());
         int dificuldade = 35;
-        int sucesso = Jobs.hasSuccess(dificuldade, "Fazendeiro", p);
-        if (sucesso == Jobs.success) {
+        if (Jobs.hasSuccess(dificuldade, "Fazendeiro", p)) {
             p.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Fazendeiro") + " " + ChatColor.GOLD + L.m("Voce extraiu recursos extras do animal !"));
             MetaShit.setMetaString("recurso", animal, "" + System.currentTimeMillis() / 1000);
             p.getWorld().dropItemNaturally(animal.getLocation(), new ItemStack(mat, 1));
@@ -575,11 +558,11 @@ public class Farmer extends KomSystem {
 
     public static boolean transformaEmOvO(Player p, Entity animal) {
         // soh vale pra fazendeiro primário
-        if (p.getItemInHand().getType() != Material.EGG) {
+        if (p.getInventory().getItemInMainHand().getType() != Material.EGG) {
             return false;
         }
-        
-        if(p.getWorld().getName().equalsIgnoreCase("dungeon")) {
+
+        if (p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             return false;
         }
 
@@ -664,13 +647,12 @@ public class Farmer extends KomSystem {
             meta.setSpawnedType(EntityType.fromId(idMonstro));
             ovo.setItemMeta(meta);
 
-            int sucesso = Jobs.hasSuccess(dificuldade, "Fazendeiro", p);
-            if (sucesso == Jobs.fail) {
+            if (Jobs.hasSuccess(dificuldade, "Fazendeiro", p)) {
                 if (dificuldade < 70) {
                     animal.remove();
                 }
-                if (p.getItemInHand().getAmount() > 1) {
-                    p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+                if (p.getInventory().getItemInMainHand().getAmount() > 1) {
+                    p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
                 } else {
                     p.setItemInHand(null);
                 }
@@ -694,17 +676,17 @@ public class Farmer extends KomSystem {
                 }
                 meta.setDisplayName(ChatColor.GREEN + "Montaria (Não Dropa Qnd Morre)");
                 meta.setLore(Arrays.asList(new String[]{
-                    ChatColor.GREEN + "Nome" + ChatColor.YELLOW + ": " + ((h.getCustomName() == null || h.getCustomName().length() == 0) ? "Pocotó" : h.getCustomName()),
-                    ChatColor.GREEN + "Cor" + ChatColor.YELLOW + ": " + h.getColor().name(),
-                    ChatColor.GREEN + "Tipo" + ChatColor.YELLOW + ": " + h.getStyle().name(),
-                    ChatColor.GREEN + "Raça" + ChatColor.YELLOW + ": " + h.getVariant().name()
-                // ChatColor.YELLOW + "- Não Dropa Quando Morre"
+                        ChatColor.GREEN + "Nome" + ChatColor.YELLOW + ": " + ((h.getCustomName() == null || h.getCustomName().length() == 0) ? "Pocotó" : h.getCustomName()),
+                        ChatColor.GREEN + "Cor" + ChatColor.YELLOW + ": " + h.getColor().name(),
+                        ChatColor.GREEN + "Tipo" + ChatColor.YELLOW + ": " + h.getStyle().name(),
+                        ChatColor.GREEN + "Raça" + ChatColor.YELLOW + ": " + h.getVariant().name()
+                        // ChatColor.YELLOW + "- Não Dropa Quando Morre"
                 }));
                 ovo.setItemMeta(meta);
             }
             //cavalo
-            if (p.getItemInHand().getAmount() > 1) {
-                p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+            if (p.getInventory().getItemInMainHand().getAmount() > 1) {
+                p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
             } else {
                 p.setItemInHand(null);
             }

@@ -14,87 +14,47 @@
  */
 package nativelevel.sisteminhas;
 
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import io.lumine.xikage.mythicmobs.mobs.ActiveMob;
-import nativelevel.Listeners.GeneralListener;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import me.fromgate.playeffect.PlayEffect;
-import me.fromgate.playeffect.VisualEffect;
 import nativelevel.Classes.Lumberjack;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.CapaInvisvel;
-import nativelevel.Custom.Items.DoubleXP;
 import nativelevel.Custom.Items.DropMob;
-import nativelevel.Custom.Items.FolhaDeMana;
 import nativelevel.Custom.Items.ItemIncomum;
 import nativelevel.Dano;
 import nativelevel.Jobs;
+import nativelevel.Jobs.TipoClasse;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
+import nativelevel.Listeners.GeneralListener;
 import nativelevel.MetaShit;
-import nativelevel.MetaShit;
-import nativelevel.Attributes.AttributeInfo;
-import nativelevel.Jobs.TipoClasse;
 import nativelevel.bencoes.TipoBless;
 import nativelevel.gemas.Raridade;
-import nativelevel.integration.WorldGuardKom;
 import nativelevel.karma.Karma;
-import nativelevel.sisteminhas.ClanLand;
-import nativelevel.sisteminhas.Deuses;
-import nativelevel.sisteminhas.KomSystem;
-import nativelevel.sisteminhas.XP;
 import nativelevel.rankings.Estatistica;
 import nativelevel.rankings.RankDB;
 import nativelevel.utils.LocUtils;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Chest;
 import org.bukkit.block.CreatureSpawner;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Horse.Variant;
-import org.bukkit.entity.IronGolem;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Llama;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.PigZombie;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Spider;
-import org.bukkit.entity.Tameable;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.inventory.EntityEquipment;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+
+import java.util.*;
 
 public class Mobs extends KomSystem {
 
@@ -146,198 +106,185 @@ public class Mobs extends KomSystem {
         Mobs.target(ev);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void spawn(final CreatureSpawnEvent ev) {
+//   @EventHandler(priority = EventPriority.HIGHEST)
+//    public void spawn(final CreatureSpawnEvent ev) {
+//
+//        // MULA DUPA ITEM
+//        if (ev.getEntity().getType() == EntityType.MULE) {
+//            ev.setCancelled(true);
+//            return;
+//        }
+//
+//        if (ev.getEntity().getType() == EntityType.LLAMA) {
+//            ev.setCancelled(true);
+//            return;
+//        }
+//
+//        if (ev.getEntity().getType() == EntityType.HORSE) {
+//            Horse h = (Horse) ev.getEntity();
+//            if (h.getVariant() == Variant.MULE || h.getVariant() == Variant.DONKEY) {
+//                ev.setCancelled(true);
+//                return;
+//            }
+//        }
+//
+//        if (ev.getSpawnReason() == SpawnReason.NATURAL) {
+//            int numeroPerto = ev.getEntity().getNearbyEntities(25, 4, 25).size();
+//            if (numeroPerto > 4) {
+//                KoM.debug("cancel 8");
+//                ev.setCancelled(true);
+//            }
+//        }
+//
+//        //KoM.debug("TENTANDO SPAWNAR MOB " + ev.getEntity().getType().name() + " REASON " + ev.getSpawnReason().name());
+//
+//        if (ev.getEntityType() == EntityType.SQUID) {
+//            if (!ev.getLocation().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
+//                ev.setCancelled(true);
+//                return;
+//            }
+//        }
+//
+//        if (ev.getEntity() instanceof Horse && ev.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG && ev.getSpawnReason() != CreatureSpawnEvent.SpawnReason.CUSTOM) {
+//
+//            Horse h = (Horse) ev.getEntity();
+//
+//            if (h.getCustomName() != null && h.getCustomName().length() > 0) {
+//                return;
+//            }
+//
+//            if (h.getColor() == Horse.Color.BLACK || h.getColor() == Horse.Color.WHITE) {
+//                if (Jobs.rnd.nextInt(8) != 1) {
+//                    h.setColor(Horse.Color.CREAMY);
+//                }
+//            }
+//
+//            if (h.getColor() != Horse.Color.CREAMY) {
+//                if (Jobs.rnd.nextInt(7) != 1) {
+//                    h.setColor(Horse.Color.CREAMY);
+//                }
+//            }
+//
+//            if (h.getStyle() != Horse.Style.NONE) {
+//                if (Jobs.rnd.nextInt(5) != 1) {
+//                    h.setStyle(Horse.Style.NONE);
+//                }
+//            }
+//        }
+//
+//        if (ev.getEntityType() == EntityType.HORSE || ev.getEntity().getType() == EntityType.VILLAGER) {
+//            return;
+//        }
+//
+//        final String tipo = ClanLand.getTypeAt(ev.getEntity().getLocation());
+//        if (ev.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER) {
+//            return;
+//            //Deixa o SpawnerSpawnEventCuidar...
+//        } else if (ev.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) {
+//            int q = 0;
+//            for (Entity e : ev.getEntity().getNearbyEntities(16, 20, 16)) {
+//                if (e.getType() == ev.getEntityType()) {
+//                    q++;
+//                }
+//            }
+//            if (q > 12) {
+//                KoM.debug("cancel 3");
+//                ev.setCancelled(true);
+//                return;
+//            }
+//        } else if (ev.getSpawnReason() == CreatureSpawnEvent.SpawnReason.BREEDING) {
+//            int q = 0;
+//            for (Entity e : ev.getEntity().getNearbyEntities(16, 20, 16)) {
+//                if (e.getType() == ev.getEntityType()) {
+//                    q++;
+//                }
+//            }
+//            if (q > 10) {
+//                KoM.debug("cancel 4");
+//                ev.setCancelled(true);
+//                return;
+//            }
+//        } else if (ev.getSpawnReason() != CreatureSpawnEvent.SpawnReason.CUSTOM) {
+//            if (!ev.getEntity().getWorld().getName().equalsIgnoreCase("NewDungeon") && ev.getEntity().getWorld().getEntities().size() >= 1200) {
+//                KoM.debug("cancel 5");
+//                ev.setCancelled(true);
+//                return;
+//            }
+//        }
+//
+//        if (ev.isCancelled()) {
+//            return;
+//        }
+//
+//        if (ev.getLocation().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
+//            ApplicableRegionSet set = KoM.worldGuard.getRegionManager(Bukkit.getWorld("NewDungeon")).getApplicableRegions(ev.getLocation());
+//            if (set.size() == 0) {
+//                KoM.debug("cancel 6");
+//                ev.setCancelled(true);
+//                return;
+//            }
+//            if (ev.getEntity().getLocation().getY() <= 5 && ev.getEntity().getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.GRASS) {
+//                ev.setCancelled(true);
+//                return;
+//            }
+//        }
+//        if (ev.getEntity() instanceof Monster) {
+//            if (Deuses.paz && !ev.getEntity().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
+//                ev.setCancelled(true);
+//                KoM.debug("cancel 7");
+//                Deuses.matou++;
+//                return;
+//            }
+//            if (WorldGuardKom.ehSafeZone(ev.getLocation()) || tipo.equalsIgnoreCase("SAFE")) {
+//                ev.setCancelled(true);
+//                return;
+//            }
+//            if (ev.getEntity().getLocation().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
+//                if (ev.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER) {
+//                    int numeroPerto = ev.getEntity().getNearbyEntities(25, 4, 25).size();
+//                    if (numeroPerto > 4) {
+//                        KoM.debug("cancel 8");
+//                        ev.setCancelled(true);
+//                    }
+//                }
+//            }
+//        }
+//        if (ev.getSpawnReason() == CreatureSpawnEvent.SpawnReason.BREEDING) {
+//            if (Jobs.rnd.nextInt(3) != 1) {
+//                ev.setCancelled(true);
+//                return;
+//            }
+//        }
+//
+//        Runnable r = new Runnable() {
+//            public void run() {
+//                if (ev.getEntity().hasMetadata("mobCustom") || KoM.mm.getMobManager().isActiveMob(ev.getEntity().getUniqueId()) || ev.getEntity().getCustomName() != null) {
+//                    if (KoM.debugMode) {
+//                        KoM.log.info("MOB JA TINHA COISAS");
+//                    }
+//                    return;
+//                } else {
+//                    if (ev.getEntity().getCustomName() == null || ev.getEntity().getCustomName().length() == 0) {
+//                        Mobs.spawn(ev, tipo);
+//                    }
+//                    if (KoM.debugMode) {
+//                        KoM.log.info("SETEI COISAS DO MOB");
+//                    }
+//                }
+//            }
+//        };
+//        Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, r, 20 * 2);
+//    }
 
-        // MULA DUPA ITEM
-        if(ev.getEntity().getType()==EntityType.MULE) {
-            ev.setCancelled(true);
-            return;
+    @EventHandler
+    public void spawn(CreatureSpawnEvent event) {
+
+        Entity entity = event.getEntity();
+
+        if (event.getSpawnReason().equals(SpawnReason.CUSTOM)) {
+            KoM.debug("Spawando " + entity.getType() + " em " + entity.getLocation().getBlock().getX() + " " + entity.getLocation().getBlock().getY() + " " + entity.getLocation().getBlock().getZ());
         }
-        
-        if(ev.getEntity().getType()==EntityType.LLAMA) {
-            ev.setCancelled(true);
-            return;
-        }
-        
-        if(ev.getEntity().getType()==EntityType.HORSE) {
-            Horse h = (Horse)ev.getEntity();
-            if(h.getVariant()==Variant.MULE || h.getVariant()==Variant.DONKEY) {
-                ev.setCancelled(true);
-                return;
-            }
-        }
-        
-        if (ev.getSpawnReason() == SpawnReason.NATURAL) {
-            int numeroPerto = ev.getEntity().getNearbyEntities(25, 4, 25).size();
-            if (numeroPerto > 4) {
-                KoM.debug("cancel 8");
-                ev.setCancelled(true);
-            }
-        }
 
-        //KoM.debug("TENTANDO SPAWNAR MOB " + ev.getEntity().getType().name() + " REASON " + ev.getSpawnReason().name());
-
-        if (ev.getEntityType() == EntityType.SQUID) {
-            if (!ev.getLocation().getWorld().getName().equalsIgnoreCase("dungeon")) {
-                ev.setCancelled(true);
-                return;
-            }
-        }
-
-        if (ev.getEntity() instanceof Horse && ev.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG && ev.getSpawnReason() != CreatureSpawnEvent.SpawnReason.CUSTOM) {
-
-            Horse h = (Horse) ev.getEntity();
-
-            if (h.getCustomName() != null && h.getCustomName().length() > 0) {
-                return;
-            }
-
-            if (h.getColor() == Horse.Color.BLACK || h.getColor() == Horse.Color.WHITE) {
-                if (Jobs.rnd.nextInt(8) != 1) {
-                    h.setColor(Horse.Color.CREAMY);
-                }
-            }
-
-            if (h.getColor() != Horse.Color.CREAMY) {
-                if (Jobs.rnd.nextInt(7) != 1) {
-                    h.setColor(Horse.Color.CREAMY);
-                }
-            }
-
-            if (h.getStyle() != Horse.Style.NONE) {
-                if (Jobs.rnd.nextInt(5) != 1) {
-                    h.setStyle(Horse.Style.NONE);
-                }
-            }
-        }
-
-        if (ev.getEntityType() == EntityType.HORSE || ev.getEntity().getType() == EntityType.VILLAGER) {
-            return;
-        }
-
-        final String tipo = ClanLand.getTypeAt(ev.getEntity().getLocation());
-        if (ev.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER) {
-            if (ev.getEntity().getWorld().getName().equalsIgnoreCase("vila")) {
-                ev.setCancelled(true);
-                KoM.debug("cancel 1");
-                return;
-            }
-            if (!ev.getEntity().getWorld().getName().equalsIgnoreCase("vila")
-                    && !ev.getEntity().getWorld().getName().equalsIgnoreCase("dungeon")) {
-
-                if (tipo != null && !tipo.equalsIgnoreCase("WARZ")) {
-                    ev.setCancelled(true);
-                    return;
-                } else if (tipo != null && tipo.equalsIgnoreCase("WARZ")) {
-                    return;
-                }
-            }
-            int q = 0;
-            for (Entity e : ev.getEntity().getNearbyEntities(16, 50, 16)) {
-                if (e.getType() == ev.getEntityType()) {
-                    q++;
-                }
-            }
-            if (q > 8) {
-                KoM.debug("cancel 2");
-                ev.setCancelled(true);
-                return;
-            }
-        } else if (ev.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) {
-            int q = 0;
-            for (Entity e : ev.getEntity().getNearbyEntities(16, 20, 16)) {
-                if (e.getType() == ev.getEntityType()) {
-                    q++;
-                }
-            }
-            if (q > 12) {
-                KoM.debug("cancel 3");
-                ev.setCancelled(true);
-                return;
-            }
-        } else if (ev.getSpawnReason() == CreatureSpawnEvent.SpawnReason.BREEDING) {
-            int q = 0;
-            for (Entity e : ev.getEntity().getNearbyEntities(16, 20, 16)) {
-                if (e.getType() == ev.getEntityType()) {
-                    q++;
-                }
-            }
-            if (q > 10) {
-                KoM.debug("cancel 4");
-                ev.setCancelled(true);
-                return;
-            }
-        } else if (ev.getSpawnReason() != CreatureSpawnEvent.SpawnReason.CUSTOM) {
-            if (!ev.getEntity().getWorld().getName().equalsIgnoreCase("dungeon") && ev.getEntity().getWorld().getEntities().size() >= 1200) {
-                KoM.debug("cancel 5");
-                ev.setCancelled(true);
-                return;
-            }
-        }
-
-        if (ev.isCancelled()) {
-            return;
-        }
-
-        if (ev.getLocation().getWorld().getName().equalsIgnoreCase("dungeon")) {
-            ApplicableRegionSet set = KoM.worldGuard.getRegionManager(Bukkit.getWorld("dungeon")).getApplicableRegions(ev.getLocation());
-            if (set.size() == 0) {
-                KoM.debug("cancel 6");
-                ev.setCancelled(true);
-                return;
-            }
-            if (ev.getEntity().getLocation().getY() <= 5 && ev.getEntity().getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.GRASS) {
-                ev.setCancelled(true);
-                return;
-            }
-        }
-        if (ev.getEntity() instanceof Monster) {
-            if (Deuses.paz && !ev.getEntity().getWorld().getName().equalsIgnoreCase("dungeon")) {
-                ev.setCancelled(true);
-                KoM.debug("cancel 7");
-                Deuses.matou++;
-                return;
-            }
-            if (WorldGuardKom.ehSafeZone(ev.getLocation()) || tipo.equalsIgnoreCase("SAFE")) {
-                ev.setCancelled(true);
-                return;
-            }
-            if (ev.getEntity().getLocation().getWorld().getName().equalsIgnoreCase("dungeon")) {
-                if (ev.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER) {
-                    int numeroPerto = ev.getEntity().getNearbyEntities(25, 4, 25).size();
-                    if (numeroPerto > 4) {
-                        KoM.debug("cancel 8");
-                        ev.setCancelled(true);
-                    }
-                }
-            }
-        }
-        if (ev.getSpawnReason() == CreatureSpawnEvent.SpawnReason.BREEDING) {
-            if (Jobs.rnd.nextInt(3) != 1) {
-                ev.setCancelled(true);
-                return;
-            }
-        }
-
-        Runnable r = new Runnable() {
-            public void run() {
-                if (ev.getEntity().hasMetadata("mobCustom") || KoM.mm.getMobManager().isActiveMob(ev.getEntity().getUniqueId()) || ev.getEntity().getCustomName() != null) {
-                    if (KoM.debugMode) {
-                        KoM.log.info("MOB JA TINHA COISAS");
-                    }
-                    return;
-                } else {
-                    if (ev.getEntity().getCustomName() == null || ev.getEntity().getCustomName().length() == 0) {
-                        Mobs.spawn(ev, tipo);
-                    }
-                    if (KoM.debugMode) {
-                        KoM.log.info("SETEI COISAS DO MOB");
-                    }
-                }
-            }
-        };
-        Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, r, 20 * 2);
     }
 
     public static int firstDigit(int n) {
@@ -364,11 +311,11 @@ public class Mobs extends KomSystem {
 
     public static Material[] dropsLevelAlto
             = {
-                Material.NETHER_WARTS, Material.GLOWSTONE_DUST, Material.BLAZE_POWDER, Material.BOOK_AND_QUILL, Material.APPLE,
-                Material.BLAZE_ROD, Material.GOLDEN_CARROT, Material.GHAST_TEAR, Material.GOLD_NUGGET, Material.MAGMA_CREAM, Material.DIRT, Material.COBBLESTONE, Material.REDSTONE, Material.POISONOUS_POTATO, Material.IRON_INGOT,
-                Material.NETHERRACK, Material.NETHER_STAR, Material.EXP_BOTTLE, Material.MOSSY_COBBLESTONE, Material.PAINTING, Material.BEDROCK, Material.BAKED_POTATO, Material.DIAMOND, Material.IRON_BLOCK, Material.BLAZE_POWDER, Material.EXP_BOTTLE, Material.FIREWORK, Material.HUGE_MUSHROOM_1, Material.DRAGON_EGG,
-                Material.SKULL, Material.DIAMOND, Material.IRON_SWORD, Material.IRON_AXE, Material.IRON_PICKAXE, Material.SULPHUR, Material.APPLE, Material.RED_MUSHROOM, Material.REDSTONE, Material.COMPASS, Material.EMPTY_MAP
-            };
+            Material.NETHER_WARTS, Material.GLOWSTONE_DUST, Material.BLAZE_POWDER, Material.BOOK_AND_QUILL, Material.APPLE,
+            Material.BLAZE_ROD, Material.GOLDEN_CARROT, Material.GHAST_TEAR, Material.GOLD_NUGGET, Material.MAGMA_CREAM, Material.DIRT, Material.COBBLESTONE, Material.REDSTONE, Material.POISONOUS_POTATO, Material.IRON_INGOT,
+            Material.NETHERRACK, Material.NETHER_STAR, Material.EXP_BOTTLE, Material.MOSSY_COBBLESTONE, Material.PAINTING, Material.BEDROCK, Material.BAKED_POTATO, Material.DIAMOND, Material.IRON_BLOCK, Material.BLAZE_POWDER, Material.EXP_BOTTLE, Material.FIREWORK, Material.HUGE_MUSHROOM_1, Material.DRAGON_EGG,
+            Material.SKULL, Material.DIAMOND, Material.IRON_SWORD, Material.IRON_AXE, Material.IRON_PICKAXE, Material.SULPHUR, Material.APPLE, Material.RED_MUSHROOM, Material.REDSTONE, Material.COMPASS, Material.EMPTY_MAP
+    };
 
     public static void dropRandomItem(Location l) {
         Material random = dropsLevelAlto[Jobs.rnd.nextInt(dropsLevelAlto.length)];
@@ -429,7 +376,7 @@ public class Mobs extends KomSystem {
         } else if (chest.getType() == Material.DIAMOND_CHESTPLATE) {
             red = red + 0.32;
         }
-        return red/2;
+        return red / 2;
     }
 
     public static void mobApanhaHigh(EntityDamageByEntityEvent ev) {
@@ -498,10 +445,17 @@ public class Mobs extends KomSystem {
     }
 
     public static void morreMob(EntityDeathEvent ev) {
-        
-        for(PotionEffect ef : ev.getEntity().getActivePotionEffects())
+
+        KoM.debug(ev.getEntity().getType() + " morreu em " + LocUtils.loc2str(ev.getEntity().getLocation()));
+        StringBuilder testeItens1 = new StringBuilder("Drops iniciais");
+        for (ItemStack itemStack : ev.getDrops()) {
+            testeItens1.append(", " + itemStack.getType());
+        }
+        KoM.debug(testeItens1.toString());
+
+        for (PotionEffect ef : ev.getEntity().getActivePotionEffects())
             ev.getEntity().removePotionEffect(ef.getType());
-        
+
         if (KoM.mm.getMobManager().isActiveMob(ev.getEntity().getUniqueId())) {
 
             Optional<ActiveMob> omob = KoM.mm.getMobManager().getActiveMob(ev.getEntity().getUniqueId());
@@ -565,7 +519,7 @@ public class Mobs extends KomSystem {
                 }
 
                 if (chanceDropEsmeralda > Jobs.rnd.nextInt(100)) {
-                    ev.getEntity().getWorld().dropItemNaturally(ev.getEntity().getLocation(), new ItemStack(Material.EMERALD, 1));
+                    ev.getDrops().add(new ItemStack(Material.EMERALD, 1));
                 }
 
                 int chanceDropMob = 1;
@@ -614,7 +568,7 @@ public class Mobs extends KomSystem {
                 }
 
                 if (chanceDropMob > Jobs.rnd.nextInt(100)) {
-                    ev.getEntity().getWorld().dropItemNaturally(ev.getEntity().getLocation(), CustomItem.getItem(DropMob.class).generateItem());
+                    ev.getDrops().add(CustomItem.getItem(DropMob.class).generateItem());
                 }
 
                 int chanceIncomum = 1; // 1 em 100
@@ -664,7 +618,7 @@ public class Mobs extends KomSystem {
                     drop.setAmount(qtdDrops);
                     ev.getEntity().getWorld().dropItemNaturally(ev.getEntity().getLocation(), drop);
                 }
-                if (ev.getEntity().getWorld().getName().equalsIgnoreCase("dungeon")) {
+                if (ev.getEntity().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                     //ev.setDroppedExp((int) (exp * 1.5));
                     chanceIncomum *= 2;
                     if (KoM.debugMode) {
@@ -680,17 +634,17 @@ public class Mobs extends KomSystem {
             }
 
             double xpTotal = XP.getExpPorAcao(levelDaZona * 5);
-            
+
             xpTotal *= 1.2; // pokin melhor vai...
-            
-            if(ev.getEntity().getKiller()!=null) {
-                if(Jobs.getJobLevel(Jobs.Classe.Mago, ev.getEntity().getKiller())==TipoClasse.PRIMARIA ||
-                   Jobs.getJobLevel(Jobs.Classe.Paladino, ev.getEntity().getKiller())==TipoClasse.PRIMARIA ||
-                   Jobs.getJobLevel(Jobs.Classe.Ladino, ev.getEntity().getKiller())==TipoClasse.PRIMARIA ) {
+
+            if (ev.getEntity().getKiller() != null) {
+                if (Jobs.getJobLevel(Jobs.Classe.Mago, ev.getEntity().getKiller()) == TipoClasse.PRIMARIA ||
+                        Jobs.getJobLevel(Jobs.Classe.Paladino, ev.getEntity().getKiller()) == TipoClasse.PRIMARIA ||
+                        Jobs.getJobLevel(Jobs.Classe.Ladino, ev.getEntity().getKiller()) == TipoClasse.PRIMARIA) {
                     xpTotal *= 1.2;
                 }
             }
-            
+
             if (Deuses.odio) {
                 xpTotal = xpTotal;
             }
@@ -734,7 +688,7 @@ public class Mobs extends KomSystem {
             }
             HashSet<Player> beneficiados = new HashSet<Player>();
             Entity qconta = ev.getEntity();
-            for (Entity e : ev.getEntity().getNearbyEntities(15, 3,15)) {
+            for (Entity e : ev.getEntity().getNearbyEntities(15, 3, 15)) {
                 if (e.getType() == EntityType.PLAYER && !beneficiados.contains(e)) {
                     Player beneficiado = (Player) e;
                     if (matou != null) {
@@ -804,26 +758,34 @@ public class Mobs extends KomSystem {
 
             }
         }
+
+        StringBuilder testeItens2 = new StringBuilder("Drops finais");
+        for (ItemStack itemStack : ev.getDrops()) {
+            testeItens2.append(", " + itemStack.getType());
+        }
+        KoM.debug(testeItens2.toString());
+
     }
+
     public static EntityType[] hardMobs
             = {
-                EntityType.GHAST, EntityType.BLAZE, EntityType.BLAZE, EntityType.BLAZE, EntityType.ENDERMAN, EntityType.MAGMA_CUBE, EntityType.MAGMA_CUBE, EntityType.WITCH
-            };
+            EntityType.GHAST, EntityType.BLAZE, EntityType.BLAZE, EntityType.BLAZE, EntityType.ENDERMAN, EntityType.MAGMA_CUBE, EntityType.MAGMA_CUBE, EntityType.WITCH
+    };
     public static EntityType[] bosses
             = {
-                EntityType.ENDER_DRAGON, EntityType.WITHER
-            };
+            EntityType.ENDER_DRAGON, EntityType.WITHER
+    };
     public static List<EfeitoMobs> tmp = null;
 
     public static List<EntityType> bixinhos = Arrays.asList(new EntityType[]{EntityType.RABBIT, EntityType.COW, EntityType.CHICKEN, EntityType.PIG, EntityType.PARROT, EntityType.SHEEP, EntityType.EGG});
-    
+
     public static void spawnaMob(CreatureSpawnEvent ev, String tipo) {
         if (ev.getEntity() instanceof Monster && !(ev.getEntity() instanceof Tameable) && (!bixinhos.contains(ev.getEntity().getType()))) {
             if (tipo == null) {
                 return;
             }
             if (ev.getEntity().getType() == EntityType.ENDERMAN) {
-                if (ev.getEntity().getLocation().getWorld().getName().equalsIgnoreCase("dungeon")) {
+                if (ev.getEntity().getLocation().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                     ev.setCancelled(true);
                     return;
                 }
@@ -1001,7 +963,7 @@ public class Mobs extends KomSystem {
             }
         }
 
-        if (attacker.getItemInHand().getType() == Material.GOLD_AXE || attacker.getItemInHand().getType() == Material.WOOD_AXE || attacker.getItemInHand().getType() == Material.IRON_AXE || attacker.getItemInHand().getType() == Material.STONE_AXE || attacker.getItemInHand().getType() == Material.DIAMOND_AXE) {
+        if (attacker.getInventory().getItemInMainHand().getType() == Material.GOLD_AXE || attacker.getInventory().getItemInMainHand().getType() == Material.WOOD_AXE || attacker.getInventory().getItemInMainHand().getType() == Material.IRON_AXE || attacker.getInventory().getItemInMainHand().getType() == Material.STONE_AXE || attacker.getInventory().getItemInMainHand().getType() == Material.DIAMOND_AXE) {
             // verificando maxadada epica
             if (attacker.hasMetadata("epichax")) {
                 MetaShit s;
@@ -1029,25 +991,25 @@ public class Mobs extends KomSystem {
         if (Jobs.getJobLevel("Ladino", attacker) == 1) {
             ev.setDamage(ev.getDamage() * 1.2);
         }
-        if (attacker.getItemInHand().getType().name().contains("SPADE")) {
+        if (attacker.getInventory().getItemInMainHand().getType().name().contains("SPADE")) {
             if (Jobs.getJobLevel("Ferreiro", attacker) == 1) {
-                if (attacker.getItemInHand().getType() == Material.GOLD_SPADE) {
+                if (attacker.getInventory().getItemInMainHand().getType() == Material.GOLD_SPADE) {
                     ev.setDamage(ev.getDamage() * 4);
                 } else {
                     ev.setDamage(ev.getDamage() * 2);
                 }
             }
         } // se ta batendo com hoes
-        else if (attacker.getItemInHand().getType() == Material.WOOD_HOE || attacker.getItemInHand().getType() == Material.GOLD_HOE || attacker.getItemInHand().getType() == Material.IRON_HOE || attacker.getItemInHand().getType() == Material.STONE_HOE || attacker.getItemInHand().getType() == Material.DIAMOND_HOE) {
+        else if (attacker.getInventory().getItemInMainHand().getType() == Material.WOOD_HOE || attacker.getInventory().getItemInMainHand().getType() == Material.GOLD_HOE || attacker.getInventory().getItemInMainHand().getType() == Material.IRON_HOE || attacker.getInventory().getItemInMainHand().getType() == Material.STONE_HOE || attacker.getInventory().getItemInMainHand().getType() == Material.DIAMOND_HOE) {
             if (Jobs.getJobLevel("Fazendeiro", attacker) == 1) {
-                if (attacker.getItemInHand().getType() == Material.GOLD_HOE) {
+                if (attacker.getInventory().getItemInMainHand().getType() == Material.GOLD_HOE) {
                     ev.setDamage(ev.getDamage() * 2);
                 } else {
                     ev.setDamage(ev.getDamage() * 1.5);
                 }
             }
             if (Jobs.getJobLevel("Alquimista", attacker) == 1) {
-                if (attacker.getItemInHand().getType() == Material.GOLD_HOE) {
+                if (attacker.getInventory().getItemInMainHand().getType() == Material.GOLD_HOE) {
                     mob.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20 * 20, 1));
                     mob.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * 20, 3));
                 } else {
@@ -1267,6 +1229,60 @@ public class Mobs extends KomSystem {
                 ev.setCancelled(true);
             }
         }
+    }
+
+    @EventHandler
+    public void mobSpawn(SpawnerSpawnEvent event) {
+
+        Entity entity = event.getEntity();
+        Location loc = event.getSpawner().getLocation();
+
+        if (loc.add(0, -3, 0).getBlock().getType().equals(Material.SPONGE)) {
+            if (loc.add(0, +1, 0).getBlock().getType().equals(Material.CHEST)) {
+
+                Chest chest = (Chest) loc.getBlock().getState();
+
+                attEntityEquip(entity, chest);
+
+                if (chest.getBlockInventory().getItem(4) != null && chest.getBlockInventory().getItem(4).getType().equals(Material.BOOK_AND_QUILL)) {
+
+                    BookMeta bookMeta = (BookMeta) chest.getBlockInventory().getItem(4).getItemMeta();
+
+                    attEntityVarious(entity, bookMeta);
+
+                }
+            }
+        }
+    }
+
+    private void attEntityEquip(Entity entity, Chest chest) {
+
+        EntityEquipment entityEquipment = ((LivingEntity) entity).getEquipment();
+
+        ItemStack[] armor = new ItemStack[]{
+                chest.getBlockInventory().getItem(21),
+                chest.getBlockInventory().getItem(20),
+                chest.getBlockInventory().getItem(19),
+                chest.getBlockInventory().getItem(18)
+        };
+
+        ItemStack maoPrimaria = chest.getBlockInventory().getItem(24);
+        ItemStack maoSecundaria = chest.getBlockInventory().getItem(23);
+
+        entityEquipment.setArmorContents(armor);
+        entityEquipment.setItemInMainHand(maoPrimaria);
+        entityEquipment.setItemInOffHand(maoSecundaria);
+
+    }
+
+    private void attEntityVarious(Entity entity, BookMeta bookMeta) {
+
+        if (bookMeta.getPageCount() > 0) {
+            if (bookMeta.getPage(1) != null) {
+                entity.setCustomName(ChatColor.translateAlternateColorCodes('&', bookMeta.getPage(1)));
+            }
+        }
+
     }
 
 }

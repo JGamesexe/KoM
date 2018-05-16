@@ -5,27 +5,14 @@
  */
 package nativelevel.Custom.Potions;
 
-import genericos.komzin.libzinha.listeners.GeralListener;
-import me.fromgate.playeffect.PlayEffect;
-import me.fromgate.playeffect.VisualEffect;
-import nativelevel.Lang.L;
 import nativelevel.Custom.CustomPotion;
 import nativelevel.KoM;
-import nativelevel.Listeners.GeneralListener;
+import nativelevel.Lang.L;
 import nativelevel.sisteminhas.ClanLand;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.Effect;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.ThrownPotion;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -33,12 +20,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-import org.bukkit.util.Vector;
 
 /**
- *
  * @author User
- *
  */
 
 public class PoisonEnemy extends CustomPotion {
@@ -48,7 +32,7 @@ public class PoisonEnemy extends CustomPotion {
     public PoisonEnemy() {
         super(L.m("Poção de Veneno Pegajosa"), L.m("Nao envenena aliados"), PotionType.POISON, true);
     }
-    
+
     public Color cor() {
         return Color.GREEN;
     }
@@ -56,7 +40,7 @@ public class PoisonEnemy extends CustomPotion {
     @Override
     public void interage(PlayerInteractEvent ev) {
         ThrownPotion thrownPotion = ev.getPlayer().launchProjectile(ThrownPotion.class);
-        thrownPotion.setItem(new ItemStack(ev.getPlayer().getItemInHand()));
+        thrownPotion.setItem(new ItemStack(ev.getPlayer().getInventory().getItemInMainHand()));
         thrownPotion.setShooter(ev.getPlayer());
         this.consome(ev.getPlayer());
     }
@@ -65,7 +49,7 @@ public class PoisonEnemy extends CustomPotion {
     public void splashEvent(PotionSplashEvent ev, Player p) {
         ClanPlayer eu = ClanLand.manager.getClanPlayer(p.getUniqueId());
         for (Entity e : ev.getAffectedEntities()) {
-              if(ev.getIntensity((LivingEntity)e)==0)
+            if (ev.getIntensity((LivingEntity) e) == 0)
                 continue;
             if (e instanceof LivingEntity) {
                 LivingEntity le = (LivingEntity) e;
@@ -89,9 +73,9 @@ public class PoisonEnemy extends CustomPotion {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            new ItemStack(Material.GOLD_NUGGET, 1),
-            new ItemStack(Material.POISONOUS_POTATO, 1),
-            new ItemStack(Material.SLIME_BALL, 1)};
+                new ItemStack(Material.GOLD_NUGGET, 1),
+                new ItemStack(Material.POISONOUS_POTATO, 1),
+                new ItemStack(Material.SLIME_BALL, 1)};
     }
 
     @Override

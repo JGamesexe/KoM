@@ -5,6 +5,11 @@
  */
 package nativelevel.mercadinho.utils;
 
+import nativelevel.KoM;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,10 +17,6 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nativelevel.KoM;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
 
 public class Utils {
 
@@ -61,7 +62,7 @@ public class Utils {
     public static byte[] BlobToBytes(Blob blob) {
         int blobLength;
         byte[] blobAsBytes = null;
-     
+
         try {
             blobLength = (int) blob.length();
             blobAsBytes = blob.getBytes(1, blobLength);

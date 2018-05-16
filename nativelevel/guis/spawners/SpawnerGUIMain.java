@@ -1,12 +1,12 @@
 package nativelevel.guis.spawners;
 
+import me.dpohvar.powernbt.api.NBTCompound;
+import me.dpohvar.powernbt.api.NBTList;
 import nativelevel.KoM;
 import nativelevel.guis.spawners.equips.EquipGUIMain;
 import nativelevel.guis.spawners.mobs.MobsGUIMain;
 import nativelevel.utils.EntityHelp;
 import nativelevel.utils.GUI;
-import me.dpohvar.powernbt.api.NBTCompound;
-import me.dpohvar.powernbt.api.NBTList;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -14,6 +14,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.*;
 import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
@@ -40,10 +41,8 @@ public class SpawnerGUIMain extends GUI {
         NBTCompound spawnerData = KoM.nbtManager.read(spawner.getBlock());
         NBTCompound spawnData = spawnerData.getCompound("SpawnData");
 
-        Entity entityTeste = spawner.getWorld().spawnEntity(spawner.getLocation(), spawner.getSpawnedType());
-
         inventory.setItem(10, typeItem(spawner.getSpawnedType()));
-        inventory.setItem(11, isBabyItem(spawnData, entityTeste));
+        inventory.setItem(11, isBabyItem(spawnData));
         inventory.setItem(13, simpleDataItem(spawnerData.getInt("RequiredPlayerRange"), "§eDistancia pra ativar", Material.SLIME_BALL));
         inventory.setItem(14, simpleDataItem(spawnerData.getInt("MaxNearbyEntities"), "§eMaximo de entidades proximas", Material.SLIME_BALL));
         inventory.setItem(15, simpleDataItem(spawnerData.getInt("SpawnCount"), "§eQuantia maxima de entidades por spawn", Material.SLIME_BALL));
@@ -54,8 +53,6 @@ public class SpawnerGUIMain extends GUI {
         inventory.setItem(32, simpleDataItem(getAttr(spawnData.getList("Attributes"), "generic.movementSpeed").getDouble("Base"), "§eVelocidade da entidade", Material.REDSTONE));
         inventory.setItem(33, simpleDataItem(getAttr(spawnData.getList("Attributes"), "generic.attackDamage").getDouble("Base"), "§eDano da entidade", Material.REDSTONE));
         inventory.setItem(34, simpleDataItem("Armadura...", "§eEquip's", Material.CHEST));
-
-        entityTeste.remove();
 
     }
 
@@ -75,7 +72,10 @@ public class SpawnerGUIMain extends GUI {
         return itemStack;
     }
 
-    private ItemStack isBabyItem(NBTCompound spawnerData, Entity entity) {
+    private ItemStack isBabyItem(NBTCompound spawnData) {
+
+
+        Entity entityTeste = spawner.getWorld().spawnEntity(spawner.getLocation(), spawner.getSpawnedType());
 
         ItemStack itemStack;
         ItemMeta itemMeta;
@@ -83,9 +83,9 @@ public class SpawnerGUIMain extends GUI {
 
         itemLore.add("");
 
-        if (entity instanceof Zombie) {
+        if (entityTeste instanceof Zombie) {
 
-            if (spawnerData.getBoolean("IsBaby")) {
+            if (spawnData.getBoolean("IsBaby")) {
 
                 itemStack = new ItemStack(Material.MILK_BUCKET);
                 itemLore.add("§7Sim");
@@ -97,9 +97,9 @@ public class SpawnerGUIMain extends GUI {
 
             }
 
-        } else if (entity instanceof Ageable) {
+        } else if (entityTeste instanceof Ageable) {
 
-            if (spawnerData.getInt("Age") < 0) {
+            if (spawnData.getInt("Age") < 0) {
 
                 itemStack = new ItemStack(Material.MILK_BUCKET);
                 itemLore.add("§7Sim");
@@ -126,6 +126,8 @@ public class SpawnerGUIMain extends GUI {
 
         itemMeta.setLore(itemLore);
         itemStack.setItemMeta(itemMeta);
+
+        entityTeste.remove();
 
         return itemStack;
 
@@ -170,7 +172,11 @@ public class SpawnerGUIMain extends GUI {
         return nAchei;
     }
 
-    public static NBTList removeAttr(NBTList attributes, String name) {
+    public static void removeAttr(CreatureSpawner spawner, String name) {
+
+        NBTCompound spawnerData = KoM.nbtManager.read(spawner.getBlock());
+        NBTCompound spawnData = spawnerData.getCompound("SpawnData");
+        NBTList attributes = spawnerData.getList("Attributes");
 
         if (attributes != null) {
 
@@ -184,7 +190,27 @@ public class SpawnerGUIMain extends GUI {
 
             }
         }
-        return attributes;
+
+        spawnData.put("Attributes", attributes);
+
+        spawnerData.put("SpawnData", spawnData);
+        KoM.nbtManager.write(spawner.getBlock(), spawnerData);
+        KoM.nbtManager.write(spawner.getBlock(), spawnData);
+
+    }
+
+    public static void tiraBebe(CreatureSpawner spawner) {
+
+        NBTCompound spawnerData = KoM.nbtManager.read(spawner.getBlock());
+        NBTCompound spawnData = spawnerData.getCompound("SpawnData");
+
+        spawnData.remove("IsBaby");
+        spawnData.remove("Age");
+
+        spawnerData.put("SpawnData", spawnData);
+        KoM.nbtManager.write(spawner.getBlock(), spawnerData);
+        KoM.nbtManager.write(spawner.getBlock(), spawnData);
+
     }
 
     private static NBTCompound criaAttr(String nome, Object valor) {
@@ -224,14 +250,22 @@ public class SpawnerGUIMain extends GUI {
     }
 
     @Override
-    public void interage(Player player, int slot, InventoryAction inventoryAction) {
-        super.interage(player, slot, inventoryAction);
+    public void interage(InventoryClickEvent event) {
+        super.interage(event);
 
-        if (inventory.getItem(slot) == null || inventory.getItem(slot).getType().equals(Material.STAINED_GLASS_PANE)) return;
+        Player player = (Player) event.getWhoClicked();
+        int slot = event.getSlot();
+        InventoryAction inventoryAction = event.getAction();
+
+        if (inventory.getItem(slot) == null || inventory.getItem(slot).getType().equals(Material.STAINED_GLASS_PANE))
+            return;
 
         switch (slot) {
             case 10:
                 open(player, new MobsGUIMain(spawner));
+                break;
+            case 11:
+                mudaBabe(inventoryAction, slot);
                 break;
             case 13:
                 mudaValorOnSpawnerData("RequiredPlayerRange", 1, 5, player, inventoryAction, slot, 5, 64, 1);
@@ -267,7 +301,7 @@ public class SpawnerGUIMain extends GUI {
 
     }
 
-    private double calc(double valor, InventoryAction inventoryAction, double quantiaP, double quantiaM) {
+    public static double calc(double valor, InventoryAction inventoryAction, double quantiaP, double quantiaM) {
 
         switch (inventoryAction) {
             default:
@@ -344,7 +378,7 @@ public class SpawnerGUIMain extends GUI {
 
         DecimalFormat format = new DecimalFormat("0.000");
 
-        double newValor = Double.valueOf(format.format(calc(valor, inventoryAction, quantiaP, quantiaM)));
+        double newValor = Double.valueOf(format.format(calc(valor, inventoryAction, quantiaP, quantiaM)).replace(',', '.'));
 
         if (valor == 0) {
 
@@ -367,7 +401,7 @@ public class SpawnerGUIMain extends GUI {
 
         }
 
-        if(data.equals("generic.maxHealth")){
+        if (data.equals("generic.maxHealth")) {
             spawnData.put("Health", newValor);
         }
 
@@ -379,6 +413,49 @@ public class SpawnerGUIMain extends GUI {
         inventory.setItem(slot, simpleDataItem(newValor, inventory.getItem(slot).getItemMeta().getDisplayName(), inventory.getItem(slot).getType()));
     }
 
-    //TODO TROCA BEBE...
+    private void mudaBabe(InventoryAction inventoryAction, int slot) {
+
+        if (inventory.getItem(slot).getType().equals(Material.LAVA_BUCKET)) return;
+
+        NBTCompound spawnerData = KoM.nbtManager.read(spawner.getBlock());
+        NBTCompound spawnData = spawnerData.getCompound("SpawnData");
+
+        Entity entityTeste = spawner.getWorld().spawnEntity(spawner.getLocation(), spawner.getSpawnedType());
+        ;
+
+        if (entityTeste instanceof Zombie) {
+
+            if (spawnData.getBoolean("IsBaby")) {
+
+                spawnData.remove("IsBaby");
+
+            } else {
+
+                spawnData.put("IsBaby", true);
+
+            }
+
+        } else if (entityTeste instanceof Ageable) {
+
+            if (spawnData.getInt("Age") < 0) {
+
+                spawnData.remove("Age");
+
+            } else {
+
+                spawnData.put("Age", -999999999);
+
+            }
+        }
+
+        spawnerData.put("SpawnData", spawnData);
+        KoM.nbtManager.write(spawner.getBlock(), spawnerData);
+        KoM.nbtManager.write(spawner.getBlock(), spawnData);
+
+        entityTeste.remove();
+
+        inventory.setItem(slot, isBabyItem(spawnData));
+
+    }
 
 }

@@ -9,7 +9,7 @@ public class NyanCat extends Aura {
 
     @Override
     public String getNome() {
-        return "NyanCat";    
+        return "NyanCat";
     }
 
     @Override
@@ -26,6 +26,6 @@ public class NyanCat extends Aura {
     public void tick(Player p, boolean newTick) {
         PlayEffect.play("reddust", "speed:100 draw:circle radius:1 loc:" + p.getLocation().getWorld().getName() + "," + p.getLocation().getBlockX() + "," + p.getLocation().getBlockY() + "," + p.getLocation().getBlockZ());
     }
-    
-   
+
+
 }

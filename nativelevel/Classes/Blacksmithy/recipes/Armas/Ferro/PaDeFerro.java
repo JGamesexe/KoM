@@ -1,18 +1,12 @@
 package nativelevel.Classes.Blacksmithy.recipes.Armas.Ferro;
 
-import nativelevel.Equipment.WeaponDamage;
 import nativelevel.Classes.Blacksmithy.CustomCrafting;
+import nativelevel.Equipment.WeaponDamage;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author Ziden
- *
  */
 public class PaDeFerro extends CustomCrafting {
 
@@ -23,9 +17,9 @@ public class PaDeFerro extends CustomCrafting {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            new ItemStack(Material.IRON_INGOT, 1),
-            new ItemStack(Material.COAL, 1),
-            new ItemStack(Material.SAND),};
+                new ItemStack(Material.IRON_INGOT, 1),
+                new ItemStack(Material.COAL, 1),
+                new ItemStack(Material.SAND),};
     }
 
     @Override
@@ -46,14 +40,14 @@ public class PaDeFerro extends CustomCrafting {
     @Override
     public ItemStack aplica(ItemStack ss) {
         double dano = WeaponDamage.getDamage(ss);
-       // dano += 1;
+        // dano += 1;
         ss = WeaponDamage.setDano(ss, dano);
         return ss;
     }
 
     @Override
     public ItemStack aplicaNoCraftNormal(ItemStack ss) {
-        if(ss.getType()!=Material.IRON_SPADE) 
+        if (ss.getType() != Material.IRON_SPADE)
             return ss;
         double dano = WeaponDamage.getDamage(ss);
         dano -= 1;

@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author Ziden
  */
 public class CmdGerador implements CommandExecutor {

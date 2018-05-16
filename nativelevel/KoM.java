@@ -57,15 +57,6 @@ STAFF:
  */
 package nativelevel;
 
-import me.dpohvar.powernbt.PowerNBT;
-import me.dpohvar.powernbt.api.NBTManager;
-import nativelevel.utils.EntityHelp;
-import nativelevel.utils.GUI;
-import nativelevel.utils.LogsKom;
-import nativelevel.sisteminhas.Boat;
-import nativelevel.sisteminhas.ClanLand;
-import nativelevel.sisteminhas.Deuses;
-import nativelevel.Listeners.GeneralListener;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import genericos.komzin.libzinha.InstaMCLibKom;
@@ -74,137 +65,95 @@ import genericos.komzin.libzinha.comandos.ComandoL;
 import genericos.komzin.libzinha.comandos.ComandoR;
 import genericos.komzin.libzinha.comandos.ComandoTell;
 import io.lumine.xikage.mythicmobs.MythicMobs;
-
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.logging.Logger;
-
 import me.blackvein.quests.Quests;
+import me.dpohvar.powernbt.PowerNBT;
+import me.dpohvar.powernbt.api.NBTManager;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.arena1x1.PvPMatchmaking.PvPMatchmaking;
 import nativelevel.ArenaGuilda2x2.Arena2x2;
 import nativelevel.ArenaGuilda2x2.CmdArena;
 import nativelevel.ArenaGuilda2x2.Eventos;
-import nativelevel.Equipment.Generator.PreSet;
+import nativelevel.Attributes.Mana;
+import nativelevel.Attributes.MenuAtributos;
 import nativelevel.Auras.Aura;
 import nativelevel.Classes.Blacksmithy.RecipeLoader;
-import nativelevel.Comandos.Botaschem;
-import nativelevel.Comandos.CmdGemas;
-import nativelevel.Comandos.CmdHub;
-import nativelevel.Comandos.Cmdlimpaitem;
-import nativelevel.Comandos.ComandoScore;
-import nativelevel.Comandos.ConsoleItem;
-import nativelevel.Comandos.Doar;
-import nativelevel.Comandos.Guilda;
-import nativelevel.Comandos.Kom;
-import nativelevel.Comandos.Msgraio;
-import nativelevel.Comandos.Msgzinha;
-import nativelevel.Comandos.Spawn;
-import nativelevel.Comandos.Tpraio;
-import nativelevel.Comandos.KomExp;
-import nativelevel.Crafting.CraftConfig;
+import nativelevel.Comandos.*;
 import nativelevel.ComandosNovos.Comando;
 import nativelevel.ComandosNovos.CommandLoader;
+import nativelevel.Crafting.CraftConfig;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.ItemLoader;
-import nativelevel.Custom.Items.BombaFumaca;
-import nativelevel.Custom.Items.DeedTorre;
-import nativelevel.Custom.Items.LockPick;
-import nativelevel.Custom.Items.LogoutTrap;
-import nativelevel.Custom.Items.TeleportScroll;
+import nativelevel.Custom.Items.*;
 import nativelevel.Custom.PotionLoader;
 import nativelevel.DataBase.SQL;
+import nativelevel.Equipment.Generator.PreSet;
 import nativelevel.Harvesting.HarvestConfig;
 import nativelevel.Lang.L;
-import nativelevel.Listeners.BlockListener;
-import nativelevel.Listeners.DamageListener;
-import nativelevel.Listeners.DeathEvents;
-import nativelevel.Listeners.InteractEvents;
-import nativelevel.Listeners.InventoryEvents;
-import nativelevel.Listeners.PlayerEvents;
+import nativelevel.Listeners.*;
 import nativelevel.Menu.netMenu;
 import nativelevel.Planting.PlantConfig;
 import nativelevel.Tasks.CleanupTask;
-import nativelevel.Attributes.Mana;
-import nativelevel.Attributes.MenuAtributos;
-import nativelevel.Comandos.CmdAnuncio;
-import nativelevel.Comandos.CmdFalar;
-import nativelevel.Comandos.CmdGerador;
-import nativelevel.Comandos.DarExp;
-import nativelevel.Comandos.LimpaMobs;
-import nativelevel.Comandos.SetarBloco;
-import nativelevel.Comandos.Teleportar;
 import nativelevel.ajuda.ComandoDislike;
 import nativelevel.ajuda.ComandoLike;
 import nativelevel.ajuda.KomAjuda;
+import nativelevel.arena1x1.PvPMatchmaking.PvPMatchmaking;
 import nativelevel.bencoes.TipoBless;
 import nativelevel.config.Config;
 import nativelevel.config.ConfigKom;
-import nativelevel.oreGen.Gen;
-import nativelevel.oreGen.Reflector;
-import nativelevel.playerboolean.StageDB;
-import nativelevel.precocabeca.Principal;
-import nativelevel.rankings.RankDB;
-import nativelevel.sc.bugfixes.SCBugFixes;
 import nativelevel.gemas.SocketListener;
 import nativelevel.komquista.KomQuista;
 import nativelevel.lojaagricola.ConfigLoja;
-import nativelevel.spec.PlayerSpec;
-import nativelevel.titulos.CmdDarTitulo;
-import nativelevel.titulos.CmdSexo;
-import nativelevel.titulos.CmdTitulo;
-import nativelevel.titulos.EscolheSexo;
-import nativelevel.titulos.EscolheTitulo;
-import nativelevel.titulos.TituloDB;
-import nativelevel.utils.ConfigManager;
-import nativelevel.sisteminhas.IpLog;
-import nativelevel.sisteminhas.Lobo;
-import nativelevel.sisteminhas.SystemLoader;
 import nativelevel.lojaagricola.LojaAgricola;
 import nativelevel.lojas.CmdSetPreco;
+import nativelevel.oreGen.Gen;
+import nativelevel.oreGen.Reflector;
 import nativelevel.phatloots.PhatLoots;
+import nativelevel.playerboolean.StageDB;
+import nativelevel.precocabeca.Principal;
 import nativelevel.rankings.RankCache;
-import nativelevel.skills.SkillMaster;
-import nativelevel.sisteminhas.Tesouros;
+import nativelevel.rankings.RankDB;
+import nativelevel.sc.bugfixes.SCBugFixes;
 import nativelevel.scores.SBCoreListener;
+import nativelevel.sisteminhas.Boat;
+import nativelevel.sisteminhas.*;
+import nativelevel.skills.SkillMaster;
+import nativelevel.spec.PlayerSpec;
+import nativelevel.titulos.*;
+import nativelevel.utils.ConfigManager;
+import nativelevel.utils.EntityHelp;
+import nativelevel.utils.LogsKom;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.NBTTagList;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandMap;
+import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Wolf;
+import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import java.util.logging.Logger;
 
 /*     
  * …………………▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -280,10 +229,11 @@ public class KoM extends JavaPlugin {
     public static Quests quests;
     public static KomAjuda ajuda;
     public static KomQuista komq;
+    public static ConversationFactory conversationFactory = new ConversationFactory(_instance);
 
     // items custom
     public static HashMap<Block, Material> rewind = new HashMap<Block, Material>();
-    IpLog iplog = new IpLog();
+//    IpLog iplog = new IpLog();
     //
 
     public static void debug(String m) {
@@ -378,7 +328,7 @@ public class KoM extends JavaPlugin {
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                World dun = Bukkit.getWorld("dungeon");
+                World dun = Bukkit.getWorld("NewDungeon");
                 if (dun != null) {
                     dun.setTime(18500L);
                 }
@@ -670,7 +620,7 @@ public class KoM extends JavaPlugin {
         t.onDisable();
         //AutoDispenser.finaliza();
 
-        iplog.onDisable();
+//        iplog.onDisable();
         if (arena != null) {
             arena.onDisable();
         }
@@ -682,6 +632,8 @@ public class KoM extends JavaPlugin {
         AutoUpdate.CheckUpdade("KomAtualizado.jar");
         AutoUpdate.CheckUpdade("KomQuista.jar");
         AutoUpdate.CheckUpdade("ArenaKom.jar");
+
+
     }
 
     public static void dealTrueDamage(LivingEntity p, double qto) {
@@ -771,7 +723,7 @@ public class KoM extends JavaPlugin {
 
     public static boolean gastaReagentes(Player p, Inventory inv, int amount) {
         boolean gastou = false;
-        String livro = CustomItem.getCustomItem(p.getItemInHand());
+        String livro = CustomItem.getCustomItem(p.getInventory().getItemInMainHand());
         if (livro != null && livro.equalsIgnoreCase(L.m("Livro das Almas"))) {
             return true;
         }

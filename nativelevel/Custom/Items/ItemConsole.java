@@ -5,20 +5,18 @@
  */
 package nativelevel.Custom.Items;
 
-import java.util.ArrayList;
-import java.util.UUID;
 import nativelevel.Custom.CustomItem;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+
 /**
- *
  * @author USER
  */
 public class ItemConsole extends CustomItem {
@@ -50,10 +48,10 @@ public class ItemConsole extends CustomItem {
 
     public static void usa(Player p) {
         String cmd = null;
-        if (p.getItemInHand().getItemMeta().getLore().size() < 2) {
+        if (p.getInventory().getItemInMainHand().getItemMeta().getLore().size() < 2) {
             return;
         }
-        ItemStack namao = p.getItemInHand();
+        ItemStack namao = p.getInventory().getItemInMainHand();
         if (namao.getItemMeta().getLore().get(0).contains("/")) {
             cmd = namao.getItemMeta().getLore().get(0).split("/")[1];
             cmd = cmd.replace("@p", p.getName());
@@ -79,10 +77,10 @@ public class ItemConsole extends CustomItem {
         }
         KoM.log.info("Foi enviado o " + cmd + " para o console o player com o item foi " + p.getName() + "!");
 
-        if (p.getItemInHand().getAmount() == 1) {
+        if (p.getInventory().getItemInMainHand().getAmount() == 1) {
             p.setItemInHand(null);
         } else {
-            p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+            p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
         }
         p.updateInventory();
     }

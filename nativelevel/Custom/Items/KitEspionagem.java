@@ -16,8 +16,8 @@ package nativelevel.Custom.Items;
 
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Lang.L;
+import nativelevel.sisteminhas.ClanLand;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.ChatColor;
@@ -50,11 +50,11 @@ public class KitEspionagem extends CustomItem {
         int pontos = ClanLand.getPtosPilagem(cp.getTag(), aqui.getTag());
         int pontosInimigos = ClanLand.getPtosPilagem(aqui.getTag(), cp.getTag());
         p.sendMessage(ChatColor.GREEN + L.m("Sua guilda tem % pontos de pilhagem aqui !", pontos));
-        p.sendMessage(ChatColor.GREEN + L.m("Sua esta guilda tem % pontos de pilhagem sob sua guilda !",pontosInimigos));
-        if (p.getItemInHand().getAmount() == 1) {
+        p.sendMessage(ChatColor.GREEN + L.m("Sua esta guilda tem % pontos de pilhagem sob sua guilda !", pontosInimigos));
+        if (p.getInventory().getItemInMainHand().getAmount() == 1) {
             p.setItemInHand(null);
         } else {
-            p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+            p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
         }
         return true;
     }

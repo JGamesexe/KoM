@@ -14,16 +14,17 @@
  */
 package nativelevel.Custom.Buildings;
 
-import org.bukkit.Chunk;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class Construcao {
 
@@ -36,7 +37,7 @@ public abstract class Construcao {
     public static boolean chunkConstruido(Chunk c) {
         return construido.contains(c);
     }
-    
+
     public static void save(Location inicio, Vector tamanho) {
         Chunk l1 = inicio.getChunk();
         Chunk l2 = inicio.clone().add(tamanho).getChunk();

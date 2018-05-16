@@ -1,14 +1,14 @@
 package nativelevel.utils;
 
-import java.util.Arrays;
-import java.util.List;
 import nativelevel.Custom.CustomItem;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
- *
  * @author Ziden
  */
 public class CategoriaUtils {
@@ -36,20 +36,20 @@ public class CategoriaUtils {
     }
 
     private static List<Material> utilidades = Arrays.asList(new Material[]{
-        Material.COMPASS, Material.WATCH, Material.TORCH, Material.WRITTEN_BOOK
+            Material.COMPASS, Material.WATCH, Material.TORCH, Material.WRITTEN_BOOK
     });
 
     private static List<Material> comidas = Arrays.asList(new Material[]{
-        Material.COOKIE, Material.BREAD, Material.PUMPKIN_PIE, Material.CAKE, Material.APPLE, Material.GOLDEN_APPLE,
-        Material.MUSHROOM_SOUP, Material.RAW_FISH, Material.COOKED_FISH, Material.RAW_BEEF, Material.COOKED_BEEF, Material.RAW_CHICKEN,
-        Material.COOKED_CHICKEN, Material.COOKED_MUTTON, Material.MUTTON, Material.RABBIT_FOOT, Material.RABBIT_STEW
+            Material.COOKIE, Material.BREAD, Material.PUMPKIN_PIE, Material.CAKE, Material.APPLE, Material.GOLDEN_APPLE,
+            Material.MUSHROOM_SOUP, Material.RAW_FISH, Material.COOKED_FISH, Material.RAW_BEEF, Material.COOKED_BEEF, Material.RAW_CHICKEN,
+            Material.COOKED_CHICKEN, Material.COOKED_MUTTON, Material.MUTTON, Material.RABBIT_FOOT, Material.RABBIT_STEW
     });
 
     private static List<Material> recursos = Arrays.asList(new Material[]{
-        Material.SUGAR_CANE, Material.SUGAR, Material.SEEDS, Material.MELON_SEEDS, Material.PUMPKIN_SEEDS,
-        Material.MELON, Material.PUMPKIN, Material.RED_ROSE, Material.DOUBLE_PLANT, Material.YELLOW_FLOWER,
-        Material.COCOA, Material.CACTUS, Material.LEAVES, Material.LEAVES_2, Material.LOG, Material.LOG_2,
-        Material.GRAVEL, Material.CLAY, Material.GLASS, Material.SAND, Material.CARROT, Material.POTATO, Material.CARROT_ITEM,Material.LEATHER,
+            Material.SUGAR_CANE, Material.SUGAR, Material.SEEDS, Material.MELON_SEEDS, Material.PUMPKIN_SEEDS,
+            Material.MELON, Material.PUMPKIN, Material.RED_ROSE, Material.DOUBLE_PLANT, Material.YELLOW_FLOWER,
+            Material.COCOA, Material.CACTUS, Material.LEAVES, Material.LEAVES_2, Material.LOG, Material.LOG_2,
+            Material.GRAVEL, Material.CLAY, Material.GLASS, Material.SAND, Material.CARROT, Material.POTATO, Material.CARROT_ITEM, Material.LEATHER,
     });
 
     public static CategoriaItem getCategoria(ItemStack ss) {
@@ -63,7 +63,7 @@ public class CategoriaUtils {
 
     public static CategoriaItem getCategoria(Material m) {
 
-        if (m.name().contains("ORE") || m.name().contains("INGOT") || m==Material.DIAMOND || m==Material.GLOWSTONE || m==Material.GLOWSTONE_DUST) {
+        if (m.name().contains("ORE") || m.name().contains("INGOT") || m == Material.DIAMOND || m == Material.GLOWSTONE || m == Material.GLOWSTONE_DUST) {
             return CategoriaItem.Minerio;
         } else if (m.name().contains("REDSTONE") || m.name().contains("PISTON") || m.name().contains("DIODE")) {
             return CategoriaItem.Engenharia;
@@ -83,13 +83,13 @@ public class CategoriaUtils {
                 || m.name().contains("_PICKAXE")
                 || m.name().contains("_HOE")
                 || m.name().contains("_SPADE")
-                || m==Material.BOW) {
+                || m == Material.BOW) {
             return CategoriaItem.Arma;
         } else if (m.name().contains("_CHESTPLATE")
                 || m.name().contains("_LEGGINGS")
                 || m.name().contains("_HELMET")
                 || m.name().contains("_BOOTS")
-                || m.name().contains("Capacete") || m==Material.SHIELD) {
+                || m.name().contains("Capacete") || m == Material.SHIELD) {
             return CategoriaItem.Armadura;
         } else if (m.isBlock()) {
             return CategoriaItem.Bloco;

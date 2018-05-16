@@ -31,21 +31,21 @@ public class ComandoG implements CommandExecutor {
                 p.sendMessage(ChatColor.GREEN + "Voce gastou " + custo + " " + moeda + " pelo chat global !");
                 InstaMCLibKom.economy.withdrawPlayer(p.getName(), custo);
             }
-            
+
             if (p.hasMetadata("Silenciado")) {
                 p.sendMessage("§f[§4!§f]§8 Voce esta silenciado. Talves voce tenha falado algo inadequado no chat!");
                 return true;
             }
-            
+
             String clan = "";
             String channel = "§7[g]";
             String prefixo = "";
             String msg = "";
             String mensagem = "";
             String nick = p.getName();
-            if(p.isOp() || p.hasPermission("kom.staff"))
-                nick = ChatColor.GOLD+nick;
-            
+            if (p.isOp() || p.hasPermission("kom.staff"))
+                nick = ChatColor.GOLD + nick;
+
             prefixo = prefixo + InstaMCLibKom.chat.getPlayerPrefix(p);
             prefixo = prefixo.replaceAll("\\&", "§");
             ClanPlayer cp;

@@ -1,21 +1,15 @@
 package nativelevel.Listeners;
 
-import java.util.Arrays;
-import java.util.List;
-import nativelevel.Classes.Engineer;
 import nativelevel.Classes.Farmer;
 import nativelevel.Classes.Lumberjack;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.Ponte;
 import nativelevel.Custom.Items.SuperBomba;
 import nativelevel.CustomEvents.BlockHarvestEvent;
-import nativelevel.ExecutaSkill;
 import nativelevel.Harvesting.HarvestEvents;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
-import static nativelevel.Listeners.GeneralListener.pistaoNaoEmpurra;
-import static nativelevel.Listeners.GeneralListener.wizard;
 import nativelevel.Planting.PlantEvents;
 import nativelevel.integration.SimpleClanKom;
 import nativelevel.rankings.Estatistica;
@@ -25,11 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BrewingStand;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Sign;
+import org.bukkit.block.*;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -44,10 +34,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static nativelevel.Listeners.GeneralListener.pistaoNaoEmpurra;
+import static nativelevel.Listeners.GeneralListener.wizard;
+
 /**
- *
  * @author Ziden
- * 
  */
 
 public class BlockListener implements Listener {
@@ -56,13 +50,13 @@ public class BlockListener implements Listener {
 
     @EventHandler
     public void harvest(BlockHarvestEvent ev) {
-        if(ev.getHarvestable().classe==Jobs.Classe.Lenhador) {
+        if (ev.getHarvestable().classe == Jobs.Classe.Lenhador) {
             Lumberjack.corta(ev);
-        } else  if(ev.getHarvestable().classe==Jobs.Classe.Fazendeiro) {
+        } else if (ev.getHarvestable().classe == Jobs.Classe.Fazendeiro) {
             Farmer.blockHarvest(ev);
         }
     }
-    
+
     @EventHandler
     public void pistao(BlockPistonExtendEvent ev) {
         for (Block b : ev.getBlocks()) {
@@ -74,20 +68,20 @@ public class BlockListener implements Listener {
                     b.setType(Material.AIR);
                 }
             }
-            if (!ev.getBlock().getWorld().getName().equalsIgnoreCase("dungeon")) {
+            if (!ev.getBlock().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                 if (b.getType() == Material.SLIME_BLOCK) {
                     ev.setCancelled(true);
                 }
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void quebraBloco(final BlockBreakEvent event) {
         if (event.isCancelled()) {
             return;
         }
-        
+
         KoM.debug("Block Break event highest");
 
         if (event.getPlayer().getGameMode() == GameMode.CREATIVE && event.getPlayer().hasPermission("kom.build")) {
@@ -113,12 +107,12 @@ public class BlockListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        
-        if(event.getBlock().getType()==Material.LEAVES || event.getBlock().getType()==Material.LEAVES_2) {
+
+        if (event.getBlock().getType() == Material.LEAVES || event.getBlock().getType() == Material.LEAVES_2) {
             Farmer.cortaFolha(event.getPlayer(), event.getBlock());
         }
 
-        if (event.getBlock().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (event.getBlock().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             Dungeon.blockBreak(event);
             return;
         }
@@ -145,7 +139,7 @@ public class BlockListener implements Listener {
                 event.getPlayer().sendMessage(ChatColor.RED + L.m("Esta placa esta presa por um poder maior."));
                 event.setCancelled(true);
                 return;
-        }
+            }
         }
         if (event.getBlock().getRelative(BlockFace.UP).getType() == Material.SIGN || event.getBlock().getRelative(BlockFace.UP).getType() == Material.SIGN_POST) {
             Sign s = (Sign) event.getBlock().getRelative(BlockFace.UP).getState();
@@ -175,13 +169,13 @@ public class BlockListener implements Listener {
             }
         }
         KoM.generator.breakBlock(event);
-        
+
         HarvestEvents.quebraBlock(event);
-        
+
         KoM.debug("Fim block break highest");
 
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void poeBloco(BlockPlaceEvent ev) {
         if (ev.isCancelled()) {
@@ -197,11 +191,11 @@ public class BlockListener implements Listener {
             }
         }
 
-        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             if (ev.getBlock().getType() != Material.TORCH) {
                 ev.getPlayer().damage(7);
             } else {
-                Arrow a = Bukkit.getWorld("dungeon").spawn(ev.getBlock().getLocation(), Arrow.class);
+                Arrow a = Bukkit.getWorld("NewDungeon").spawn(ev.getBlock().getLocation(), Arrow.class);
                 for (Entity e : a.getNearbyEntities(8, 8, 8)) {
                     if (e.getType() == EntityType.PLAYER) {
                         Player nego = (Player) e;
@@ -214,7 +208,7 @@ public class BlockListener implements Listener {
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void colocaBloco(final BlockPlaceEvent ev) {
 
@@ -229,7 +223,7 @@ public class BlockListener implements Listener {
         if (ev.getBlock().getType() == Material.COMMAND) {
             //KnightsOfMinecraft.komLog.escreve(ev.getPlayer().getName() +L.m( " colocou command block no mundo " + ev.getBlock().getLocation().getWorld().getName() + " na loc " + ev.getBlock().getLocation().getBlockX() + "," + ev.getBlock().getLocation().getBlockY() + "," + ev.getBlock().getLocation().getBlockZ());
         }
-        
+
         // anti bug de criar redstone_block
         if (ev.getBlock().getType() == Material.STONE_BUTTON) {
             if (ev.getBlockAgainst().getType().getId() == 98 && ev.getBlockAgainst().getData() == 3) {
@@ -240,13 +234,13 @@ public class BlockListener implements Listener {
             }
         }
 
-        String customItem = CustomItem.getCustomItem(ev.getPlayer().getItemInHand());
+        String customItem = CustomItem.getCustomItem(ev.getPlayer().getInventory().getItemInMainHand());
         if (customItem != null) {
             ev.setCancelled(true);
             return;
         }
 
-        if (ev.getBlock().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (ev.getBlock().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             Dungeon.blockPlace(ev);
         }
 
@@ -254,8 +248,7 @@ public class BlockListener implements Listener {
             ev.setCancelled(true);
             return;
         }
-        
-      
+
 
         if (ev.getBlock().getType() == Material.BED || ev.getBlock().getType() == Material.HOPPER || ev.getBlock().getType() == Material.HOPPER_MINECART || ev.getBlock().getType() == Material.IRON_ORE || ev.getBlock().getType() == Material.GOLD_ORE || ev.getBlock().getType() == Material.MELON || ev.getBlock().getType() == Material.PUMPKIN || ev.getBlock().getType() == Material.EMERALD_ORE) {
             if (!ev.getPlayer().isOp()) {
@@ -263,10 +256,10 @@ public class BlockListener implements Listener {
                 ev.setCancelled(true);
             }
         }
-        
-          KoM.debug("Planting");
+
+        KoM.debug("Planting");
         PlantEvents.plantaBlock(ev);
-        
+
         if (!ev.isCancelled()) {
             ev.getBlock().setMetadata("playerpois", new FixedMetadataValue(KoM._instance, true));
         }

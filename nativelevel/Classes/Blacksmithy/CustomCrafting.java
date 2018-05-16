@@ -1,8 +1,5 @@
 package nativelevel.Classes.Blacksmithy;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import nativelevel.Jobs;
 import nativelevel.Lang.L;
 import nativelevel.Lang.LangMinecraft;
@@ -11,30 +8,23 @@ import nativelevel.RecipeBooks.HaveRecipe;
 import nativelevel.RecipeBooks.RecipePage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.Potion;
-import org.bukkit.potion.PotionType;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- *
  * @author vntgasl
- *
  */
 public abstract class CustomCrafting implements HaveRecipe {
 
     public void consome(Player player) {
-        if (player.getItemInHand().getAmount() > 1) {
-            player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
+        if (player.getInventory().getItemInMainHand().getAmount() > 1) {
+            player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
         } else {
             player.setItemInHand(null);
         }

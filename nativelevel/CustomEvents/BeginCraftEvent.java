@@ -13,7 +13,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author User
  */
 public class BeginCraftEvent extends Event {

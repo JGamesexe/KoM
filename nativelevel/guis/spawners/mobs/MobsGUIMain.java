@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -68,10 +68,14 @@ public class MobsGUIMain extends GUI {
     }
 
     @Override
-    public void interage(Player player, int slot, InventoryAction inventoryAction) {
-        super.interage(player, slot, inventoryAction);
+    public void interage(InventoryClickEvent event) {
+        super.interage(event);
 
-        if (inventory.getItem(slot) == null || inventory.getItem(slot).getType().equals(Material.STAINED_GLASS_PANE)) return;
+        Player player = (Player) event.getWhoClicked();
+        int slot = event.getSlot();
+
+        if (inventory.getItem(slot) == null || inventory.getItem(slot).getType().equals(Material.STAINED_GLASS_PANE))
+            return;
 
         switch (slot) {
             case 2:

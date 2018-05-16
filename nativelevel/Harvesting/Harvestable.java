@@ -5,17 +5,16 @@
  */
 package nativelevel.Harvesting;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import nativelevel.Jobs;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author vntgasl
  */
 public class Harvestable {
@@ -35,12 +34,12 @@ public class Harvestable {
         lore.add(ChatColor.YELLOW + classe.name());
         lore.add(ChatColor.GREEN + "Dificuldade: " + ChatColor.YELLOW + difficulty);
         lore.add(ChatColor.GREEN + "Bonus XP: " + ChatColor.YELLOW + expRatio);
-        if(op) {
-           lore.add(ChatColor.AQUA + "Click Direito: " + ChatColor.YELLOW + "+1 Dificuldade");
-           lore.add(ChatColor.AQUA + "Click Esquerdo: " + ChatColor.YELLOW + "-1 Dificuldade");
-           lore.add(ChatColor.AQUA + "Shift Click Direito: " + ChatColor.YELLOW + "+0.1 XP");
-           lore.add(ChatColor.AQUA + "Shift Click Esquerdo: " + ChatColor.YELLOW + "-0.1 XP");
-           lore.add(ChatColor.AQUA + "Mouse + Q: " + ChatColor.YELLOW + "Deletar");
+        if (op) {
+            lore.add(ChatColor.AQUA + "Click Direito: " + ChatColor.YELLOW + "+1 Dificuldade");
+            lore.add(ChatColor.AQUA + "Click Esquerdo: " + ChatColor.YELLOW + "-1 Dificuldade");
+            lore.add(ChatColor.AQUA + "Shift Click Direito: " + ChatColor.YELLOW + "+0.1 XP");
+            lore.add(ChatColor.AQUA + "Shift Click Esquerdo: " + ChatColor.YELLOW + "-0.1 XP");
+            lore.add(ChatColor.AQUA + "Mouse + Q: " + ChatColor.YELLOW + "Deletar");
         }
         meta.setLore(lore);
         ss.setItemMeta(meta);

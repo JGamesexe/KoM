@@ -2,16 +2,10 @@ package nativelevel.Classes.Blacksmithy.recipes;
 
 import nativelevel.Classes.Blacksmithy.CustomCrafting;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author Ziden
- *
  */
 public class DiamondChestplate extends CustomCrafting {
 
@@ -22,9 +16,9 @@ public class DiamondChestplate extends CustomCrafting {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            new ItemStack(Material.IRON_CHESTPLATE, 1),
-            new ItemStack(Material.LEATHER, 1),
-            new ItemStack(Material.DIAMOND_BLOCK),};
+                new ItemStack(Material.IRON_CHESTPLATE, 1),
+                new ItemStack(Material.LEATHER, 1),
+                new ItemStack(Material.DIAMOND_BLOCK),};
     }
 
     @Override

@@ -16,42 +16,46 @@ package nativelevel.Classes;
 
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.CustomEvents.BlockHarvestEvent;
-import org.bukkit.util.Vector;
-import org.bukkit.event.player.PlayerInteractEvent;
-import nativelevel.Listeners.GeneralListener;
-import nativelevel.Jobs;
-import nativelevel.Lang.PT;
-import nativelevel.Menu.Menu;
-import nativelevel.sisteminhas.ClanLand;
-import org.bukkit.event.block.Action;
-import nativelevel.KoM;
-import nativelevel.MetaShit;
-import nativelevel.Attributes.Mana;
 import nativelevel.Attributes.Stamina;
+import nativelevel.CustomEvents.BlockHarvestEvent;
 import nativelevel.Equipment.EquipManager;
-import nativelevel.bencoes.TipoBless;
-import nativelevel.config.ConfigKom;
-import nativelevel.config.ItemJob;
-import nativelevel.rankings.Estatistica;
-import nativelevel.rankings.RankDB;
+import nativelevel.Jobs;
+import nativelevel.KoM;
+import nativelevel.Menu.Menu;
+import nativelevel.MetaShit;
+import nativelevel.sisteminhas.ClanLand;
 import nativelevel.spec.PlayerSpec;
-import nativelevel.sisteminhas.XP;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 public class Minerador {
+
+    public static void onHit(EntityDamageByEntityEvent ev) {
+
+
+        Player attacker = (Player) ev.getDamager();
+        ItemStack weapon = attacker.getInventory().getItemInMainHand();
+
+        if (weapon.getType().toString().contains("PICKAXE")) {
+
+            if (weapon.getType().name().contains("GOLD")) ev.setDamage(ev.getDamage() + 0.5);
+
+            ev.setDamage(ev.getDamage() + (ev.getDamage() * 0.10));
+
+        }
+
+    }
 
     public static void axaItems(BlockBreakEvent ev) {
         int lvl = Jobs.getJobLevel("Minerador", ev.getPlayer());
@@ -108,11 +112,11 @@ public class Minerador {
     }
 
     public static void escala(PlayerInteractEvent ev) {
-        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             return;
         }
-        
-        if(ev.getHand()==EquipmentSlot.OFF_HAND)
+
+        if (ev.getHand() == EquipmentSlot.OFF_HAND)
             return;
 
         if (Jobs.getJobLevel("Minerador", ev.getPlayer()) == 1) {
@@ -131,7 +135,7 @@ public class Minerador {
                     ev.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE + "* cleck *");
                     ev.getPlayer().setVelocity(velo);
                     PlayEffect.play(VisualEffect.FIREWORKS_SPARK, ev.getClickedBlock().getLocation(), "num:5");
-                    ItemStack mao = ev.getPlayer().getItemInHand();
+                    ItemStack mao = ev.getPlayer().getInventory().getItemInMainHand();
                     mao.setDurability((short) (mao.getDurability() + 1));
                     //EntityPlayer p = ((CraftPlayer)ev.getPlayer()).getHandle();
                     //p.playerConnection.sendPacket(new PacketPlayInArmAnimation());
@@ -151,7 +155,7 @@ public class Minerador {
         }
 
         String type = ClanLand.getTypeAt(p.getLocation());
-        if (type.equalsIgnoreCase("SAFE") || p.getLocation().getWorld().getName().equals("dungeon")) {
+        if (type.equalsIgnoreCase("SAFE") || p.getLocation().getWorld().getName().equals("NewDungeon")) {
             p.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Minerador") + " " + ChatColor.RED + "Voce nao pode desarmar aqui !");
             return;
         }
@@ -164,7 +168,7 @@ public class Minerador {
         KoM.gastaItem(p, p.getInventory(), Material.GRAVEL, (byte) 0);
 
         final Player inimigo = (Player) ev.getEntity();
-        if (inimigo.getItemInHand() == null) {
+        if (inimigo.getInventory().getItemInMainHand() == null) {
             return;
         }
 
@@ -187,7 +191,7 @@ public class Minerador {
                 Thief.revela(p);
             }
 
-            ItemStack namao = inimigo.getItemInHand();
+            ItemStack namao = inimigo.getInventory().getItemInMainHand();
             int slot = inimigo.getInventory().firstEmpty();
             inimigo.setItemInHand(null);
 

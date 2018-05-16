@@ -1,10 +1,6 @@
 package nativelevel.komquista.managers;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import nativelevel.KoM;
 import nativelevel.komquista.DB;
 import nativelevel.komquista.KomQuista;
@@ -12,20 +8,14 @@ import nativelevel.komquista.utils.ChatUtils;
 import nativelevel.phatloots.PhatLootsAPI;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.scheduler.BukkitScheduler;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class KomQuistaManager {
 
@@ -71,7 +61,7 @@ public class KomQuistaManager {
             taabrindo = true;
             Bukkit.broadcastMessage("§9• §eSendo aberto em 2 minutos!");
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask( KoM._instance, new Runnable() {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, new Runnable() {
 
                 public void run() {
                     for (Player p : Bukkit.getOnlinePlayers()) {
@@ -95,11 +85,11 @@ public class KomQuistaManager {
                         ChatUtils.SendSuffix(p);
                     }
                     KomQuistaManager.aberto = true;
-                    
+
                     KomQuistaManager.taabrindo = false;
 
                     KomQuistaManager.tempoinicial = System.currentTimeMillis();
-                    
+
                     KomQuistaManager.startMessages();
 
                     Runnable r = new Runnable() {
@@ -110,10 +100,10 @@ public class KomQuistaManager {
                             }
                         }
                     };
-                    
-                    KomQuistaManager.task = Bukkit.getScheduler().scheduleSyncDelayedTask( KoM._instance,r , 36000L);
-                    
-                    
+
+                    KomQuistaManager.task = Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, r, 36000L);
+
+
                 }
             }, 2400L);
 
@@ -161,7 +151,7 @@ public class KomQuistaManager {
     }
 
     public static void startMessages() {
-        messagetask = Bukkit.getScheduler().scheduleSyncRepeatingTask( KoM._instance, new Runnable() {
+        messagetask = Bukkit.getScheduler().scheduleSyncRepeatingTask(KoM._instance, new Runnable() {
             public void run() {
                 int minutos = KomQuistaManager.getTempoRestante();
                 String modo = KomQuistaManager.modotreino ? "treino" : "recompensa";
@@ -201,7 +191,7 @@ public class KomQuistaManager {
                 if (x == 0) {
                     Clan c = KomQuista.getClanManager().getClan(tag);
                     if (!modotreino) {
-                        Bukkit.getScheduler().scheduleSyncDelayedTask( KoM._instance, new Runnable() {
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, new Runnable() {
                             public void run() {
                                 Clan cl = KomQuista.getClanManager().getClan(tag);
                                 if (cl != null) {
@@ -286,7 +276,7 @@ public class KomQuistaManager {
                     sendClanMessage(cl, "§9• §6Dentro de 5 minutos ele abre para todos!");
 
                     final Location bauloc = b.getLocation();
-                    Bukkit.getScheduler().scheduleSyncDelayedTask( KoM._instance, new Runnable() {
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, new Runnable() {
                         public void run() {
                             if (KomQuistaManager.baus.containsKey(bauloc)) {
                                 for (ClanPlayer cp : cl.getOnlineMembers()) {

@@ -4,11 +4,6 @@ import nativelevel.phatloots.PhatLoot;
 import nativelevel.phatloots.PhatLoots;
 import nativelevel.phatloots.PhatLootsCommandSender;
 import nativelevel.phatloots.PhatLootsUtil;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -17,6 +12,8 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.*;
 
 /**
  * A CommandLoot is a Command which may be executed from the player or the console
@@ -81,7 +78,7 @@ public class CommandLoot extends Loot {
     /**
      * Adds this command to the LootBundle
      *
-     * @param lootBundle The loot that has been rolled for
+     * @param lootBundle   The loot that has been rolled for
      * @param lootingBonus The increased chance of getting rarer loots
      */
     @Override
@@ -98,7 +95,7 @@ public class CommandLoot extends Loot {
         new BukkitRunnable() {
             @Override
             public void run() {
-                String cmd  = command;
+                String cmd = command;
                 if (player == null) {
                     if (!fromConsole || command.contains("<player>") || command.contains("<killer>")) {
                         return;
@@ -167,14 +164,14 @@ public class CommandLoot extends Loot {
     @Override
     public boolean onToggle(ClickType click) {
         switch (click) {
-        case SHIFT_LEFT:
-            fromConsole = !fromConsole;
-            break;
-        case SHIFT_RIGHT:
-            tempOP = !tempOP;
-            break;
-        default:
-            return false;
+            case SHIFT_LEFT:
+                fromConsole = !fromConsole;
+                break;
+            case SHIFT_RIGHT:
+                tempOP = !tempOP;
+                break;
+            default:
+                return false;
         }
         return true;
     }

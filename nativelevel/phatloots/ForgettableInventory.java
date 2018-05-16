@@ -1,9 +1,10 @@
 package nativelevel.phatloots;
 
-import java.util.HashMap;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.HashMap;
 
 /**
  * A Forgettable Inventory is a virtual Inventory that will be removed from memory after the set delay
@@ -20,7 +21,7 @@ public class ForgettableInventory {
     /**
      * Constructs a new ForgettableInventory with the given key and Inventory
      *
-     * @param key The given key
+     * @param key       The given key
      * @param inventory The given Inventory
      */
     public ForgettableInventory(String key, Inventory inventory) {

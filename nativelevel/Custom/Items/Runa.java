@@ -14,24 +14,20 @@
  */
 package nativelevel.Custom.Items;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import nativelevel.CFG;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
-import nativelevel.KoM;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Lang.L;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class Runa extends CustomItem {
 
@@ -62,9 +58,9 @@ public class Runa extends CustomItem {
         String loc = local.getBlockX() + "@" + local.getBlockY() + "@" + local.getBlockZ();
         ItemMeta meta = ss.getItemMeta();
         meta.setLore(Arrays.asList(new String[]{
-            ChatColor.BLACK + ":" + loc,
-            ChatColor.GOLD + "- Uma runa marcada por "+nomePlay,
-            ChatColor.BLACK + ":Runa"}
+                ChatColor.BLACK + ":" + loc,
+                ChatColor.GOLD + "- Uma runa marcada por " + nomePlay,
+                ChatColor.BLACK + ":Runa"}
         ));
         ss.setItemMeta(meta);
     }

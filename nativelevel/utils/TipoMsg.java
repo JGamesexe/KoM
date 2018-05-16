@@ -6,11 +6,10 @@
 package nativelevel.utils;
 
 /**
- *
  * @author ciro
  */
 public enum TipoMsg {
-    MENSAGEM,ALERTA,CONQUISTA,DELAY,ERROR,AVISO;
+    MENSAGEM, ALERTA, CONQUISTA, DELAY, ERROR, AVISO;
     /*
     -MENSAGEM: Msg qualquer em §e sem som
     -ALERTA: Msg em vermelho §c com som de click para alertas em geral

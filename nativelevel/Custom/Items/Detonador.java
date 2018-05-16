@@ -14,32 +14,25 @@
  */
 package nativelevel.Custom.Items;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
+import nativelevel.Attributes.Mana;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
 import nativelevel.KoM;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Lang.L;
-import nativelevel.Attributes.Mana;
-import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.UUID;
 
 public class Detonador extends CustomItem {
 
@@ -62,9 +55,9 @@ public class Detonador extends CustomItem {
                     EntityDamageByEntityEvent ev = new EntityDamageByEntityEvent(causador, e, EntityDamageEvent.DamageCause.ENTITY_EXPLOSION, 12D);
                     Bukkit.getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        KoM.dealTrueDamage((LivingEntity)e, ev.getDamage());
-                        if(e.getType()==EntityType.PLAYER) {
-                            ((Player)e).sendMessage(ChatColor.RED+"Uma armadilha explodiu !");
+                        KoM.dealTrueDamage((LivingEntity) e, ev.getDamage());
+                        if (e.getType() == EntityType.PLAYER) {
+                            ((Player) e).sendMessage(ChatColor.RED + "Uma armadilha explodiu !");
                         }
                     }
                 }

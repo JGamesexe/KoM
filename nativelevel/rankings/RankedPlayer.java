@@ -8,15 +8,14 @@ package nativelevel.rankings;
 import java.util.UUID;
 
 /**
- *
  * @author vntgasl
  */
 public class RankedPlayer {
-    
+
     public Estatistica stat;
     public String player;
     public UUID id;
     public int posicao;
     public int pontos;
-    
+
 }

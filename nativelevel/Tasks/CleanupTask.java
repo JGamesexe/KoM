@@ -1,14 +1,12 @@
 package nativelevel.Tasks;
 
 import nativelevel.KoM;
-import nativelevel.Language.MSG;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.*;
-import org.bukkit.World;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.entity.*;
 
 /**
- *
  * @author Nosliw
  */
 public class CleanupTask implements Runnable {
@@ -35,10 +33,10 @@ public class CleanupTask implements Runnable {
         if (counter >= CYCLES) {
             for (World world : Bukkit.getWorlds()) {
                 for (Entity e : world.getEntities()) {
-                    
-                    if(e.hasMetadata("NPC"))
+
+                    if (e.hasMetadata("NPC"))
                         continue;
-                    
+
                     if (e.getType() == EntityType.DROPPED_ITEM && e.getType() != EntityType.ARMOR_STAND) {
                         e.remove();
                     } else if (e instanceof Monster) {

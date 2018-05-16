@@ -37,10 +37,10 @@ public class DocumentoBancario extends CustomItem {
         slots = slots + 1;
         KoM.database.setSlotsBanco(p.getUniqueId().toString(), slots);
         p.sendMessage(ChatColor.GREEN + L.m("Voce leu os documentos, e ganhou um slot extra no banco !"));
-        if (p.getItemInHand().getAmount() == 1) {
+        if (p.getInventory().getItemInMainHand().getAmount() == 1) {
             p.setItemInHand(null);
         } else {
-            p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+            p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
         }
         return true;
     }

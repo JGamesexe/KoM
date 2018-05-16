@@ -5,22 +5,21 @@
  */
 package nativelevel.gemas;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import nativelevel.Jobs;
 import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public enum Gema {
 
-   // Amarela(4, "§E", new String[]{"+1 Regeneracao"}, new String[]{"+2 Regeneracao"}),
+    // Amarela(4, "§E", new String[]{"+1 Regeneracao"}, new String[]{"+2 Regeneracao"}),
     Laranja(1, "§6", new String[]{"+3% Chance Critico", "+1 Dano Critico"}, new String[]{"+7% Chance Critico", "+5% Dano Critico"}),
-   // Rosa(6, "§D", new String[]{"+1 Dano Magico"}, new String[]{"+3 Dano Magico"}),
+    // Rosa(6, "§D", new String[]{"+1 Dano Magico"}, new String[]{"+3 Dano Magico"}),
     Aqua(3, "§B", new String[]{"+3% Dano Distancia"}, new String[]{"+8% Dano Distancia"}),
     Preta(15, "§1", new String[]{"+1 Tempo Stun"}, new String[]{"+4 Tempo Stun"}),
     Vermelha(14, "§C", new String[]{"+2% Dano Fisico"}, new String[]{"+8% Dano Fisico"}),
@@ -66,11 +65,11 @@ public enum Gema {
     }
 
     public static ItemStack gera(Gema gem, Raridade r) {
-        ItemStack gema = new ItemStack(Material.STAINED_GLASS, 1,(short)0, (byte)gem.id);
+        ItemStack gema = new ItemStack(Material.STAINED_GLASS, 1, (short) 0, (byte) gem.id);
         int qtd = 1;
         ItemMeta meta = gema.getItemMeta();
         List<String> lore = meta.getLore();
-        if(lore==null)
+        if (lore == null)
             lore = new ArrayList<String>();
         lore.add("§9§lIsto e uma Gema " + gem.cor + "§l " + gem.name());
         lore.add(" ");
@@ -134,11 +133,11 @@ public enum Gema {
                 lore.addAll(Arrays.asList(g.loreNormal));
             }
             meta.setLore(lore);
-             ss.setItemMeta(meta);
+            ss.setItemMeta(meta);
         }
     }
 
-     public static boolean temSockets(ItemStack ss) {
+    public static boolean temSockets(ItemStack ss) {
         ItemMeta meta = ss.getItemMeta();
         if (meta == null) {
             return false;
@@ -153,7 +152,7 @@ public enum Gema {
         }
         return false;
     }
-    
+
     public static List<Gema> getSocketsLivres(ItemStack ss) {
         List<Gema> sockets = new ArrayList<Gema>();
         ItemMeta meta = ss.getItemMeta();
@@ -177,7 +176,7 @@ public enum Gema {
     public static void addSocket(ItemStack item, Gema g) {
         ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.getLore();
-        if(lore==null)
+        if (lore == null)
             lore = new ArrayList<String>();
         int index = lore.indexOf("      ");
         lore.add(index + 1, g.cor + "§l" + iconeSlot + " [Encaixe~" + g.name() + "]");

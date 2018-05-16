@@ -5,27 +5,7 @@
  */
 package nativelevel.config;
 
-import nativelevel.lojaagricola.*;
-import nativelevel.config.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import nativelevel.Classes.*;
-import nativelevel.KoM;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.Potion;
-import org.bukkit.potion.PotionType;
-
 /**
- *
  * @author vntgasl
  */
 public class ConfigKom {

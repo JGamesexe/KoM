@@ -6,15 +6,15 @@
 package nativelevel.config;
 
 import org.bukkit.Material;
+
 /**
- *
  * @author Gabriel
  */
 public class ItemJob {
-    
+
     public int dificuldade;
     public String job;
     public int xp;
     public Material item;
-    
+
 }

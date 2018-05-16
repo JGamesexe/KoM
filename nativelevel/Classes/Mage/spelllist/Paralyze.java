@@ -5,17 +5,13 @@
  */
 package nativelevel.Classes.Mage.spelllist;
 
-import java.util.HashSet;
-import java.util.UUID;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.KoM;
-import nativelevel.Listeners.GeneralListener;
 import nativelevel.Classes.Mage.Elements;
 import nativelevel.Classes.Mage.MageSpell;
 import nativelevel.Classes.Mage.SpellParticleEffects;
+import nativelevel.KoM;
 import nativelevel.MetaShit;
-import nativelevel.spec.PlayerSpec;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_12_R1.PacketPlayOutEntityDestroy;
 import org.bukkit.Bukkit;
@@ -23,18 +19,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftSnowball;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.SmallFireball;
-import org.bukkit.entity.Snowball;
+import org.bukkit.entity.*;
+
+import java.util.HashSet;
+import java.util.UUID;
 
 /**
- *
  * @author User
- *
  */
 
 public class Paralyze extends MageSpell {
@@ -46,7 +37,7 @@ public class Paralyze extends MageSpell {
     public static HashSet<UUID> paralizados = new HashSet<UUID>();
 
     public static void paraliza(LivingEntity e) {
-          KoM.debug("Adicionando para");
+        KoM.debug("Adicionando para");
         paralizados.add(e.getUniqueId());
         SpellParticleEffects.ativos.put(e, SpellParticleEffects.ParticleType.BLUE_REDSTONE);
     }

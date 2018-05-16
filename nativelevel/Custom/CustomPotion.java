@@ -1,8 +1,5 @@
 package nativelevel.Custom;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import nativelevel.Jobs;
 import nativelevel.Lang.L;
 import nativelevel.Lang.LangMinecraft;
@@ -12,10 +9,8 @@ import nativelevel.RecipeBooks.RecipePage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.Inventory;
@@ -27,16 +22,18 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
- *
  * @author vntgasl
- *
  */
 public abstract class CustomPotion implements HaveRecipe {
 
     public void consome(Player player) {
-        if (player.getItemInHand().getAmount() > 1) {
-            player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
+        if (player.getInventory().getItemInMainHand().getAmount() > 1) {
+            player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
         } else {
             player.setItemInHand(null);
         }
@@ -95,7 +92,7 @@ public abstract class CustomPotion implements HaveRecipe {
     public abstract int getMinimumSkill();
 
     public abstract ItemStack brewWith();
-    
+
     public abstract Color cor();
 
     public abstract void drink(PlayerItemConsumeEvent ev);
@@ -151,13 +148,13 @@ public abstract class CustomPotion implements HaveRecipe {
         pot.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
 
         item.setItemMeta(pot);
-       
-        
-        PotionMeta potmeta = (PotionMeta)item.getItemMeta();
+
+
+        PotionMeta potmeta = (PotionMeta) item.getItemMeta();
         potmeta.clearCustomEffects();
         potmeta.setColor(this.cor());
-        potmeta.setBasePotionData(new PotionData(PotionType.MUNDANE,false,false));
-     
+        potmeta.setBasePotionData(new PotionData(PotionType.MUNDANE, false, false));
+
         item.setItemMeta(potmeta);
         setItemNameAndLore(item, ChatColor.GOLD + name, lore.toArray(new String[lore.size()]));
         specialThreat(item);

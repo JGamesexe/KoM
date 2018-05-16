@@ -1,28 +1,25 @@
 package nativelevel.lojas;
 
-import java.util.List;
 import nativelevel.sisteminhas.ClanLand;
 import nativelevel.sisteminhas.KomSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.List;
 
 public class ShopListener
         extends KomSystem {
@@ -125,7 +122,7 @@ public class ShopListener
                     p.sendMessage("§cVoce nao possui dinheiro para comprar este item!");
                     return;
                 }
-                
+
                 //FactionMoney.gasta(p, preco + 0.0D);
                 ClanLand.econ.withdrawPlayer(p.getName(), preco);
                 ItemStack item = ev.getCurrentItem().clone();
@@ -145,7 +142,7 @@ public class ShopListener
                 removeInventoryItems(p.getInventory(), item.getType(), item.getDurability(), item.getAmount());
 
                 ClanLand.econ.depositPlayer(p.getName(), preco);
-                
+
                 //FactionMoney.ganha(p, preco + 0.0D);
 
                 p.sendMessage("§cItem Vendido! Ganhou: " + preco + " Coins");

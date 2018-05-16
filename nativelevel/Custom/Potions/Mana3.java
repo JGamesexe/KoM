@@ -5,32 +5,24 @@
  */
 package nativelevel.Custom.Potions;
 
+import nativelevel.Attributes.Mana;
 import nativelevel.Custom.CustomItem;
-import nativelevel.Lang.L;
 import nativelevel.Custom.CustomPotion;
 import nativelevel.Custom.Items.FolhaDeMana;
 import nativelevel.KoM;
-import nativelevel.Attributes.Mana;
+import nativelevel.Lang.L;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.Effect;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 /**
- *
  * @author User
- * 
  */
 
 public class Mana3 extends CustomPotion {
@@ -42,7 +34,7 @@ public class Mana3 extends CustomPotion {
     public Color cor() {
         return Color.BLUE;
     }
-    
+
     @Override
     public void interage(PlayerInteractEvent ev) {
 
@@ -56,9 +48,9 @@ public class Mana3 extends CustomPotion {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            CustomItem.getItem(FolhaDeMana.class).generateItem(),
-            new ItemStack(Material.CAKE, 1),
-            new ItemStack(Material.GHAST_TEAR, 1)};
+                CustomItem.getItem(FolhaDeMana.class).generateItem(),
+                new ItemStack(Material.CAKE, 1),
+                new ItemStack(Material.GHAST_TEAR, 1)};
     }
 
     @Override
@@ -80,7 +72,7 @@ public class Mana3 extends CustomPotion {
     public void drink(PlayerItemConsumeEvent ev) {
         Mana.changeMana(ev.getPlayer(), 200);
         KoM.efeitoBlocos(ev.getPlayer(), Material.LAPIS_BLOCK);
-        ev.getPlayer().sendMessage(ChatColor.GREEN+"Voce recuperou um pouco de seu mana");
+        ev.getPlayer().sendMessage(ChatColor.GREEN + "Voce recuperou um pouco de seu mana");
     }
 
 }

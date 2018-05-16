@@ -5,24 +5,12 @@
  */
 package nativelevel.Custom.Potions;
 
-import genericos.komzin.libzinha.listeners.GeralListener;
-import me.fromgate.playeffect.PlayEffect;
-import me.fromgate.playeffect.VisualEffect;
-import nativelevel.Lang.L;
 import nativelevel.Custom.CustomPotion;
 import nativelevel.KoM;
-import nativelevel.Listeners.GeneralListener;
+import nativelevel.Lang.L;
 import org.bukkit.Color;
-import org.bukkit.Effect;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.ThrownPotion;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -30,12 +18,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-import org.bukkit.util.Vector;
 
 /**
- *
  * @author User
- *
  */
 public class Slow2 extends CustomPotion {
 
@@ -52,7 +37,7 @@ public class Slow2 extends CustomPotion {
     @Override
     public void interage(PlayerInteractEvent ev) {
         ThrownPotion thrownPotion = ev.getPlayer().launchProjectile(ThrownPotion.class);
-        thrownPotion.setItem(new ItemStack(ev.getPlayer().getItemInHand()));
+        thrownPotion.setItem(new ItemStack(ev.getPlayer().getInventory().getItemInMainHand()));
         thrownPotion.setShooter(ev.getPlayer());
         this.consome(ev.getPlayer());
     }
@@ -75,9 +60,9 @@ public class Slow2 extends CustomPotion {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            new ItemStack(Material.COOKED_MUTTON, 1),
-            new ItemStack(Material.FLOWER_POT, 1),
-            new ItemStack(Material.RED_ROSE, 1)};
+                new ItemStack(Material.COOKED_MUTTON, 1),
+                new ItemStack(Material.FLOWER_POT, 1),
+                new ItemStack(Material.RED_ROSE, 1)};
     }
 
     @Override

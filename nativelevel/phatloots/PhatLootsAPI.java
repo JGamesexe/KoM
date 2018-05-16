@@ -1,11 +1,12 @@
 package nativelevel.phatloots;
 
 import nativelevel.phatloots.loot.LootBundle;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 
 /**
  * API for the PhatLoots plugin
@@ -43,8 +44,8 @@ public class PhatLootsAPI {
     public static LootBundle rollForLoot(String phatLootName) {
         PhatLoot phatLoot = PhatLoots.getPhatLoot(phatLootName);
         return phatLoot == null
-               ? new LootBundle()
-               : phatLoot.rollForLoot();
+                ? new LootBundle()
+                : phatLoot.rollForLoot();
     }
 
     /**
@@ -91,7 +92,7 @@ public class PhatLootsAPI {
     /**
      * Forces the given Player to Loot the given Block if it is a PhatLootChest
      *
-     * @param block The Block which may be linked to a PhatLoot
+     * @param block  The Block which may be linked to a PhatLoot
      * @param player The given Player
      * @return true if the Block was linked and looted, false otherwise
      */
@@ -102,8 +103,8 @@ public class PhatLootsAPI {
     /**
      * Forces the given Player to Loot the given Block if it is a PhatLootChest
      *
-     * @param block The Block which may be linked to a PhatLoot
-     * @param player The given Player
+     * @param block     The Block which may be linked to a PhatLoot
+     * @param player    The given Player
      * @param autoSpill true if the Chest should spill its loot
      * @return true if the Block was linked and looted, false otherwise
      */

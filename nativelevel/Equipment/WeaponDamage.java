@@ -1,25 +1,23 @@
 package nativelevel.Equipment;
 
+import me.dpohvar.powernbt.api.NBTCompound;
+import me.dpohvar.powernbt.api.NBTList;
 import nativelevel.Attributes.Armors;
-import java.util.UUID;
 import nativelevel.KoM;
-import nativelevel.Equipment.NBTAttrs;
-import nativelevel.utils.itemattributes.AttributeModifier;
 import nativelevel.utils.itemattributes.ItemAttrAPI;
 import nativelevel.utils.itemattributes.Slot;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.NBTTagList;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.UUID;
+
 /**
- *
  * @author Ziden
- *
  */
 public class WeaponDamage {
 
@@ -27,6 +25,7 @@ public class WeaponDamage {
         if (ss == null) {
             return 0;
         }
+
         if (ss.getType().name().contains("SWORD") || ss.getType().name().contains("AXE") || ss.getType().name().contains("SPADE") || ss.getType().name().contains("HOE")) {
             if (ss.getType().name().contains("WOOD")) {
                 return 1.5;
@@ -56,6 +55,24 @@ public class WeaponDamage {
         ss.setItemMeta(meta);
         ss = attributeModifiers.apply(ss);
         return ss;
+    }
+
+    public static double getItemDamage(ItemStack itemStack) {
+        if (itemStack != null && itemStack.getType() != Material.AIR) {
+            NBTCompound item = KoM.nbtManager.read(itemStack);
+            if (item != null) {
+                NBTCompound tag = item.getCompound("tag");
+                if (tag != null) {
+                    NBTList attrMod = tag.getList("AttributeModifiers");
+                    if (attrMod != null || !attrMod.isEmpty()) {
+                        for (Object anAttrMod : attrMod) {
+                            Bukkit.broadcastMessage(anAttrMod.toString());
+                        }
+                    }
+                }
+            }
+        }
+        return 0;
     }
 
     public static ItemStack checkForMods(ItemStack ss) {

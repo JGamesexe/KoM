@@ -14,56 +14,57 @@
  */
 package nativelevel.Classes.Alchemy;
 
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import me.fromgate.playeffect.PlayEffect;
-import me.fromgate.playeffect.VisualEffect;
 import nativelevel.CFG;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
-import nativelevel.Lang.PT;
-import nativelevel.Listeners.GeneralListener;
 import nativelevel.Menu.Menu;
-import nativelevel.MetaShit;
-import nativelevel.bencoes.TipoBless;
-import nativelevel.config.ConfigKom;
-import nativelevel.config.ItemJob;
-import nativelevel.rankings.Estatistica;
-import nativelevel.rankings.RankDB;
-import nativelevel.spec.PlayerSpec;
-import nativelevel.sisteminhas.XP;
-import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
-import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
 public class Alchemist {
+
+    public static void onHit(EntityDamageByEntityEvent ev) {
+
+        Player attacker = (Player) ev.getDamager();
+        ItemStack weapon = attacker.getInventory().getItemInMainHand();
+
+        if (weapon.getType().toString().contains("HOE")) {
+
+            if (weapon.getType().name().contains("GOLD")) ev.setDamage(ev.getDamage() + 0.2);
+
+            ev.setDamage(ev.getDamage() + (ev.getDamage() * 0.05));
+
+            if ((1 + (Math.random() * 100)) < 50) return;
+
+            LivingEntity reciver = (LivingEntity) ev.getEntity();
+            PotionEffect poison = reciver.getPotionEffect(PotionEffectType.POISON);
+
+            if (poison == null) poison = new PotionEffect(PotionEffectType.POISON, 25, 1);
+            else poison = new PotionEffect(PotionEffectType.POISON, poison.getDuration() + 25, 1);
+
+            reciver.addPotionEffect(poison, true);
+        }
+
+    }
+
+    public static void onDamaged(EntityDamageEvent ev) {
+
+        if (ev.getCause().equals(EntityDamageEvent.DamageCause.POISON)) ev.setCancelled(true);
+
+    }
 
     public static boolean isReagent(int id) {
         if (id < 370 || id > 382) { // no é um reagente
@@ -86,12 +87,12 @@ public class Alchemist {
         return 0;
     }
     */
-    
+
     public static void tossTnt(PlayerInteractEvent ev) {
         if (CFG.dungeons.contains(ev.getPlayer().getWorld().getName())) {
             return;
         }
-        String customItem = CustomItem.getCustomItem(ev.getPlayer().getItemInHand());
+        String customItem = CustomItem.getCustomItem(ev.getPlayer().getInventory().getItemInMainHand());
         if (customItem != null) {
             return;
         }
@@ -100,7 +101,7 @@ public class Alchemist {
             ev.getPlayer().sendMessage(ChatColor.AQUA + Menu.getSimbolo(L.get("Classes.Alchemist")) + " " + ChatColor.RED + L.get("Classes.AlchemistClass.ThrowTnt"));
             return;
         }
-        if (ev.getPlayer().getItemInHand().getType() == Material.TNT) {
+        if (ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.TNT) {
             if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("WoE")) {
                 ev.setCancelled(true);
                 return;
@@ -353,7 +354,7 @@ public class Alchemist {
                     return true;
                 }
                 int level = ev.getClickedBlock().getData();
-                ItemStack namao = ev.getPlayer().getItemInHand();
+                ItemStack namao = ev.getPlayer().getInventory().getItemInMainHand();
 
                 if (namao.getType() == Material.POTION) {
                     if (namao.getDurability() == 0 && namao.getData().getData() == 0) {

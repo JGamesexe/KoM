@@ -14,44 +14,33 @@
  */
 package nativelevel.Custom;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import nativelevel.Equipment.WeaponDamage;
+import nativelevel.Attributes.Mana;
 import nativelevel.Classes.Thief;
-import nativelevel.Custom.Items.LogoutTrap;
-import nativelevel.Custom.Items.TeleportScroll;
-import nativelevel.Jobs;
-import nativelevel.utils.MetaUtils;
-import nativelevel.KoM;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Custom.Items.CajadoElemental;
+import nativelevel.Custom.Items.LogoutTrap;
+import nativelevel.Equipment.WeaponDamage;
+import nativelevel.Jobs;
+import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.Listeners.GeneralListener;
 import nativelevel.MetaShit;
-import nativelevel.Attributes.Mana;
+import nativelevel.sisteminhas.ClanLand;
 import nativelevel.sisteminhas.Tralhas;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.EntityEffect;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import nativelevel.utils.MetaUtils;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class CustomItem {
 
@@ -160,7 +149,7 @@ public abstract class CustomItem {
                         event.setDamage(1D);
                         return;
                     }
-                   // bateu.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 1));
+                    // bateu.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 1));
                     event.setDamage(15);
                     //tomou.damage(15 + Jobs.rnd.nextInt(10), bateu);
                     if (tomou.getLocation().getBlock().getLightLevel() < 6) {
@@ -198,7 +187,7 @@ public abstract class CustomItem {
             }
 
             if (Jobs.getJobLevel("Mago", bateu) == 1) {
-                String elemento = CajadoElemental.getElemento(bateu.getItemInHand()).trim();
+                String elemento = CajadoElemental.getElemento(bateu.getInventory().getItemInMainHand()).trim();
                 if (elemento == null) {
                     return;
                 }
@@ -223,7 +212,7 @@ public abstract class CustomItem {
                         tomou.setNoDamageTicks(0);
                         EntityDamageByEntityEvent ev = new EntityDamageByEntityEvent(bateu, tomou, cause, event.getDamage());
                         Bukkit.getPluginManager().callEvent(ev);
-                        bateu.getItemInHand().setDurability((short) (bateu.getItemInHand().getDurability() + 1));
+                        bateu.getInventory().getItemInMainHand().setDurability((short) (bateu.getInventory().getItemInMainHand().getDurability() + 1));
                         tomou.playEffect(EntityEffect.HURT);
                         //if(!ev.isCancelled()) {
                         double dano = ev.getDamage() * 0.6;
@@ -322,9 +311,9 @@ public abstract class CustomItem {
         }
         return null;
     }
-    
+
     public void interage(PlayerInteractEvent ev) {
-        
+
     }
 
     public ItemStack generateItem() {

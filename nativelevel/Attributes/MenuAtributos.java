@@ -5,31 +5,7 @@
  */
 package nativelevel.Attributes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import nativelevel.CFG;
-import nativelevel.Menu.Menu;
-import nativelevel.utils.MetaUtils;
-import nativelevel.KoM;
-import nativelevel.Lang.L;
-import nativelevel.integration.BungeeCordKom;
-import nativelevel.sisteminhas.XP;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.Wool;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 public class MenuAtributos implements Listener {
     
@@ -160,5 +136,5 @@ public class MenuAtributos implements Listener {
         p.openInventory(i);
     }
 */
-    
+
 }

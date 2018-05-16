@@ -10,7 +10,7 @@ public class Amor extends Aura {
 
     @Override
     public String getNome() {
-        return "Amor";    
+        return "Amor";
     }
 
     @Override
@@ -27,6 +27,6 @@ public class Amor extends Aura {
     public void tick(Player p, boolean newTick) {
         PlayEffect.play(VisualEffect.HEART, "loc:" + p.getLocation().getWorld().getName() + "," + p.getLocation().getBlockX() + "," + p.getLocation().getBlockY() + "," + p.getLocation().getBlockZ());
     }
-    
-   
+
+
 }

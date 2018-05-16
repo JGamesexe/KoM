@@ -1,3 +1,4 @@
 package nativelevel.komquista.utils;
 
-public class Utils {}
+public class Utils {
+}

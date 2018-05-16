@@ -19,7 +19,6 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
 /**
- *
  * @author usuario
  */
 public class MetaSkill implements MetadataValue {

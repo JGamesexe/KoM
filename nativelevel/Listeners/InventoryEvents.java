@@ -1,42 +1,32 @@
 package nativelevel.Listeners;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.asofold.bpl.simplyvanish.SimplyVanish;
 import me.asofold.bpl.simplyvanish.config.VanishConfig;
+import nativelevel.Attributes.Mana;
 import nativelevel.Auras.Aura;
-import nativelevel.Classes.Alchemy.Alchemist;
+import nativelevel.CFG;
 import nativelevel.Classes.Blacksmithy.Blacksmith;
 import nativelevel.Classes.Farmer;
-import nativelevel.Classes.Mage.Wizard;
+import nativelevel.ComandosNovos.commands.list.KomSubs.CmdOE;
+import nativelevel.ComandosNovos.commands.list.KomSubs.CraftSubs.CmdCraftCheck;
+import nativelevel.ComandosNovos.commands.list.KomSubs.HarvestSubs.CmdHarvestCheck;
 import nativelevel.Crafting.CraftEvents;
 import nativelevel.Custom.Buildings.Portal;
 import nativelevel.Custom.CustomItem;
+import nativelevel.Custom.Items.BussolaMagica;
 import nativelevel.Custom.Items.CapaInvisvel;
 import nativelevel.Custom.Items.Encaixe;
 import nativelevel.Custom.Items.Runa;
 import nativelevel.CustomEvents.BeginCraftEvent;
 import nativelevel.CustomEvents.FinishCraftEvent;
-import nativelevel.ExecutaSkill;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.MetaShit;
-import nativelevel.Attributes.Mana;
-import nativelevel.CFG;
-import nativelevel.ComandosNovos.list.KomSubs.CmdOE;
-import nativelevel.ComandosNovos.list.KomSubs.CraftSubs.CmdCraftCheck;
-import nativelevel.ComandosNovos.list.KomSubs.HarvestSubs.CmdHarvestCheck;
-import nativelevel.Custom.Items.BussolaMagica;
 import nativelevel.guis.GUIsHelp;
-import nativelevel.skills.SkillMaster;
 import nativelevel.sisteminhas.ClanLand;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import nativelevel.skills.SkillMaster;
+import org.bukkit.*;
 import org.bukkit.block.Banner;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.banner.Pattern;
@@ -45,11 +35,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BlockStateMeta;
@@ -57,6 +43,9 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Ziden
@@ -154,6 +143,13 @@ public class InventoryEvents implements Listener {
         } else if (ev.getCraftable().classe == Jobs.Classe.Fazendeiro) {
             Farmer.depoisCraft(ev);
         }
+    }
+
+    @EventHandler
+    public void abreInventario(InventoryOpenEvent event) {
+
+        if (event.getPlayer().isInsideVehicle()) event.setCancelled(true);
+
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -389,7 +385,6 @@ public class InventoryEvents implements Listener {
                     if (lore.contains("!")) {
 
                         event.setCurrentItem(null);
-                        event.setCursor(null);
                         p.sendMessage(ChatColor.AQUA + L.m("* o item ilusório se desfaz *"));
                     }
                 }
@@ -425,7 +420,7 @@ public class InventoryEvents implements Listener {
                     escudo.addPattern(pat);
 
                 }
-                //EDIT 
+                //EDIT
                 KoM.debug("Atualizando");
                 DyeColor corBanner = DyeColor.getByDyeData(event.getCursor().getData().getData());
                 KoM.debug("Cor banner = " + corBanner.name());

@@ -1,10 +1,5 @@
 package nativelevel.phatloots;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.util.EnumSet;
-import java.util.LinkedList;
-import java.util.Random;
 import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.bukkit.Location;
@@ -15,6 +10,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.Random;
 
 /**
  * Utility Variables/Methods commonly used by PhatLoots and its add-ons
@@ -36,7 +37,7 @@ public class PhatLootsUtil {
     /**
      * Returns true if the given player is allowed to loot the specified PhatLoot
      *
-     * @param player The Player who is being checked for permission
+     * @param player   The Player who is being checked for permission
      * @param phatLoot The PhatLoot in question
      * @return true if the player is allowed to loot the PhatLoot
      */
@@ -44,8 +45,8 @@ public class PhatLootsUtil {
         //Check if the PhatLoot is restricted
         if (PhatLootsConfig.restrictAll || PhatLootsConfig.restricted.contains(phatLoot.name)) {
             return player.hasPermission("phatloots.loot.*") //Check for the loot all permission
-                   ? true
-                   : player.hasPermission("phatloots.loot." + phatLoot.name); //Check if the Player has the specific loot permission
+                    ? true
+                    : player.hasPermission("phatloots.loot." + phatLoot.name); //Check if the Player has the specific loot permission
         } else {
             return true;
         }
@@ -129,18 +130,18 @@ public class PhatLootsUtil {
      */
     public static Block getLeftSide(Block block) {
         switch (block.getType()) {
-        case TRAPPED_CHEST:
-        case CHEST:
-            Chest chest = (Chest) block.getState();
-            Inventory inventory = chest.getInventory();
-            //We only care about the left side because that is the Block that would be linked
-            if (inventory instanceof DoubleChestInventory) {
-                chest = (Chest) ((DoubleChestInventory) inventory).getLeftSide().getHolder();
-                block = chest.getBlock();
-            }
-            break;
-        default:
-            break;
+            case TRAPPED_CHEST:
+            case CHEST:
+                Chest chest = (Chest) block.getState();
+                Inventory inventory = chest.getInventory();
+                //We only care about the left side because that is the Block that would be linked
+                if (inventory instanceof DoubleChestInventory) {
+                    chest = (Chest) ((DoubleChestInventory) inventory).getLeftSide().getHolder();
+                    block = chest.getBlock();
+                }
+                break;
+            default:
+                break;
         }
         return block;
     }
@@ -155,7 +156,7 @@ public class PhatLootsUtil {
     public static Player getNearestPlayer(Location location) {
         Player nearestPlayer = null;
         double shortestDistance = 2500;
-        for (Player player: location.getWorld().getPlayers()) {
+        for (Player player : location.getWorld().getPlayers()) {
             Location playerLocation = player.getLocation();
             //Use the squared distance because is it much less resource intensive
             double distanceToPlayer = location.distanceSquared(playerLocation);

@@ -1,25 +1,11 @@
 package nativelevel.phatloots;
 
-import java.io.*;
-import java.util.*;
-import java.util.logging.Level;
 import nativelevel.KoM;
-import nativelevel.phatloots.events.MobDropLootEvent;
-import nativelevel.phatloots.events.MobEquipEvent;
-import nativelevel.phatloots.events.PlayerLootEvent;
-import nativelevel.phatloots.events.PreLootEvent;
-import nativelevel.phatloots.events.PreMobDropLootEvent;
-import nativelevel.phatloots.events.PreMobEquipEvent;
-import nativelevel.phatloots.events.PrePlayerLootEvent;
+import nativelevel.phatloots.events.*;
 import nativelevel.phatloots.loot.*;
-import nativelevel.phatloots.loot.LootCollection;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.apache.commons.lang.time.DateUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -31,6 +17,10 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
+
+import java.io.*;
+import java.util.*;
+import java.util.logging.Level;
 
 /**
  * A PhatLoot is a reward made up of money, items, and more
@@ -109,7 +99,7 @@ public final class PhatLoot implements ConfigurationSerializable {
      * Returns -1 if the PhatLootChest never resets
      *
      * @param player The given Player
-     * @param chest The given PhatLootChest
+     * @param chest  The given PhatLootChest
      * @return the remaining time until the PhatLootChest resets
      */
     public long getTimeRemaining(Player player, PhatLootChest chest) {
@@ -175,7 +165,7 @@ public final class PhatLoot implements ConfigurationSerializable {
      * Updates the Player's time value in the Map with the current time
      *
      * @param player The Player whose time is to be updated
-     * @param chest The PhatLootChest to set the time for
+     * @param chest  The PhatLootChest to set the time for
      */
     public void setTime(Player player, PhatLootChest chest) {
         Calendar calendar = Calendar.getInstance();
@@ -209,7 +199,7 @@ public final class PhatLoot implements ConfigurationSerializable {
      * Rolls for loot to give to the specified player
      *
      * @param player The Player who is looting
-     * @param title The title of the Inventory
+     * @param title  The title of the Inventory
      */
     public void rollForLoot(Player player, String title) {
         rollForChestLoot(player, null, title);
@@ -219,7 +209,7 @@ public final class PhatLoot implements ConfigurationSerializable {
      * Rolls for loot to place in the given PhatLootChest
      *
      * @param player The Player who is looting
-     * @param chest The PhatLootChest that is being looted
+     * @param chest  The PhatLootChest that is being looted
      * @return true if the PhatLootChest should be manually broken
      */
     public boolean rollForChestLoot(Player player, PhatLootChest chest) {
@@ -230,8 +220,8 @@ public final class PhatLoot implements ConfigurationSerializable {
      * Rolls for loot to place in the given PhatLootChest
      *
      * @param player The Player who is looting
-     * @param chest The PhatLootChest that is being looted
-     * @param title The title of the Inventory
+     * @param chest  The PhatLootChest that is being looted
+     * @param title  The title of the Inventory
      * @return true if the PhatLootChest should be manually broken
      */
     public boolean rollForChestLoot(Player player, PhatLootChest chest, String title) {
@@ -241,9 +231,9 @@ public final class PhatLoot implements ConfigurationSerializable {
     /**
      * Rolls for loot to place in the given PhatLootChest
      *
-     * @param player The Player who is looting
-     * @param chest The PhatLootChest that is being looted
-     * @param title The title of the Inventory
+     * @param player    The Player who is looting
+     * @param chest     The PhatLootChest that is being looted
+     * @param title     The title of the Inventory
      * @param autoSpill true if the Chest should spill its loot rather than placing it in the chest
      * @return true if the PhatLootChest should be manually broken
      */
@@ -358,7 +348,7 @@ public final class PhatLoot implements ConfigurationSerializable {
         Collection<ItemStack> itemList = lootBundle.getItemList();
 
         KoM.debug("Rolling");
-        
+
         //Get the Inventory for the user
         Inventory inv = PhatLootChest.getInventory(getUser(player), title, chest);
         if (player.getOpenInventory().getTopInventory() != inv) {
@@ -379,8 +369,8 @@ public final class PhatLoot implements ConfigurationSerializable {
                     }
                     if (amount > 0) {
                         msg = amount > 1
-                              ? msg.replace("<amount>", String.valueOf(item.getAmount()))
-                              : msg.replace("x<amount>", "").replace("<amount>", String.valueOf(item.getAmount()));
+                                ? msg.replace("<amount>", String.valueOf(item.getAmount()))
+                                : msg.replace("x<amount>", "").replace("<amount>", String.valueOf(item.getAmount()));
                         player.sendMessage(msg);
                     }
                     i++;
@@ -415,8 +405,8 @@ public final class PhatLoot implements ConfigurationSerializable {
                                 String msg = PhatLootsConfig.overflow.replace("<item>", PhatLootsUtil.getItemName(stack));
                                 int amount = stack.getAmount();
                                 msg = amount > 1
-                                      ? msg.replace("<amount>", String.valueOf(stack.getAmount()))
-                                      : msg.replace("x<amount>", "").replace("<amount>", String.valueOf(stack.getAmount()));
+                                        ? msg.replace("<amount>", String.valueOf(stack.getAmount()))
+                                        : msg.replace("x<amount>", "").replace("<amount>", String.valueOf(stack.getAmount()));
                                 player.sendMessage(msg);
                             }
                         }
@@ -431,8 +421,8 @@ public final class PhatLoot implements ConfigurationSerializable {
 
             //Open the Inventory if it is not already open
             if (player.getOpenInventory().getTopInventory() != inv) {
-               KoM.debug("Abrindo denovo");
-               chest.openInventory(player, inv, global);
+                KoM.debug("Abrindo denovo");
+                chest.openInventory(player, inv, global);
             }
         } else if (!autoLoot) {
             //Open the Inventory if it is not already open (even though no loot was added)
@@ -451,8 +441,8 @@ public final class PhatLoot implements ConfigurationSerializable {
         }
         if (PhatLootsConfig.lootBroadcast != null) {
             Bukkit.broadcastMessage(PhatLootsConfig.lootBroadcast
-                                                .replace("<name>", player.getName())
-                                                .replace("<phatloot>", name));
+                    .replace("<name>", player.getName())
+                    .replace("<phatloot>", name));
         }
 
         if (!autoSpill) {
@@ -468,9 +458,9 @@ public final class PhatLoot implements ConfigurationSerializable {
     /**
      * Rolls for loot to add to the given mob drops
      *
-     * @param mob The LivingEntity that was killed
+     * @param mob    The LivingEntity that was killed
      * @param player The player who killed the mob or null if the mob died of natural causes
-     * @param drops The list of items that the mob drops
+     * @param drops  The list of items that the mob drops
      * @return The amount of experience that the mob should drop
      */
     public int rollForMobDrops(LivingEntity mob, Player player, List<ItemStack> drops) {
@@ -507,8 +497,8 @@ public final class PhatLoot implements ConfigurationSerializable {
         ItemStack weapon = player == null ? null : player.getInventory().getItemInMainHand();
         //The looting bonus is determined by the LOOT_BONUS_MOBS enchantment on the weapon
         double lootingBonus = weapon == null
-                              ? 0
-                              : lootingBonusPerLvl * weapon.getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS);
+                ? 0
+                : lootingBonusPerLvl * weapon.getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS);
 
         //Call the pre-event to be modified
         PreLootEvent preEvent = new PreMobDropLootEvent(mob, player, lootingBonus);
@@ -585,8 +575,8 @@ public final class PhatLoot implements ConfigurationSerializable {
                 String msg = PhatLootsConfig.mobDroppedItem.replace("<item>", PhatLootsUtil.getItemName(item));
                 int amount = item.getAmount();
                 msg = amount > 1
-                      ? msg.replace("<amount>", String.valueOf(amount))
-                      : msg.replace("x<amount>", "").replace("<amount>", String.valueOf(amount));
+                        ? msg.replace("<amount>", String.valueOf(amount))
+                        : msg.replace("x<amount>", "").replace("<amount>", String.valueOf(amount));
                 player.sendMessage(msg);
             }
         }
@@ -603,7 +593,7 @@ public final class PhatLoot implements ConfigurationSerializable {
      * Rolls for loot that becomes the given entity's equipment
      *
      * @param entity The given LivingEntity
-     * @param level The 'level' of the entity
+     * @param level  The 'level' of the entity
      */
     public void rollForEquipment(LivingEntity entity, double level) {
         //Call the pre-event to be modified
@@ -725,7 +715,7 @@ public final class PhatLoot implements ConfigurationSerializable {
     /**
      * Rolls for a Loot to add to the given LootBundle
      *
-     * @param lootBundle The given LootBundle
+     * @param lootBundle   The given LootBundle
      * @param lootingBonus The amount to increase each roll by
      * @return The Loot that has been rolled for
      */
@@ -742,14 +732,14 @@ public final class PhatLoot implements ConfigurationSerializable {
      * Returns the key for the given Player and PhatLootChest
      *
      * @param player The Player or null if global
-     * @param chest The PhatLootChest which may be null
+     * @param chest  The PhatLootChest which may be null
      * @return the key that represents this player and chest
      */
     private String getKey(Player player, PhatLootChest chest) {
         String user = getUser(player);
         return chest == null
-               ? user
-               : chest.toString() + "'" + user;
+                ? user
+                : chest.toString() + "'" + user;
     }
 
     /**
@@ -760,8 +750,8 @@ public final class PhatLoot implements ConfigurationSerializable {
      */
     private String getUser(Player player) {
         return global || player == null
-               ? "global"
-               : player.getUniqueId().toString();
+                ? "global"
+                : player.getUniqueId().toString();
     }
 
     /**
@@ -973,10 +963,10 @@ public final class PhatLoot implements ConfigurationSerializable {
 
         //Calculate the latest timestamp that would have reset by now
         long time = System.currentTimeMillis()
-                    - days * DateUtils.MILLIS_PER_DAY
-                    - hours * DateUtils.MILLIS_PER_HOUR
-                    - minutes * DateUtils.MILLIS_PER_MINUTE
-                    - seconds * DateUtils.MILLIS_PER_SECOND;
+                - days * DateUtils.MILLIS_PER_DAY
+                - hours * DateUtils.MILLIS_PER_HOUR
+                - minutes * DateUtils.MILLIS_PER_MINUTE
+                - seconds * DateUtils.MILLIS_PER_SECOND;
 
         //Remove each key whose value is less than the calculated time
         for (String key : keys) {
@@ -1038,8 +1028,8 @@ public final class PhatLoot implements ConfigurationSerializable {
     public void saveChests() {
         File file = new File(PhatLoots.dataFolder, "Chests" + File.separator + name + ".txt");
 
-       KoM.debug("DATAFOLDER: "+PhatLoots.dataFolder);
-        
+        KoM.debug("DATAFOLDER: " + PhatLoots.dataFolder);
+
         //Don't save an empty file
         if (chests.isEmpty()) {
             //Delete the pre-existing file
@@ -1048,18 +1038,17 @@ public final class PhatLoot implements ConfigurationSerializable {
             }
             return;
         }
-        
-        
+
 
         try (FileWriter fWriter = new FileWriter(file)) {
-            
-            KoM.debug("fWriter null ? "+(fWriter==null));
-          
-            
+
+            KoM.debug("fWriter null ? " + (fWriter == null));
+
+
             try (PrintWriter pWriter = new PrintWriter(fWriter)) {
-                
-                  KoM.debug("pWriter null ? "+(pWriter==null));
-                
+
+                KoM.debug("pWriter null ? " + (pWriter == null));
+
                 for (PhatLootChest chest : getChests()) {
                     pWriter.println(chest.toString());
                 }

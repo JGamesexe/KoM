@@ -15,7 +15,7 @@ import org.bukkit.event.Listener;
  * @author Codisimus
  */
 public class CitizensListener implements Listener {
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onNPCSpawn(NPCSpawnEvent event) {
         PhatLoot phatLoot = PhatLoots.getPhatLoot("NPC" + event.getNPC().getName() + "Spawn");
         if (phatLoot == null) {
@@ -30,7 +30,7 @@ public class CitizensListener implements Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onNPCDeath(NPCDeathEvent event) {
         PhatLoot phatLoot = PhatLoots.getPhatLoot("NPC" + event.getNPC().getName());
         if (phatLoot == null) {

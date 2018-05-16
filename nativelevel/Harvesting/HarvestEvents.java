@@ -1,8 +1,5 @@
 package nativelevel.Harvesting;
 
-import nativelevel.Harvesting.HarvestTypes;
-import nativelevel.Harvesting.Harvestable;
-import nativelevel.Harvesting.HarvestCache;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
 import nativelevel.Attributes.Stamina;
@@ -15,7 +12,6 @@ import nativelevel.CustomEvents.BlockHarvestEvent;
 import nativelevel.Jobs;
 import nativelevel.Jobs.TipoClasse;
 import nativelevel.KoM;
-import nativelevel.Lang.LangMinecraft;
 import nativelevel.MetaShit;
 import nativelevel.Planting.PlantCache;
 import nativelevel.Planting.Plantable;
@@ -26,23 +22,15 @@ import nativelevel.utils.CategoriaUtils;
 import nativelevel.utils.CategoriaUtils.CategoriaItem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.CropState;
 import org.bukkit.Effect;
 import org.bukkit.Material;
-import org.bukkit.NetherWartsState;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Crops;
-import org.bukkit.material.NetherWarts;
 
 /**
- *
  * @author Ziden
- *
  */
 public class HarvestEvents {
 
@@ -85,8 +73,8 @@ public class HarvestEvents {
         Harvestable harv = HarvestCache.getHarvestable(ev.getBlock());
         KoM.debug("Block Break");
 
-        if (ev.getBlock().getType()==Material.CROPS) {
-          
+        if (ev.getBlock().getType() == Material.CROPS) {
+
             if (ev.getBlock().getData() < 7) {
                 ev.getPlayer().sendMessage(ChatColor.RED + "Esta planta não estava pronta para colheita");
                 ev.setCancelled(true);
@@ -95,7 +83,7 @@ public class HarvestEvents {
                 PlayEffect.play(VisualEffect.SPELL, (ev.getBlock().getLocation().add(0.5D, 0.5D, 0.5D)), "num:5");
                 return;
             }
-        } else if (ev.getBlock().getType()==Material.NETHER_WART_BLOCK || ev.getBlock().getType()==Material.NETHER_WARTS) {
+        } else if (ev.getBlock().getType() == Material.NETHER_WART_BLOCK || ev.getBlock().getType() == Material.NETHER_WARTS) {
             if (ev.getBlock().getData() < 3) {
                 ev.getPlayer().sendMessage(ChatColor.RED + "Esta planta não estava pronta para colheita");
                 ev.setCancelled(true);
@@ -122,28 +110,27 @@ public class HarvestEvents {
                 PlayEffect.play(VisualEffect.SPELL, (ev.getBlock().getLocation().add(0.5D, 0.5D, 0.5D)), "num:5");
                 return;
             }
-        } 
+        }
 
         // ANTI BUG DO CACAU
-        if(ev.getBlock().getType()==Material.LOG || ev.getBlock().getType() == Material.LOG_2) {
-            
-            if(ev.getBlock().getRelative(BlockFace.EAST).getType()==Material.COCOA) {
+        if (ev.getBlock().getType() == Material.LOG || ev.getBlock().getType() == Material.LOG_2) {
+
+            if (ev.getBlock().getRelative(BlockFace.EAST).getType() == Material.COCOA) {
                 ev.getBlock().getRelative(BlockFace.EAST).setType(Material.AIR);
             }
-            if(ev.getBlock().getRelative(BlockFace.NORTH).getType()==Material.COCOA) {
+            if (ev.getBlock().getRelative(BlockFace.NORTH).getType() == Material.COCOA) {
                 ev.getBlock().getRelative(BlockFace.NORTH).setType(Material.AIR);
             }
-            if(ev.getBlock().getRelative(BlockFace.SOUTH).getType()==Material.COCOA) {
+            if (ev.getBlock().getRelative(BlockFace.SOUTH).getType() == Material.COCOA) {
                 ev.getBlock().getRelative(BlockFace.SOUTH).setType(Material.AIR);
             }
-            if(ev.getBlock().getRelative(BlockFace.WEST).getType()==Material.COCOA) {
+            if (ev.getBlock().getRelative(BlockFace.WEST).getType() == Material.COCOA) {
                 ev.getBlock().getRelative(BlockFace.WEST).setType(Material.AIR);
             }
-            
+
         }
-        
-        
-        
+
+
         if (harv != null) {
 
             if (ev.getBlock().hasMetadata("playerpois")) {

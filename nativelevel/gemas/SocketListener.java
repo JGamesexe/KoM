@@ -5,16 +5,16 @@
  */
 package nativelevel.gemas;
 
-import java.util.List;
 import nativelevel.Jobs;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 public class SocketListener implements Listener {
 
@@ -41,26 +41,25 @@ public class SocketListener implements Listener {
                         return;
                     }
                     int job = Jobs.getJobLevel("Mago", p);
-                    if(job!=1) {
+                    if (job != 1) {
                         p.sendMessage("§4Apenas magos primários podem fazer isto.");
                         return;
                     }
-                    
+
                     boolean pois = false;
                     for (Gema possivel : sockets) {
                         if (possivel == gema) {
-                            
-                            int sucesso = Jobs.hasSuccess(80, "Mago", p);
-                            if(sucesso==Jobs.fail) {
+
+                            if (Jobs.hasSuccess(80, "Mago", p)) {
                                 ev.setCursor(new ItemStack(Material.GLASS));
-                                ev.getCurrentItem().setDurability((short)(ev.getCurrentItem().getDurability()+20));
-                                if(ev.getCurrentItem().getDurability()>ev.getCurrentItem().getType().getMaxDurability()) {
+                                ev.getCurrentItem().setDurability((short) (ev.getCurrentItem().getDurability() + 20));
+                                if (ev.getCurrentItem().getDurability() > ev.getCurrentItem().getType().getMaxDurability()) {
                                     ev.setCurrentItem(null);
                                 }
                                 p.sendMessage("§4Você não conseguiu colocar a gema magica no equipamento, danificando ambos.");
                                 return;
                             }
-                            
+
                             Gema.addGemaToItem(ev.getCurrentItem(), gema, ev.getCursor());
                             ev.setCursor(null);
                             ev.setCancelled(true);

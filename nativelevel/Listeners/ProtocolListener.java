@@ -1,6 +1,7 @@
 package nativelevel.Listeners;
 
 import nativelevel.KoM;
+import org.bukkit.plugin.Plugin;
 
 /*
 import com.comphenix.protocol.Packets;
@@ -15,29 +16,13 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 */
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-import nativelevel.Language.LNG;
-import nativelevel.Language.TRL;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 /**
- *
  * @author Nosliw
- * 
  */
 
 // commented as it bugged chat a little
 public class ProtocolListener /* implements PacketListener */ {
-    
+
     //@Override
     public Plugin getPlugin() {
         return KoM._instance;

@@ -14,36 +14,31 @@
  */
 package nativelevel.Custom.Items;
 
-import java.util.List;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
+import nativelevel.Attributes.Mana;
 import nativelevel.Classes.Thief;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
-import nativelevel.MetaShit;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
-import nativelevel.Attributes.AttributeInfo;
-import nativelevel.Attributes.Mana;
+import nativelevel.MetaShit;
 import nativelevel.spec.PlayerSpec;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
+import java.util.List;
+
 /**
- *
  * @author usuario
- *
  */
 public class Pistola extends CustomItem {
 
@@ -60,11 +55,11 @@ public class Pistola extends CustomItem {
             return false;
         }
 
-        if(player.getInventory().getItemInOffHand() != null && player.getInventory().getItemInOffHand().getType()!=Material.AIR) {
-            player.sendMessage(ChatColor.RED+"Voce precisa das outra mão livre para conseguir mirar e atirar com a Bonka.");
+        if (player.getInventory().getItemInOffHand() != null && player.getInventory().getItemInOffHand().getType() != Material.AIR) {
+            player.sendMessage(ChatColor.RED + "Voce precisa das outra mão livre para conseguir mirar e atirar com a Bonka.");
             return false;
         }
-        
+
         if (!player.hasPotionEffect(PotionEffectType.SLOW)) {
 
             if (!player.getInventory().contains(Material.SULPHUR)) {
@@ -73,7 +68,7 @@ public class Pistola extends CustomItem {
             }
 
             boolean gastaMana = true;
-            ItemMeta m = player.getItemInHand().getItemMeta();
+            ItemMeta m = player.getInventory().getItemInMainHand().getItemMeta();
             List<String> lore = m.getLore();
             if (lore.size() > 0) {
                 if (lore.get(0).contains("Bonka Versao 2")) {
@@ -110,18 +105,18 @@ public class Pistola extends CustomItem {
             Location loc = player.getLocation();
 
             Location inicio = new Location(player.getWorld(), loc.getX() + (dir.getX() / 5.0), loc.getY() + player.getEyeHeight() - 0.1, loc.getZ() + (dir.getZ() / 5.0));
-                //Snowball snowball = (Snowball)player.getWorld().spawnEntity(inicio, EntityType.SNOWBALL);
+            //Snowball snowball = (Snowball)player.getWorld().spawnEntity(inicio, EntityType.SNOWBALL);
 
             Snowball snowball = (Snowball) player.launchProjectile(Snowball.class);
-            
-            if(!player.isSneaking()) {
+
+            if (!player.isSneaking()) {
                 Vector destino = snowball.getVelocity();
                 destino.add(new Vector(Jobs.rnd.nextInt(1) - (1 / 2) / 20, Jobs.rnd.nextInt(1) - (1 / 2) / 20, Jobs.rnd.nextInt(1) - (1 / 2) / 20));
                 snowball.setVelocity(destino);
             }
-            
+
             snowball.setFireTicks(400);
-                //snowball.setVelocity(player.getLocation().getDirection().multiply(2f));
+            //snowball.setVelocity(player.getLocation().getDirection().multiply(2f));
 
             MetaShit.setMetaString("tipoTiro", snowball, "kaboom");
             MetaShit.setMetaString("bonka", snowball, "");

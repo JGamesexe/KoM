@@ -27,16 +27,16 @@ public class CajadoElemental extends CustomItem {
     public CajadoElemental() {
         super(Material.IRON_SPADE, L.m("Cajado Elemental"), L.m("Pode carregar elementos"), CustomItem.RARO);
     }
-    
+
     public static void botaElemento(ItemStack cajado, String elemento) {
         ItemMeta meta = cajado.getItemMeta();
-        meta.setDisplayName(ChatColor.GREEN+"Cajado elemental: "+elemento);
+        meta.setDisplayName(ChatColor.GREEN + "Cajado elemental: " + elemento);
         cajado.setItemMeta(meta);
     }
-    
+
     public static String getElemento(ItemStack cajado) {
         ItemMeta meta = cajado.getItemMeta();
-        if(meta.getDisplayName().contains(":")) {
+        if (meta.getDisplayName().contains(":")) {
             String elemento = meta.getDisplayName().trim().split(":")[1];
             return elemento;
         }
@@ -46,5 +46,18 @@ public class CajadoElemental extends CustomItem {
     @Override
     public boolean onItemInteract(Player p) {
         return true;
+    }
+
+    public static boolean isCajadoElemental(ItemStack itemStack) {
+        if (itemStack != null
+                && itemStack.getType() == Material.IRON_SPADE
+                && itemStack.getItemMeta() != null
+                && itemStack.getItemMeta().getLore() != null
+                && !itemStack.getItemMeta().getLore().isEmpty()) {
+            for (String lore : itemStack.getItemMeta().getLore()) {
+                if (lore.contains(":Cajado Elemental")) return true;
+            }
+        }
+        return false;
     }
 }

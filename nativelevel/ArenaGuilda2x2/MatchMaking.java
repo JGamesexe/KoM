@@ -5,17 +5,15 @@
  */
 package nativelevel.ArenaGuilda2x2;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nativelevel.sisteminhas.ClanLand;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author usuario
@@ -83,7 +81,7 @@ public class MatchMaking extends Thread {
             return;
         }
 
-       // if (!cp.getClan().getFundador().equals(p.getUniqueId())) {
+        // if (!cp.getClan().getFundador().equals(p.getUniqueId())) {
         //     p.sendMessage("Apenas líderes podem chamar jogadores para arena 2x2 !");
         //    return;
         // }

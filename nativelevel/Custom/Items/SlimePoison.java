@@ -22,7 +22,7 @@ import org.bukkit.entity.Player;
 public class SlimePoison extends CustomItem {
 
     public SlimePoison() {
-        super(Material.SLIME_BALL,L.m( "Slimeball Envenenada"), L.m("Pode chutar, causa veneno forte"), CustomItem.INCOMUM);
+        super(Material.SLIME_BALL, L.m("Slimeball Envenenada"), L.m("Pode chutar, causa veneno forte"), CustomItem.INCOMUM);
     }
 
     @Override

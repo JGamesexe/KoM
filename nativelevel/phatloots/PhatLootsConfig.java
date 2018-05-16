@@ -1,23 +1,23 @@
 package nativelevel.phatloots;
 
+import nativelevel.KoM;
 import nativelevel.phatloots.commands.LootCommand;
 import nativelevel.phatloots.listeners.MobListener;
 import nativelevel.phatloots.listeners.PhatLootsListener;
 import nativelevel.phatloots.loot.Item;
 import nativelevel.phatloots.loot.LootCollection;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import nativelevel.KoM;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.logging.Level;
 
 /**
  * Loads Config settings for the PhatLoots plugin
@@ -62,7 +62,7 @@ public class PhatLootsConfig {
 
     public static void load() {
         FileConfiguration config = new YamlConfiguration();
-        File PvP = new File("plugins" + File.separator + "Kom" + File.separator + "configLoots.yml");
+        File PvP = new File("plugins" + File.separator + "Kom" + File.separator + "PhatLoots" + File.separator + "configLoots.yml");
         if (!PvP.exists()) {
             try {
                 PvP.createNewFile();
@@ -259,7 +259,7 @@ public class PhatLootsConfig {
      * & will be converted to § where color codes are used
      *
      * @param config The given ConfigurationSection
-     * @param key The key that leads to the requested string
+     * @param key    The key that leads to the requested string
      * @return The String or null if the string was not found or empty
      */
     private static String getString(ConfigurationSection config, String key) {

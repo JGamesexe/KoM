@@ -1,19 +1,13 @@
 package nativelevel.Classes.Blacksmithy.recipes.Armas.Pedra;
 
-import nativelevel.Equipment.WeaponDamage;
 import nativelevel.Classes.Blacksmithy.CustomCrafting;
+import nativelevel.Equipment.WeaponDamage;
 import nativelevel.KoM;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author Ziden
- *
  */
 
 public class PaDePedra extends CustomCrafting {
@@ -25,9 +19,9 @@ public class PaDePedra extends CustomCrafting {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            new ItemStack(Material.STONE, 1),
-            new ItemStack(Material.COAL, 1),
-            new ItemStack(Material.SAND),};
+                new ItemStack(Material.STONE, 1),
+                new ItemStack(Material.COAL, 1),
+                new ItemStack(Material.SAND),};
     }
 
     @Override

@@ -4,8 +4,6 @@
  */
 package nativelevel.spec;
 
-import java.util.ArrayList;
-import java.util.List;
 import nativelevel.KoM;
 import nativelevel.Menu.Menu;
 import org.bukkit.Bukkit;
@@ -15,16 +13,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author venturus
- *
  */
 
 public enum PlayerSpec implements Listener {
@@ -66,7 +63,7 @@ public enum PlayerSpec implements Listener {
      Ceifador - Arremeça uma foice
      Druida = pode virar um papagaio e voar ou pousar no ombro de alguem
      */
-    
+
     Guardiao("Paladino", "-Mana Escudo -Dano Fisico +Armadura -Stamina Escudada", 1), // ok
     Crusador("Paladino", "+Mana Escudo +Dano Fisico", 2), // ok
     Assassino("Ladino", "+Dano Fisico -Dano Arco -Armadura -Mana Bomba Fumaça", 1), // ok

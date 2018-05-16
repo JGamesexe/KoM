@@ -5,47 +5,38 @@
  */
 package nativelevel.Equipment;
 
-import java.util.Arrays;
-import java.util.List;
 import nativelevel.Attributes.Health;
 import nativelevel.CustomEvents.PlayerEquipEvent;
 import nativelevel.CustomEvents.PlayerUnequipEvent;
 import nativelevel.KoM;
-import nativelevel.MetaShit;
 import nativelevel.scores.SBCore;
 import nativelevel.sisteminhas.KomSystem;
 import net.minecraft.server.v1_12_R1.ItemArmor;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.NBTTagList;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
- *
  * @author vntgasl
  */
 public class EquipmentEvents extends KomSystem {
@@ -95,11 +86,11 @@ public class EquipmentEvents extends KomSystem {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void itemHeld(PlayerItemHeldEvent ev) {
-        
-        if(ev.isCancelled()){
+
+        if (ev.isCancelled()) {
             return;
         }
-        
+
         ItemStack old = ev.getPlayer().getInventory().getItem(ev.getPreviousSlot());
         ItemStack niw = ev.getPlayer().getInventory().getItem(ev.getNewSlot());
 
@@ -168,7 +159,7 @@ public class EquipmentEvents extends KomSystem {
             return;
         }
         if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-            String name = event.getPlayer().getItemInHand().getType().name();
+            String name = event.getPlayer().getInventory().getItemInMainHand().getType().name();
             if (name.contains("_CHESTPLATE") || name.contains("_LEGGINGS") || name.contains("_BOOTS") || name.contains("_HELMET")) {
                 EquipManager.checkEquips(event.getPlayer());
             }
@@ -245,23 +236,23 @@ public class EquipmentEvents extends KomSystem {
         EquipMeta playerEquipMeta = EquipManager.getPlayerEquipmentMeta(ev.getPlayer());
         EquipMeta.subMeta(playerEquipMeta, itemMeta);
         EquipManager.setPlayerEquipmentMeta(ev.getPlayer(), playerEquipMeta);
-        
+
         PotionEffect bonusVida = null;
-        
-        for(PotionEffect pot : ev.getPlayer().getActivePotionEffects()) {
-            if(pot.getType()==PotionEffectType.HEALTH_BOOST) {
+
+        for (PotionEffect pot : ev.getPlayer().getActivePotionEffects()) {
+            if (pot.getType() == PotionEffectType.HEALTH_BOOST) {
                 bonusVida = pot;
             }
         }
-        
-        if(bonusVida != null)
+
+        if (bonusVida != null)
             ev.getPlayer().removePotionEffect(PotionEffectType.HEALTH_BOOST);
-        
+
         ev.getPlayer().setMaxHealth(Health.getMaxHealth(ev.getPlayer(), ev.getPlayer().getLevel()));
 
-        if(bonusVida != null)
+        if (bonusVida != null)
             ev.getPlayer().addPotionEffect(bonusVida);
-        
+
         if (itemMeta.getAtributos().contains(Atributo.Mana) || itemMeta.getAtributos().contains(Atributo.Stamina)) {
             SBCore.AtualizaObjetivos(ev.getPlayer());
         }
@@ -283,9 +274,9 @@ public class EquipmentEvents extends KomSystem {
     public static List<Material> offHands = Arrays.asList(new Material[]{Material.STICK, Material.SHIELD, Material.WOOD_SWORD});
 
     public static boolean isOffHand(Material m, List<String> lore) {
-        if(lore != null) {
-            for(String s : lore) {
-                if(s.contains("Mão Esquerda") || s.contains("Mão Secundária")) {
+        if (lore != null) {
+            for (String s : lore) {
+                if (s.contains("Mão Esquerda") || s.contains("Mão Secundária")) {
                     return true;
                 }
             }

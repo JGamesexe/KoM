@@ -14,20 +14,15 @@
  */
 package nativelevel.efeitos;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import nativelevel.efeitos.ReflectionUtil.DynamicPackage;
 import nativelevel.efeitos.ReflectionUtil.FieldEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.lang.reflect.Constructor;
+import java.util.*;
+import java.util.Map.Entry;
 
 public enum ParticleEffect {
 
@@ -182,6 +177,7 @@ public enum ParticleEffect {
 
     /**
      * Displays a particle effect which is visible for all players whitin the maximum range of 20 blocks in the world of
+     *
      * @param loc
      */
     public void display(Location loc, float offsetX, float offsetY, float offsetZ, float speed, int amount) {

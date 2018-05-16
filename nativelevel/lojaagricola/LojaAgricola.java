@@ -5,11 +5,9 @@
  */
 package nativelevel.lojaagricola;
 
-import java.util.ArrayList;
-import java.util.List;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Jobs;
 import nativelevel.KoM;
+import nativelevel.sisteminhas.ClanLand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,10 +19,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author vntgasl
- *
  */
 public class LojaAgricola implements Listener {
 
@@ -192,17 +191,17 @@ public class LojaAgricola implements Listener {
             } else if (emBaixa.contains(v.m)) {
                 qtd = ConfigLoja.qtdQtdBaixa(v.getNomeTecnico());
             }
-            List<String> lore = new ArrayList<String>();   
+            List<String> lore = new ArrayList<String>();
             meta.setDisplayName("§e§l" + v.nome);
             if (emAlta == v.m) {
-                lore.add("§7Vender §6"+qtd+" §7por " + ChatColor.YELLOW +"§l"+ getPreco(v) + " §7§lEsmeraldas");
+                lore.add("§7Vender §6" + qtd + " §7por " + ChatColor.YELLOW + "§l" + getPreco(v) + " §7§lEsmeraldas");
                 lore.add("§6Produto em §nALTA§6 $$$");
             } else if (emBaixa.contains(v.m)) {
-                lore.add("§7Vender §c"+qtd+" §7por " + ChatColor.YELLOW +"§l"+ getPreco(v) + " §7§lEsmeraldas");
+                lore.add("§7Vender §c" + qtd + " §7por " + ChatColor.YELLOW + "§l" + getPreco(v) + " §7§lEsmeraldas");
                 lore.add("§cProduto em §nBAIXA§c $");
             } else {
-                lore.add("§7Vender §9"+qtd+" §7por " + ChatColor.YELLOW +"§l"+ getPreco(v) + " §7§lEsmeraldas");
-                lore.add("§9Produto §nSEM§9 modificação $$");  
+                lore.add("§7Vender §9" + qtd + " §7por " + ChatColor.YELLOW + "§l" + getPreco(v) + " §7§lEsmeraldas");
+                lore.add("§9Produto §nSEM§9 modificação $$");
             }
             meta.setLore(lore);
             ss.setItemMeta(meta);
@@ -244,17 +243,17 @@ public class LojaAgricola implements Listener {
             ItemStack clicado = ev.getCurrentItem();
             if (clicado != null) {
                 Material m = clicado.getType();
-                
+
                 for (Vendavel v : vendaveis) {
                     if (v.m == m) {
-                        
+
                         int qtd = ConfigLoja.getQtdNormal(v.getNomeTecnico());
                         if (emAlta == v.m) {
                             qtd = ConfigLoja.getQtdAlta(v.getNomeTecnico());
                         } else if (emBaixa.contains(v.m)) {
                             qtd = ConfigLoja.qtdQtdBaixa(v.getNomeTecnico());
                         }
-                        
+
                         ItemStack ss = new ItemStack(m, qtd);
                         if (v.m == Material.INK_SACK) {
                             ss = new ItemStack(Material.INK_SACK, qtd, (byte) 3);
@@ -262,13 +261,13 @@ public class LojaAgricola implements Listener {
                         int preco = getPreco(v);
 
                         if (!KoM.inventoryContains(ev.getWhoClicked().getInventory(), ss)) {
-                            p.sendMessage(ChatColor.RED + "Voce nao tem um "+qtd+" deste item para vender !");
+                            p.sendMessage(ChatColor.RED + "Voce nao tem um " + qtd + " deste item para vender !");
                             return;
                         } else {
                             KoM.removeInventoryItems(p.getInventory(), ss.getType(), qtd);
                             //p.getInventory().remove(ss);
                         }
-                        p.sendMessage(ChatColor.GREEN + "Voce vendeu "+qtd+" " + v.nome + " por " + preco + " moedas!");
+                        p.sendMessage(ChatColor.GREEN + "Voce vendeu " + qtd + " " + v.nome + " por " + preco + " moedas!");
                         vendeu += preco;
 
                         if (vendeu >= maxVendeu) {

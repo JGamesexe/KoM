@@ -1,16 +1,17 @@
 package nativelevel.Equipment;
 
+import nativelevel.Attributes.Buffs.BuffControl;
 import nativelevel.CustomEvents.PlayerEquipEvent;
 import nativelevel.CustomEvents.PlayerUnequipEvent;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import java.util.HashMap;
-import java.util.UUID;
 import nativelevel.KoM;
 import nativelevel.MetaShit;
-import org.bukkit.Bukkit;
-import nativelevel.Attributes.Buffs.BuffControl;
 import nativelevel.sisteminhas.KomSystem;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class EquipManager extends KomSystem {
 

@@ -1,16 +1,24 @@
 package nativelevel.guis.spawners.equips;
 
+import me.dpohvar.powernbt.api.NBTCompound;
+import me.dpohvar.powernbt.api.NBTList;
+import nativelevel.KoM;
+import nativelevel.guis.spawners.SpawnerGUIMain;
 import nativelevel.utils.GUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EquipGUIMain extends GUI {
 
@@ -18,10 +26,8 @@ public class EquipGUIMain extends GUI {
     Chest chest;
 
     public EquipGUIMain(CreatureSpawner spawner) {
-        super(Bukkit.createInventory(null, 45, "§3MobSPAWNAER, Equip's"), spawner);
+        super(Bukkit.createInventory(null, 54, "§3MobSPAWNAER, Equip's"), spawner);
         this.spawner = (CreatureSpawner) spawner.getBlock().getState();
-
-        //TODO NÃO DEIXAR NEGO BOTAR MOBSPAWNER EM Y MENOR QUE 6
 
         if (!spawner.getWorld().getBlockAt(spawner.getLocation().add(0, -3, 0)).getType().equals(Material.SPONGE)) {
             spawner.getWorld().getBlockAt(spawner.getLocation().add(0, -3, 0)).setType(Material.SPONGE);
@@ -42,9 +48,17 @@ public class EquipGUIMain extends GUI {
 
     private void cria() {
 
+        NBTCompound spawnerData = KoM.nbtManager.read(spawner.getBlock());
+        NBTCompound spawnData = spawnerData.getCompound("SpawnData");
+
+        if (spawnData.getList("ArmorDropChances") == null || spawnData.getList("HandDropChances") == null) {
+            attProbSpawner(getProbs());
+        }
+
         botaVidros();
 
         ItemStack[] items = mobItems();
+        ItemStack[] probsItems = probabilyItems(getProbs());
 
         inventory.setItem(10, items[0]);
         inventory.setItem(11, items[1]);
@@ -52,19 +66,25 @@ public class EquipGUIMain extends GUI {
         inventory.setItem(13, items[3]);
         inventory.setItem(15, items[4]);
         inventory.setItem(16, items[5]);
-        inventory.setItem(31, itemTroca());
+        inventory.setItem(19, probsItems[3]);
+        inventory.setItem(20, probsItems[2]);
+        inventory.setItem(21, probsItems[1]);
+        inventory.setItem(22, probsItems[0]);
+        inventory.setItem(24, probsItems[5]);
+        inventory.setItem(25, probsItems[4]);
+        inventory.setItem(40, itemTroca());
 
     }
 
     private ItemStack[] mobItems() {
 
         ItemStack[] itemStacks = new ItemStack[]{
+                chest.getBlockInventory().getItem(18),
                 chest.getBlockInventory().getItem(19),
                 chest.getBlockInventory().getItem(20),
                 chest.getBlockInventory().getItem(21),
-                chest.getBlockInventory().getItem(22),
-                chest.getBlockInventory().getItem(24),
-                chest.getBlockInventory().getItem(25)
+                chest.getBlockInventory().getItem(23),
+                chest.getBlockInventory().getItem(24)
         };
 
         for (int x = 0; x < itemStacks.length; x++) {
@@ -82,6 +102,9 @@ public class EquipGUIMain extends GUI {
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         itemMeta.setDisplayName("§eTroca equip's");
+
+        itemMeta.addEnchant(Enchantment.MENDING, 1, true);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 
         ArrayList<String> itemLore = new ArrayList<>();
         itemLore.add("");
@@ -139,9 +162,75 @@ public class EquipGUIMain extends GUI {
 
     }
 
+    private float[] getProbs() {
+
+        float[] probs = new float[]{0, 0, 0, 0, 0, 0};
+
+        NBTCompound spawnerData = KoM.nbtManager.read(spawner.getBlock());
+        NBTCompound spawnData = spawnerData.getCompound("SpawnData");
+
+        int index = 0;
+
+        if (spawnData.getList("ArmorDropChances") != null) {
+
+            NBTList armorProbs = spawnData.getList("ArmorDropChances");
+
+            for (int x = 0; x < armorProbs.size(); x++) {
+                probs[index] = (float) armorProbs.get(x);
+                index++;
+            }
+
+        }
+
+        if (spawnData.getList("HandDropChances") != null) {
+
+            NBTList handProbs = spawnData.getList("HandDropChances");
+
+            index = 4;
+
+            for (int x = 0; x < handProbs.size(); x++) {
+                probs[index] = (float) handProbs.get(x);
+                index++;
+            }
+
+        }
+
+        spawnerData.put("SpawnData", spawnData);
+
+
+        return probs;
+    }
+
+    private ItemStack[] probabilyItems(float[] probs) {
+
+        ItemStack[] itemStacks = new ItemStack[6];
+
+        for (int x = 0; x < probs.length; x++) {
+            itemStacks[x] = new ItemStack(Material.SIGN);
+            ItemMeta itemMeta = itemStacks[x].getItemMeta();
+            itemMeta.setDisplayName("§eProbabilidade");
+
+            List<String> itemLore = new ArrayList<>();
+
+            itemLore.add("");
+            itemLore.add("§7" + ((int) (probs[x] * 100)));
+            itemLore.add("");
+
+            itemMeta.setLore(itemLore);
+            itemStacks[x].setItemMeta(itemMeta);
+
+        }
+
+        return itemStacks;
+    }
+
     @Override
-    public void interage(Player player, int slot, InventoryAction inventoryAction) {
-        super.interage(player, slot, inventoryAction);
+    public void interage(InventoryClickEvent event) {
+        super.interage(event);
+
+        Player player = (Player) event.getWhoClicked();
+        int slot = event.getSlot();
+        InventoryAction inventoryAction = event.getAction();
 
         if (inventory.getItem(slot) != null && inventory.getItem(slot).getType().equals(Material.STAINED_GLASS_PANE)) {
             cancelaInteract = true;
@@ -170,9 +259,27 @@ public class EquipGUIMain extends GUI {
             case 16:
                 cancelaInteract = false;
                 break;
-            case 31:
+            case 19:
+                attProb(slot, inventoryAction);
+                break;
+            case 20:
+                attProb(slot, inventoryAction);
+                break;
+            case 21:
+                attProb(slot, inventoryAction);
+                break;
+            case 22:
+                attProb(slot, inventoryAction);
+                break;
+            case 24:
+                attProb(slot, inventoryAction);
+                break;
+            case 25:
+                attProb(slot, inventoryAction);
+                break;
+            case 40:
                 trocaItems();
-                open(player, new EquipGUIMain(spawner));
+                open(player, new SpawnerGUIMain(spawner));
                 break;
         }
 
@@ -180,30 +287,93 @@ public class EquipGUIMain extends GUI {
 
     private void trocaItems() {
 
-        ItemStack[] items = mobItems();
         ItemStack[] novosItems = new ItemStack[6];
         int index;
 
         int[] slots = new int[]{10, 11, 12, 13, 15, 16};
         index = 0;
 
-        for (int x : slots) {
-            for (ItemStack itemStack : items) {
-                if (inventory.getItem(x) != null && itemStack.equals(inventory.getItem(x))) {
-                    inventory.setItem(x, new ItemStack(Material.AIR));
-                }
+        for (int slot : slots) {
+            if (inventory.getItem(slot) != null && inventory.getItem(slot).equals(displayItems(index))) {
+                inventory.setItem(slot, new ItemStack(Material.AIR));
+
             }
-            novosItems[index] = inventory.getItem(x);
+            novosItems[index] = inventory.getItem(slot);
             index++;
         }
 
-        int[] slotsChest = new int[]{19, 20, 21, 22, 24, 25};
+//        int[] slotsProbs = new int[]{19, 20, 21, 22, 24, 25};
+        int[] slotsProbs = new int[]{22, 21, 20, 19, 25, 24};
+        float[] probs = new float[6];
+        index = 0;
+
+        for (int slot : slotsProbs) {
+
+            ItemStack itemStack = inventory.getItem(slot);
+            ItemMeta itemMeta = itemStack.getItemMeta();
+
+            List<String> itemLore = itemMeta.getLore();
+
+            probs[index] = (Float.valueOf(itemLore.get(1).replace("§7", "")) / 100);
+            index++;
+
+        }
+
+        int[] slotsChest = new int[]{18, 19, 20, 21, 23, 24};
         index = 0;
 
         for (int x : slotsChest) {
             chest.getBlockInventory().setItem(x, novosItems[index]);
             index++;
         }
+
+        attProbSpawner(probs);
+
+    }
+
+    private void attProb(int slot, InventoryAction inventoryAction) {
+
+        ItemStack itemStack = inventory.getItem(slot);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        List<String> itemLore = itemMeta.getLore();
+
+        double newValor = SpawnerGUIMain.calc((Double.valueOf(itemLore.get(1).replace("§7", ""))), inventoryAction, 1, 5);
+
+        if (newValor < 0 || newValor > 100) return;
+
+        itemLore.set(1, "§7" + ((int) newValor));
+
+        itemMeta.setLore(itemLore);
+        itemStack.setItemMeta(itemMeta);
+
+        inventory.setItem(slot, itemStack);
+
+    }
+
+    private void attProbSpawner(float[] probs) {
+
+        NBTList armorProbs = new NBTList();
+
+        armorProbs.add(probs[0]);
+        armorProbs.add(probs[1]);
+        armorProbs.add(probs[2]);
+        armorProbs.add(probs[3]);
+
+        NBTList handProbs = new NBTList();
+
+        handProbs.add(probs[4]);
+        handProbs.add(probs[5]);
+
+        NBTCompound spawnerData = KoM.nbtManager.read(spawner.getBlock());
+        NBTCompound spawnData = spawnerData.getCompound("SpawnData");
+
+        spawnData.put("ArmorDropChances", armorProbs);
+        spawnData.put("HandDropChances", handProbs);
+        spawnerData.put("SpawnData", spawnData);
+
+        KoM.nbtManager.write(spawner.getBlock(), spawnerData);
+        KoM.nbtManager.write(spawner.getBlock(), spawnData);
 
     }
 

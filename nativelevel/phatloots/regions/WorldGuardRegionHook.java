@@ -3,14 +3,14 @@ package nativelevel.phatloots.regions;
 import com.sk89q.worldguard.bukkit.WGBukkit;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import org.bukkit.Location;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.bukkit.Location;
 
 /**
- *
  * @author Codisimus
  */
 public class WorldGuardRegionHook implements RegionHook {

@@ -1,6 +1,5 @@
 package nativelevel.Auras.Lista;
 
-import me.fromgate.playeffect.PlayEffect;
 import nativelevel.Auras.Aura;
 import nativelevel.utils.UtilParticles;
 import org.bukkit.Location;
@@ -37,15 +36,15 @@ public class AsasDeAnjo extends Aura {
     }
 
     private boolean[][] shape = {
-        {o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o},
-        {o, x, x, x, x, o, o, o, o, o, o, o, x, x, x, x, o, o},
-        {o, o, x, x, x, x, x, o, o, o, x, x, x, x, x, o, o, o},
-        {o, o, o, x, x, x, x, x, x, x, x, x, x, x, o, o, o, o},
-        {o, o, o, o, x, x, x, x, x, x, x, x, x, o, o, o, o, o},
-        {o, o, o, o, x, x, x, x, o, x, x, x, x, o, o, o, o, o},
-        {o, o, o, o, o, x, x, x, o, x, x, x, o, o, o, o, o, o},
-        {o, o, o, o, o, x, x, o, o, o, x, x, o, o, o, o, o, o},
-        {o, o, o, o, x, x, o, o, o, o, o, x, x, o, o, o, o, o}
+            {o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o, o},
+            {o, x, x, x, x, o, o, o, o, o, o, o, x, x, x, x, o, o},
+            {o, o, x, x, x, x, x, o, o, o, x, x, x, x, x, o, o, o},
+            {o, o, o, x, x, x, x, x, x, x, x, x, x, x, o, o, o, o},
+            {o, o, o, o, x, x, x, x, x, x, x, x, x, o, o, o, o, o},
+            {o, o, o, o, x, x, x, x, o, x, x, x, x, o, o, o, o, o},
+            {o, o, o, o, o, x, x, x, o, x, x, x, o, o, o, o, o, o},
+            {o, o, o, o, o, x, x, o, o, o, x, x, o, o, o, o, o, o},
+            {o, o, o, o, x, x, o, o, o, o, o, x, x, o, o, o, o, o}
     };
 
 

@@ -1,8 +1,9 @@
 package nativelevel.phatloots.events;
 
 import nativelevel.phatloots.loot.LootBundle;
-import java.util.List;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 /**
  * Called when a PhatLoot is lootedThe LootingBonus which may be positive of negative

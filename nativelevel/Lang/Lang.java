@@ -14,13 +14,13 @@
  */
 package nativelevel.Lang;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
 import nativelevel.KoM;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
 
 /**
  * An enum for requesting strings from the language file.
@@ -35,7 +35,7 @@ public enum Lang {
     PLAYER_ONLY("player-only", "Sorry but that can only be run by a player!"),
     MUST_BE_NUMBER("must-be-number", "&cYou need to specify a number, not a word."),
     NO_PERMS("no-permissions", "&cYou don''t have permission for that!");
-    public static YamlConfiguration LANG ;
+    public static YamlConfiguration LANG;
     public static File LANG_FILE;
     private String path;
     private String def;
@@ -43,7 +43,7 @@ public enum Lang {
     /**
      * Lang enum constructor.
      *
-     * @param path The string path.
+     * @param path  The string path.
      * @param start The default string.
      */
     Lang(String path, String start) {
@@ -63,12 +63,12 @@ public enum Lang {
     public static void loadLang() {
         File lang = new File(KoM._instance.getDataFolder(), "lang.yml");
         if (!lang.exists()) {
-            
+
             try {
-                
+
                 KoM._instance.getDataFolder().mkdir();
                 lang.createNewFile();
-                
+
                 //InputStream defConfigStream = KoM._instance.getResource("lang.yml");
                 //if (defConfigStream != null) {
                 //    YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);

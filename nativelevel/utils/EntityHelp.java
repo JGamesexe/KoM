@@ -1,6 +1,5 @@
 package nativelevel.utils;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +21,7 @@ public class EntityHelp {
         ArrayList<EntityType> animais = new ArrayList<>();
 
         for (EntityType entityType : entityTypes) {
-            if(!entityType.isAlive()){
+            if (!entityType.isAlive()) {
                 merdas.add(entityType);
             }
         }
@@ -108,15 +107,15 @@ public class EntityHelp {
 
     }
 
-    public static int tamanhoDoBau(ArrayList arrayList){
+    public static int tamanhoDoBau(ArrayList arrayList) {
 
         int a = 0;
         a += arrayList.size() / 9;
-        if ((arrayList.size() % 9) != 0){
+        if ((arrayList.size() % 9) != 0) {
             a++;
         }
 
-        return a*9;
+        return a * 9;
     }
 
 

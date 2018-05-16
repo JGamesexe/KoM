@@ -5,19 +5,17 @@
  */
 package nativelevel.Harvesting;
 
-import nativelevel.Harvesting.Harvestable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import nativelevel.Jobs;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
 /**
- *
  * @author vntgasl
  */
 public class HarvestCache {
@@ -89,9 +87,9 @@ public class HarvestCache {
 
     static {
         translations.put(Material.CROPS, Material.WHEAT);
-        translations.put(Material.BEETROOT_BLOCK, Material.BEETROOT_SEEDS);    
+        translations.put(Material.BEETROOT_BLOCK, Material.BEETROOT_SEEDS);
     }
-    
+
     public static List<Material> ignora = Arrays.asList(new Material[]{});
 
     public static Harvestable getHarvestable(Block b) {
@@ -105,7 +103,7 @@ public class HarvestCache {
         HashSet<Harvestable> byBlock = harvestableByMaterial.get(blockMat.getId());
         if (byBlock != null) {
             for (Harvestable harv : byBlock) {
-                if (harv.data == data || (harv.m == Material.CROPS || harv.m == Material.PUMPKIN || harv.m == Material.BEETROOT_BLOCK || harv.m == Material.MELON || harv.m == Material.NETHER_WART_BLOCK || harv.m == Material.NETHER_WARTS || harv.m==Material.NETHER_STALK || harv.m == Material.CARROT || harv.m == Material.POTATO || harv.m == Material.COCOA || harv.m == Material.SUGAR_CANE_BLOCK || harv.m == Material.SUGAR_CANE)) {
+                if (harv.data == data || (harv.m == Material.CROPS || harv.m == Material.PUMPKIN || harv.m == Material.BEETROOT_BLOCK || harv.m == Material.MELON || harv.m == Material.NETHER_WART_BLOCK || harv.m == Material.NETHER_WARTS || harv.m == Material.NETHER_STALK || harv.m == Material.CARROT || harv.m == Material.POTATO || harv.m == Material.COCOA || harv.m == Material.SUGAR_CANE_BLOCK || harv.m == Material.SUGAR_CANE)) {
                     return harv;
                 }
             }

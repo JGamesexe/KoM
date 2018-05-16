@@ -17,8 +17,8 @@ public class ChestBreakEvent extends PhatLootChestEvent {
     /**
      * Creates a new event with the given data
      *
-     * @param lastLooter The Player who was last seen looting the chest
-     * @param chest The PhatLootChest being looted or null if no chest was involved
+     * @param lastLooter  The Player who was last seen looting the chest
+     * @param chest       The PhatLootChest being looted or null if no chest was involved
      * @param respawnTime The amount of time (in ticks) until the chest respawns or -1 if it never respawns
      */
     public ChestBreakEvent(PhatLootChest chest, Player lastLooter, long respawnTime) {

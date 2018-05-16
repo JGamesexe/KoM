@@ -44,7 +44,7 @@ commands:
         usage: /kom
     lobby:
         alias: hub
-    terreno:
+    terrenox:
         description: Comando Terrenos
         usage: /terreno
     towers:

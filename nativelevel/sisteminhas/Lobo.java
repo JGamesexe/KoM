@@ -5,17 +5,13 @@
  */
 package nativelevel.sisteminhas;
 
-import java.util.ArrayList;
-import java.util.List;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
 import nativelevel.Jobs;
 import nativelevel.Jobs.TipoClasse;
-import nativelevel.KoM;
 import nativelevel.MetaShit;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.DyeColor;
-import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
@@ -24,29 +20,30 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Wolf;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author User
  */
 
 
 public class Lobo implements CommandExecutor {
-    
+
     public static void interactOsso(PlayerInteractEvent ev) {
-        if (Jobs.getJobLevel(Jobs.Classe.Fazendeiro, ev.getPlayer())==TipoClasse.PRIMARIA && ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() == Material.BONE) {
-            ItemMeta meta = ev.getPlayer().getItemInHand().getItemMeta();
+        if (Jobs.getJobLevel(Jobs.Classe.Fazendeiro, ev.getPlayer()) == TipoClasse.PRIMARIA && ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.BONE) {
+            ItemMeta meta = ev.getPlayer().getInventory().getItemInMainHand().getItemMeta();
             if (meta.getLore() == null || meta.getLore().size() == 0) {
                 if (ev.getPlayer().hasMetadata("Lobo")) {
                     Wolf w = (Wolf) MetaShit.getMetaObject("Lobo", ev.getPlayer());
                     InfoLobo il = getLobo(ev.getPlayer());
-                    if(il==null) {
-                        ev.getPlayer().sendMessage(ChatColor.RED+"Nao encontrei seu osso magico");
+                    if (il == null) {
+                        ev.getPlayer().sendMessage(ChatColor.RED + "Nao encontrei seu osso magico");
                         return;
                     }
                     if (w.isDead() || !w.isValid()) {
@@ -59,11 +56,11 @@ public class Lobo implements CommandExecutor {
                         w.setSitting(false);
                         ev.getPlayer().playSound(ev.getPlayer().getLocation(), Sound.ENTITY_WOLF_PANT, 1, 1);
                         PlayEffect.play(VisualEffect.HEART, ev.getPlayer().getLocation(), "num:5");
-                        
+
                     }
                 } else {
                     InfoLobo info = getLobo(ev.getPlayer());
-                    if(info==null)
+                    if (info == null)
                         return;
                     if (info.dono.equalsIgnoreCase(ev.getPlayer().getName())) {
                         criaLobo(ev.getPlayer(), info);
@@ -72,14 +69,14 @@ public class Lobo implements CommandExecutor {
                     }
                 }
             }
-            if (ev.getPlayer().getItemInHand().getAmount() > 1) {
-                ev.getPlayer().getItemInHand().setAmount(ev.getPlayer().getItemInHand().getAmount() - 1);
+            if (ev.getPlayer().getInventory().getItemInMainHand().getAmount() > 1) {
+                ev.getPlayer().getInventory().getItemInMainHand().setAmount(ev.getPlayer().getInventory().getItemInMainHand().getAmount() - 1);
             } else {
                 ev.getPlayer().setItemInHand(null);
             }
         }
     }
-    
+
     public static Wolf criaLobo(Player p, InfoLobo i) {
         if (p.hasMetadata("Lobo")) {
             Wolf w = (Wolf) MetaShit.getMetaObject("Lobo", p);
@@ -93,14 +90,14 @@ public class Lobo implements CommandExecutor {
         MetaShit.setMetaObject("Lobo", p, w);
         return w;
     }
-    
+
     public static void interage(PlayerInteractEntityEvent ev) {
         if (ev.getRightClicked() != null && ev.getRightClicked().getType() == EntityType.WOLF) {
             Wolf w = (Wolf) ev.getRightClicked();
             if (w.getOwner() != null) {
                 return;
             }
-            if (ev.getPlayer().getItemInHand() == null || ev.getPlayer().getItemInHand().getType() != Material.BONE) {
+            if (ev.getPlayer().getInventory().getItemInMainHand() == null || ev.getPlayer().getInventory().getItemInMainHand().getType() != Material.BONE) {
                 return;
             }
             ev.setCancelled(true);
@@ -108,9 +105,9 @@ public class Lobo implements CommandExecutor {
                 ev.getPlayer().sendMessage(ChatColor.RED + "Guarde isto na sua Enderchest e use um osso para chamar seu lobo !");
                 return;
             }
-            ItemStack osso = ev.getPlayer().getItemInHand();
+            ItemStack osso = ev.getPlayer().getInventory().getItemInMainHand();
             if (Jobs.getJobLevel("Fazendeiro", ev.getPlayer()) == 1 && ev.getPlayer().getLevel() >= 13) {
-                
+
                 ItemMeta meta = osso.getItemMeta();
                 if (meta.getDisplayName() != null && meta.getDisplayName().equalsIgnoreCase(ChatColor.GOLD + "Osso Magico")) {
                     List<String> lore = meta.getLore();
@@ -135,7 +132,7 @@ public class Lobo implements CommandExecutor {
             }
         }
     }
-    
+
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
         if (cs instanceof Player) {
@@ -186,17 +183,17 @@ public class Lobo implements CommandExecutor {
                 }
             }
         }
-        
+
         return true;
     }
-    
+
     private static class InfoLobo {
-        
+
         String nome;
         DyeColor cor;
         String dono;
     }
-    
+
     public static void updateLobo(Player p, String nome, DyeColor cor) {
         ItemStack ss = getItemLobo(p);
         ItemMeta meta = ss.getItemMeta();
@@ -208,7 +205,7 @@ public class Lobo implements CommandExecutor {
         meta.setLore(lore);
         ss.setItemMeta(meta);
     }
-    
+
     public static ItemStack getItemLobo(Player p) {
 
         for (ItemStack ss : p.getEnderChest().getContents()) {
@@ -226,7 +223,7 @@ public class Lobo implements CommandExecutor {
                 }
             }
         }
-        
+
         for (ItemStack ss : p.getInventory().getContents()) {
             if (ss == null) {
                 continue;
@@ -243,7 +240,7 @@ public class Lobo implements CommandExecutor {
         }
         return null;
     }
-    
+
     public static InfoLobo getLobo(Player p) {
         for (ItemStack ss : p.getEnderChest().getContents()) {
             if (ss == null) {
@@ -291,7 +288,7 @@ public class Lobo implements CommandExecutor {
         }
         return null;
     }
-    
+
     public static ItemStack criaItemLobo(Player p) {
         ItemStack ss = new ItemStack(Material.BONE);
         ItemMeta meta = ss.getItemMeta();
@@ -305,7 +302,7 @@ public class Lobo implements CommandExecutor {
         ss.setItemMeta(meta);
         return ss;
     }
-    
+
     public static ItemStack criaItem() {
         ItemStack ss = new ItemStack(Material.BONE);
         ItemMeta meta = ss.getItemMeta();

@@ -14,17 +14,17 @@
  */
 package nativelevel.efeitos;
 
+import org.bukkit.Bukkit;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
-
 /**
  * ReflectionUtil v1.1
- *
+ * <p>
  * You are welcome to use it, modify it and redistribute it under the condition to not claim this class as your own
  *
  * @author DarkBlade12
@@ -47,17 +47,17 @@ public abstract class ReflectionUtil {
     public enum DynamicPackage {
 
         MINECRAFT_SERVER {
-                    @Override
-                    public String toString() {
-                        return "net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().substring(23, 30);
-                    }
-                },
+            @Override
+            public String toString() {
+                return "net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().substring(23, 30);
+            }
+        },
         CRAFTBUKKIT {
-                    @Override
-                    public String toString() {
-                        return Bukkit.getServer().getClass().getPackage().getName();
-                    }
-                };
+            @Override
+            public String toString() {
+                return Bukkit.getServer().getClass().getPackage().getName();
+            }
+        };
     }
 
     public static class FieldEntry {

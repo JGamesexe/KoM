@@ -5,9 +5,8 @@
 package nativelevel.Custom.Mobs;
 
 /**
- *
  * @author usuario
  */
 public class CustomMobs {
-    
+
 }

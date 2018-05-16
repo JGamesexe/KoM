@@ -1,5 +1,11 @@
 package nativelevel.Equipment.Generator;
 
+import nativelevel.ComandosNovos.Comando;
+import nativelevel.Equipment.EquipMeta;
+import nativelevel.KoM;
+import nativelevel.gemas.Raridade;
+import org.bukkit.Material;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,23 +13,16 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import nativelevel.Equipment.EquipMeta;
-import nativelevel.ComandosNovos.Comando;
-import nativelevel.KoM;
-import nativelevel.gemas.Raridade;
-import org.bukkit.Material;
 
 /**
- *
  * @author Ziden
- *
  */
 public abstract class PreSet {
 
     public abstract Raridade getRaridade();
 
     public abstract Material getMat();
-    
+
     public abstract String nome();
 
     public abstract EquipMeta getStats();

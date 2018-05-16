@@ -14,7 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  * @author Codisimus
  */
 public class MobSpawnListener extends MobListener {
-    @EventHandler (ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onMobSpawn(final CreatureSpawnEvent event) {
         //Schedule this code so that mob spawning plugins have a chance to change the type of the mob
         new BukkitRunnable() {
@@ -25,8 +25,8 @@ public class MobSpawnListener extends MobListener {
                 if (phatLoot != null) {
                     //The mob's 'level' gives them a looting bonus to get better equipment
                     double level = entity.hasMetadata("level")
-                                   ? entity.getMetadata("level").get(0).asDouble()
-                                   : 0;
+                            ? entity.getMetadata("level").get(0).asDouble()
+                            : 0;
                     phatLoot.rollForEquipment(entity, level);
                 }
             }

@@ -14,9 +14,10 @@
  */
 package nativelevel;
 
-import java.text.DecimalFormat;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import java.text.DecimalFormat;
 
 public class Dano {
 

@@ -3,19 +3,18 @@
  * and open the template in the editor.
  */
 package nativelevel.utils;
+
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.Location;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 /**
- *
  * @author Gabriel
  */
 public class ConfigManager {
@@ -36,7 +35,7 @@ public class ConfigManager {
         return this.config;
     }
 
-    public void SaveConfig(){
+    public void SaveConfig() {
         try {
             this.config.save(dbFile);
         } catch (IOException ex) {

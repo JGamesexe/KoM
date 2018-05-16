@@ -14,28 +14,19 @@
  */
 package nativelevel.Custom.Items;
 
-import nativelevel.utils.TitleAPI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
-import nativelevel.KoM;
-import nativelevel.Lang.L;
-import nativelevel.config.Config;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 public class ValeSorteio extends CustomItem {
 
@@ -186,7 +177,7 @@ public class ValeSorteio extends CustomItem {
     @Override
     public boolean onItemInteract(Player player) {
 
-        ItemMeta item = player.getItemInHand().getItemMeta();
+        ItemMeta item = player.getInventory().getItemInMainHand().getItemMeta();
         String nome = ChatColor.stripColor(item.getLore().get(0));
 
         if (!nome.equalsIgnoreCase(nomeSorteio)) {
@@ -200,10 +191,10 @@ public class ValeSorteio extends CustomItem {
                 p.sendMessage(ChatColor.AQUA + "[Sorteio] " + player.getName() + " usou um ticket de sorteio.");
             }
         }
-        if (player.getItemInHand().getAmount() == 1) {
+        if (player.getInventory().getItemInMainHand().getAmount() == 1) {
             player.setItemInHand(null);
         } else {
-            player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
+            player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
         }
         player.updateInventory();
         return true;

@@ -1,15 +1,15 @@
 package nativelevel.lojas;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CmdSetPreco
         implements CommandExecutor {
@@ -25,7 +25,7 @@ public class CmdSetPreco
             return true;
         }
         Player p = (Player) cs;
-        if ((p.getItemInHand() == null) || (p.getItemInHand().getType() == Material.AIR)) {
+        if ((p.getInventory().getItemInMainHand() == null) || (p.getInventory().getItemInMainHand().getType() == Material.AIR)) {
             cs.sendMessage("§cVoce precisa ter algo em sua mao para setar pre§o!");
             return true;
         }
@@ -38,14 +38,14 @@ public class CmdSetPreco
                     cs.sendMessage("§cO segundo argumento deve ser um valor inteiro!");
                     return true;
                 }
-                ItemMeta in = p.getItemInHand().getItemMeta();
+                ItemMeta in = p.getInventory().getItemInMainHand().getItemMeta();
                 if (!in.hasLore()) {
                     List l = new ArrayList();
                     l.add("§6§lLoja");
                     l.add("§2Compra: §6" + i);
 
                     in.setLore(l);
-                    p.getItemInHand().setItemMeta(in);
+                    p.getInventory().getItemInMainHand().setItemMeta(in);
                     p.sendMessage("§cAlterado!");
                     return true;
                 }
@@ -58,7 +58,7 @@ public class CmdSetPreco
                     List ls = in.getLore();
                     ls.set(1, "§2Compra: §6" + i);
                     in.setLore(ls);
-                    p.getItemInHand().setItemMeta(in);
+                    p.getInventory().getItemInMainHand().setItemMeta(in);
                     p.sendMessage("§cAlterado!");
                     return true;
                 }
@@ -70,7 +70,7 @@ public class CmdSetPreco
                     cs.sendMessage("§cO segundo argumento deve ser um valor inteiro!");
                     return true;
                 }
-                ItemMeta in = p.getItemInHand().getItemMeta();
+                ItemMeta in = p.getInventory().getItemInMainHand().getItemMeta();
                 if (!in.hasLore()) {
                     List l = in.getLore();
                     if (l == null) {
@@ -80,7 +80,7 @@ public class CmdSetPreco
 
                     l.add("§2Venda: §6" + i);
                     in.setLore(l);
-                    p.getItemInHand().setItemMeta(in);
+                    p.getInventory().getItemInMainHand().setItemMeta(in);
                     p.sendMessage("§cAlterado!");
                 } else {
                     List l = in.getLore();
@@ -88,14 +88,14 @@ public class CmdSetPreco
 
                     l.add("§2Venda: §6" + i);
                     in.setLore(l);
-                    p.getItemInHand().setItemMeta(in);
+                    p.getInventory().getItemInMainHand().setItemMeta(in);
                     p.sendMessage("§cAlterado!");
                 }
                 if (ChatColor.stripColor((String) in.getLore().get(0)).equalsIgnoreCase("Loja")) {
                     List ls = in.getLore();
                     ls.set(1, "§2Venda: §6" + i);
                     in.setLore(ls);
-                    p.getItemInHand().setItemMeta(in);
+                    p.getInventory().getItemInMainHand().setItemMeta(in);
                     p.sendMessage("§cAlterado!");
                     return true;
                 }

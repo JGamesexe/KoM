@@ -1,6 +1,5 @@
 package nativelevel.komquista.comandos;
 
-import java.util.List;
 import nativelevel.komquista.DB;
 import nativelevel.komquista.managers.ControleTempos;
 import nativelevel.komquista.managers.Guilda;
@@ -11,6 +10,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class CmdKomQ
         implements CommandExecutor {

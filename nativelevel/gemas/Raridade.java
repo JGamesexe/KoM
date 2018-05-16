@@ -6,9 +6,7 @@
 package nativelevel.gemas;
 
 /**
- *
  * @author User
- * 
  */
 
 public enum Raridade {
@@ -18,13 +16,13 @@ public enum Raridade {
     Raro("§9"),
     Epico("§d"),
     Lendario("§e");
-    
+
     public String cor;
-    
+
     private Raridade(String cor) {
         this.cor = cor;
     }
-    
+
     public String getIcone() {
         return cor + "♦";
     }

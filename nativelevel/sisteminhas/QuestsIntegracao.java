@@ -1,12 +1,7 @@
 package nativelevel.sisteminhas;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
-import static me.blackvein.quests.Quests.ignoreLockedQuests;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.BussolaMagica;
 import nativelevel.KoM;
@@ -18,15 +13,16 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
- *
  * @author Ziden
- *
  */
 public class QuestsIntegracao extends KomSystem {
 
@@ -139,83 +135,83 @@ public class QuestsIntegracao extends KomSystem {
             if (q.testRequirements(quester) && !quester.completedQuests.contains(q.name)) {
 
                 try {
-                
-                ItemStack icone = new ItemStack(Material.BOOK_AND_QUILL, 1);
-                ItemMeta meta = icone.getItemMeta();
 
-                meta.setDisplayName(ChatColor.AQUA + q.getName());
-                List<String> lore = new ArrayList<String>();
+                    ItemStack icone = new ItemStack(Material.BOOK_AND_QUILL, 1);
+                    ItemMeta meta = icone.getItemMeta();
 
-                int nivel = 0;
+                    meta.setDisplayName(ChatColor.AQUA + q.getName());
+                    List<String> lore = new ArrayList<String>();
 
-                if (q.commands.size() > 0) {
-                    for (String com : q.commands) {
-                        if (com.contains("darxp")) {
-                            nivel = Integer.valueOf(com.split(" ")[2]);
-                        }
-                    }
-                }
+                    int nivel = 0;
 
-                int xp = XP.getExpPorAcao(nivel) * XP_MOD;
-
-                if (q.customRequirements != null && q.customRequirements.containsKey("Nivel KoM")) {
-                    Map<String, Object> mapa = q.customRequirements.get("Nivel KoM");
-                    if (mapa != null) {
-                        KoM.debug("MAPA " + mapa.keySet().toString());
-                        nivel = Integer.valueOf((String) mapa.get("Level"));
-                        lore.add(ChatColor.GREEN + "Nivel Minimo: " + ChatColor.YELLOW + nivel);
-                    }
-
-                }
-
-                lore.add(ChatColor.GREEN + "XP: " + ChatColor.YELLOW + xp);
-                if (nivel == 0) {
-                    lore.add(ChatColor.RED + "[ Quest sem XP ]");
-                    //if (p.isOp()) {
-                    //    lore.add(ChatColor.RED + "Essa quest ta sem recompensa /darxp <mano> <nivel>");
-                    //}
-                }
-
-                if (q.npcStart != null) {
-                    // no mesmo mundo
-                    if (q.npcStart.getEntity() != null && q.npcStart.getEntity().getLocation().getWorld().getName().equalsIgnoreCase("dungeon")) {
-                        lore.add(ChatColor.GREEN + "Local: " + ChatColor.YELLOW + " Algum lugar macabro por aí.");
-                    } else {
-                        if (q.npcStart.getEntity() != null && q.npcStart.getEntity().getLocation().getWorld().getName().equalsIgnoreCase(p.getWorld().getName())) {
-                            int distancia = ((Double) q.npcStart.getEntity().getLocation().distance(p.getLocation())).intValue();
-                            lore.add(ChatColor.GREEN + "Distância: " + ChatColor.YELLOW + distancia + " blocos");
-                            lore.add(ChatColor.GREEN + "NPC: " + ChatColor.YELLOW + q.npcStart.getName());
-                        } else {
-                            lore.add(ChatColor.GREEN + "NPC não foi encontrado.");
-                        }
-                    }
-                } else {
-                    if (q.blockStart != null) {
-                        if (q.blockStart.getWorld().getName().equalsIgnoreCase("dungeon")) {
-                            lore.add(ChatColor.GREEN + "Local: " + ChatColor.YELLOW + " Algum lugar macabro por aí.");
-                        } else {
-                            if (q.blockStart.getWorld().getName().equalsIgnoreCase(p.getWorld().getName())) {
-                                try {
-                                    int distancia = ((Double) q.npcStart.getEntity().getLocation().distance(p.getLocation())).intValue();
-                                    lore.add(ChatColor.GREEN + "Distância: " + ChatColor.YELLOW + distancia + " blocos");
-                                } catch(Exception e) {
-                                    e.printStackTrace();
-                                }
-                            } else {
-                                lore.add(ChatColor.GREEN + "Bloco não foi encontrado.");
+                    if (q.commands.size() > 0) {
+                        for (String com : q.commands) {
+                            if (com.contains("darxp")) {
+                                nivel = Integer.valueOf(com.split(" ")[2]);
                             }
                         }
-                        lore.add(ChatColor.GREEN + "Bloco de Início: " + ChatColor.YELLOW + LangMinecraft.get().get(new ItemStack(q.blockStart.getBlock().getType())));
                     }
-                }
 
-                lore.add(ChatColor.YELLOW + "" + ChatColor.BOLD + "Clique para Apontar na Bussola");
+                    int xp = XP.getExpPorAcao(nivel) * XP_MOD;
 
-                meta.setLore(lore);
-                icone.setItemMeta(meta);
-                i.addItem(icone);
-                
-                } catch(Throwable e) {
+                    if (q.customRequirements != null && q.customRequirements.containsKey("Nivel KoM")) {
+                        Map<String, Object> mapa = q.customRequirements.get("Nivel KoM");
+                        if (mapa != null) {
+                            KoM.debug("MAPA " + mapa.keySet().toString());
+                            nivel = Integer.valueOf((String) mapa.get("Level"));
+                            lore.add(ChatColor.GREEN + "Nivel Minimo: " + ChatColor.YELLOW + nivel);
+                        }
+
+                    }
+
+                    lore.add(ChatColor.GREEN + "XP: " + ChatColor.YELLOW + xp);
+                    if (nivel == 0) {
+                        lore.add(ChatColor.RED + "[ Quest sem XP ]");
+                        //if (p.isOp()) {
+                        //    lore.add(ChatColor.RED + "Essa quest ta sem recompensa /darxp <mano> <nivel>");
+                        //}
+                    }
+
+                    if (q.npcStart != null) {
+                        // no mesmo mundo
+                        if (q.npcStart.getEntity() != null && q.npcStart.getEntity().getLocation().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
+                            lore.add(ChatColor.GREEN + "Local: " + ChatColor.YELLOW + " Algum lugar macabro por aí.");
+                        } else {
+                            if (q.npcStart.getEntity() != null && q.npcStart.getEntity().getLocation().getWorld().getName().equalsIgnoreCase(p.getWorld().getName())) {
+                                int distancia = ((Double) q.npcStart.getEntity().getLocation().distance(p.getLocation())).intValue();
+                                lore.add(ChatColor.GREEN + "Distância: " + ChatColor.YELLOW + distancia + " blocos");
+                                lore.add(ChatColor.GREEN + "NPC: " + ChatColor.YELLOW + q.npcStart.getName());
+                            } else {
+                                lore.add(ChatColor.GREEN + "NPC não foi encontrado.");
+                            }
+                        }
+                    } else {
+                        if (q.blockStart != null) {
+                            if (q.blockStart.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
+                                lore.add(ChatColor.GREEN + "Local: " + ChatColor.YELLOW + " Algum lugar macabro por aí.");
+                            } else {
+                                if (q.blockStart.getWorld().getName().equalsIgnoreCase(p.getWorld().getName())) {
+                                    try {
+                                        int distancia = ((Double) q.npcStart.getEntity().getLocation().distance(p.getLocation())).intValue();
+                                        lore.add(ChatColor.GREEN + "Distância: " + ChatColor.YELLOW + distancia + " blocos");
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                } else {
+                                    lore.add(ChatColor.GREEN + "Bloco não foi encontrado.");
+                                }
+                            }
+                            lore.add(ChatColor.GREEN + "Bloco de Início: " + ChatColor.YELLOW + LangMinecraft.get().get(new ItemStack(q.blockStart.getBlock().getType())));
+                        }
+                    }
+
+                    lore.add(ChatColor.YELLOW + "" + ChatColor.BOLD + "Clique para Apontar na Bussola");
+
+                    meta.setLore(lore);
+                    icone.setItemMeta(meta);
+                    i.addItem(icone);
+
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
 

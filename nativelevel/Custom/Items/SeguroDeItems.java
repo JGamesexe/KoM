@@ -14,18 +14,16 @@
  */
 package nativelevel.Custom.Items;
 
-import java.util.Arrays;
-import java.util.List;
 import nativelevel.Custom.CustomItem;
-import nativelevel.KoM;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Lang.L;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class SeguroDeItems extends CustomItem {
 
@@ -39,8 +37,8 @@ public class SeguroDeItems extends CustomItem {
 
         ItemMeta meta = papel.getItemMeta();
         meta.setLore(Arrays.asList(new String[]{
-            ChatColor.AQUA + "Cargas : " + cargas,
-            ChatColor.BLACK + ":Seguro de Itens",}
+                ChatColor.AQUA + "Cargas : " + cargas,
+                ChatColor.BLACK + ":Seguro de Itens",}
         ));
         papel.setItemMeta(meta);
         return papel;

@@ -6,7 +6,6 @@
 package nativelevel.NewLoots;
 
 /**
- *
  * @author User
  */
 public class ControleBau {

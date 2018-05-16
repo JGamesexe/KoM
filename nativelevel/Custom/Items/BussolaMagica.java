@@ -14,7 +14,6 @@
  */
 package nativelevel.Custom.Items;
 
-import java.util.List;
 import nativelevel.Custom.CustomItem;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
@@ -30,6 +29,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.List;
 
 public class BussolaMagica extends CustomItem {
 
@@ -47,7 +48,7 @@ public class BussolaMagica extends CustomItem {
         for (LocalBussola local : locais) {
             if (local.nivel <= player.getLevel() + 25 || player.hasPermission("kom.locais")) {
                 ItemStack ss = new ItemStack(local.getIcone());
-                if(ss==null || ss.getItemMeta()==null) {
+                if (ss == null || ss.getItemMeta() == null) {
                     ss = new ItemStack(Material.GRASS);
                 }
                 i.addItem(MetaUtils.setItemNameAndLore(ss, ChatColor.YELLOW + "Apontar para " + local.nome, new String[]{ChatColor.GREEN + "Nivel: " + local.nivel, ChatColor.GREEN + "Clique para apontar."}));
@@ -83,10 +84,10 @@ public class BussolaMagica extends CustomItem {
                     LocalBussola loc = getLocal(nomeLocal);
                     if (loc != null) {
                         Location localFinal = LocUtils.str2loc(loc.local);
-                      
+
                         p.setCompassTarget(localFinal);
                         p.sendMessage(ChatColor.GREEN + "Sua bussola agora está apontando para " + loc.nome);
-                       
+
                     }
                 }
             }
@@ -98,16 +99,16 @@ public class BussolaMagica extends CustomItem {
         public int nivel;
         public String nome;
         public String local;
-        
+
         private Material icone = null;
-        
+
         public Material getIcone() {
-            if(icone == null) {
-               Location l = LocUtils.str2loc(local);
-               icone = l.getWorld().getHighestBlockAt(l).getType();
-               if(icone == Material.AIR)
-                   icone = l.getWorld().getHighestBlockAt(l).getRelative(BlockFace.DOWN).getType();
-               KoM.debug("MAIS ALTO = "+icone);
+            if (icone == null) {
+                Location l = LocUtils.str2loc(local);
+                icone = l.getWorld().getHighestBlockAt(l).getType();
+                if (icone == Material.AIR)
+                    icone = l.getWorld().getHighestBlockAt(l).getRelative(BlockFace.DOWN).getType();
+                KoM.debug("MAIS ALTO = " + icone);
             }
             return icone;
         }

@@ -4,43 +4,21 @@ import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import nativelevel.scores.Title;
-import nativelevel.utils.TitleAPI;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import me.asofold.bpl.simplyvanish.SimplyVanish;
 import me.asofold.bpl.simplyvanish.config.VanishConfig;
 import me.blackvein.quests.Quest;
 import nativelevel.Attributes.Health;
 import nativelevel.CFG;
 import nativelevel.Classes.Farmer;
+import nativelevel.Classes.Mage.spelllist.Paralyze;
 import nativelevel.Crafting.CraftEvents;
-
-import static nativelevel.Crafting.CraftEvents.addInfoItem;
-
 import nativelevel.Custom.Buildings.Portal;
 import nativelevel.Custom.CustomItem;
-import nativelevel.Custom.Items.Armadilha;
-import nativelevel.Custom.Items.CapaInvisvel;
-import nativelevel.Custom.Items.Detonador;
-import nativelevel.Custom.Items.LogoutTrap;
-import nativelevel.Custom.Items.PedraDoPoder;
+import nativelevel.Custom.Items.*;
+import nativelevel.Equipment.EquipManager;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
-
-import static nativelevel.Listeners.GeneralListener.loots;
-import static nativelevel.Listeners.GeneralListener.taPelado;
-
-import nativelevel.Classes.Mage.spelllist.Paralyze;
-import nativelevel.Custom.Items.SeguroDeItems;
-import nativelevel.Equipment.EquipManager;
 import nativelevel.MetaShit;
 import nativelevel.bencoes.TipoBless;
 import nativelevel.integration.BungeeCordKom;
@@ -51,26 +29,20 @@ import nativelevel.rankings.RankedPlayer;
 import nativelevel.scores.SBCore;
 import nativelevel.sisteminhas.BookPortal;
 import nativelevel.sisteminhas.ClanLand;
-import nativelevel.sisteminhas.Horses;
 import nativelevel.sisteminhas.XP;
-import nativelevel.sisteminhas.Mobs;
 import nativelevel.skills.Skill;
 import nativelevel.skills.SkillMaster;
 import nativelevel.titulos.Titulos;
 import nativelevel.utils.BungLocation;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import nativelevel.utils.JotaGUtils;
+import nativelevel.utils.LocUtils;
+import nativelevel.utils.TitleAPI;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -78,16 +50,19 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerLevelChangeEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+
+import java.util.*;
+
+import static nativelevel.Crafting.CraftEvents.addInfoItem;
+import static nativelevel.Listeners.GeneralListener.loots;
+import static nativelevel.Listeners.GeneralListener.taPelado;
 
 /**
  * @author Ziden
@@ -119,7 +94,7 @@ public class PlayerEvents implements Listener {
             ev.getPlayer().removePotionEffect(PotionEffectType.BLINDNESS);
         }
 
-        if (!ev.getPlayer().getWorld().getName().equalsIgnoreCase("arena") && !ev.getPlayer().getWorld().getName().equalsIgnoreCase("woe") && !ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (!ev.getPlayer().getWorld().getName().equalsIgnoreCase("arena") && !ev.getPlayer().getWorld().getName().equalsIgnoreCase("woe") && !ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             if (LogoutTrap.trapeados.contains(ev.getPlayer().getName())) {
                 LogoutTrap.trapeados.remove(ev.getPlayer().getName());
                 ev.getPlayer().setHealth(0);
@@ -430,8 +405,16 @@ public class PlayerEvents implements Listener {
             return;
         }
 
-        if (event.getTo().getWorld().getName().equalsIgnoreCase("Vila") || event.getTo().getWorld().getName().equalsIgnoreCase("Dungeon")) {
+        if (!event.getTo().getWorld().getName().equalsIgnoreCase("NewWorld")) {
             return;
+        }
+
+        if (event.getPlayer().isOp()
+                && event.getPlayer().getInventory().getItemInMainHand() != null
+                && event.getPlayer().getInventory().getItemInMainHand().getType() == Material.EMPTY_MAP
+                && event.getPlayer().getInventory().getItemInMainHand().getItemMeta() != null
+                && MetaShit.getMetaObject("autoClaim", event.getPlayer()) != null) {
+            JotaGUtils.changeChunkTypeWithItem(event.getPlayer(), event.getTo(), event.getPlayer().getInventory().getItemInMainHand());
         }
 
         int mobLevel1 = ClanLand.getMobLevel(event.getFrom());
@@ -450,7 +433,7 @@ public class PlayerEvents implements Listener {
         String lastType = ClanLand.getTypeAt(event.getFrom());
 
         if (type.equalsIgnoreCase("SAFE") && !lastType.equalsIgnoreCase("SAFE")) {
-            event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 60 * 60, 1));
+            event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20 * 60 * 60, 0));
         }
         if (!type.equalsIgnoreCase("SAFE") && lastType.equalsIgnoreCase("SAFE")) {
             event.getPlayer().removePotionEffect(PotionEffectType.SPEED);
@@ -473,18 +456,18 @@ public class PlayerEvents implements Listener {
 
         if (type.equals(lastType)) {
             if (type.equals("CLAN") && lastType.equals("CLAN")) {
-                String tag = ClanLand.getClanAt(event.getTo()).getTag();
-                String lasttag = ClanLand.getClanAt(event.getFrom()).getTag();
-                if (!tag.equals(lasttag)) {
+                String tag = ClanLand.getBookMeta(event.getTo()).getTitle();
+                String lasttag = ClanLand.getBookMeta(event.getFrom()).getTitle();
+                if (!tag.equalsIgnoreCase(lasttag)) {
                     ClanLand.update(event.getPlayer(), event.getTo());
-                } else {
-                    String donoVai = ClanLand.getOwnerAt(event.getTo());
-                    String dono2 = ClanLand.getOwnerAt(event.getFrom());
-                    if (donoVai == null && dono2 != null) {
+                } else if (ClanLand.manager.getClanPlayer(event.getPlayer()) != null && ClanLand.manager.getClanPlayer(event.getPlayer()).getTag().equalsIgnoreCase(tag.replace("#", ""))) {
+                    String[] donoVai = ClanLand.getOwnerAt(event.getTo());
+                    String[] dono2 = ClanLand.getOwnerAt(event.getFrom());
+                    if (donoVai.length == 0 && dono2.length != 0) {
                         ClanLand.update(event.getPlayer(), event.getTo());
-                    } else if (donoVai != null && dono2 == null) {
+                    } else if (donoVai.length != 0 && dono2.length == 0) {
                         ClanLand.update(event.getPlayer(), event.getTo());
-                    } else if (donoVai != null && dono2 != null && !donoVai.equalsIgnoreCase(dono2)) {
+                    } else if (donoVai.length != 0 && dono2.length != 0 && !donoVai[0].equalsIgnoreCase(dono2[0])) {
                         ClanLand.update(event.getPlayer(), event.getTo());
                     }
                 }
@@ -562,7 +545,7 @@ public class PlayerEvents implements Listener {
                     ev.setCancelled(true);
                     return;
                 } else {
-                    if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon") || ev.getPlayer().getWorld().getName().equalsIgnoreCase("vila")) {
+                    if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon") || ev.getPlayer().getWorld().getName().equalsIgnoreCase("vila")) {
                         ev.getPlayer().sendMessage(ChatColor.RED + L.m("Voce nao pode jogar isto aqui !"));
                         ev.setCancelled(true);
                         return;
@@ -640,7 +623,7 @@ public class PlayerEvents implements Listener {
         if (!KoM.database.hasRegisteredClass(ev.getPlayer().getUniqueId().toString())) {
             //player.message(ChatColor.RED, MSG.REQUIRE_TUTORIAL);
             ev.getPlayer().sendMessage(ChatColor.RED + L.m("Voce precisa terminar o tutorial !"));
-            if (Bukkit.getWorld("dungeon") == null) {
+            if (Bukkit.getWorld("NewDungeon") == null) {
                 BungeeCordKom.tp(ev.getPlayer(), CFG.localTutorial);
             } else {
                 ev.setRespawnLocation(CFG.localTutorial.toLocation());
@@ -676,7 +659,7 @@ public class PlayerEvents implements Listener {
 
         p.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(100.0D);
 
-        p.setMaxHealth(Health.getMaxHealth(p, p.getLevel()));
+        p.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(Health.getMaxHealth(p, p.getLevel()));
 
         if (KoM.safeMode && !p.isOp()) {
             p.kickPlayer("Servidor em Manutenção");
@@ -693,14 +676,14 @@ public class PlayerEvents implements Listener {
 
         }
 
-        if (p.getWorld().getName().equalsIgnoreCase("eventos") || p.getWorld().getName().equalsIgnoreCase("dungeon") || p.getWorld().getName().equalsIgnoreCase("arena")) {
-            if (p.getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (p.getWorld().getName().equalsIgnoreCase("eventos") || p.getWorld().getName().equalsIgnoreCase("NewDungeon") || p.getWorld().getName().equalsIgnoreCase("arena")) {
+            if (p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                 long agora = System.currentTimeMillis() / 1000;
                 if (agora > KoM.ENABLE_TIME + 60) {
-                    BungeeCordKom.tp(p, CFG.spawnTree);
+                    BungeeCordKom.tp(p, new BungLocation(p.getBedSpawnLocation()));
                 }
             } else {
-                BungeeCordKom.tp(p, CFG.spawnTree);
+                BungeeCordKom.tp(p, new BungLocation(p.getBedSpawnLocation()));
             }
         }
 
@@ -757,7 +740,7 @@ public class PlayerEvents implements Listener {
     @EventHandler
     public void usaBalde(PlayerBucketFillEvent ev) {
         Location bp = ev.getBlockClicked().getLocation();
-        if (bp.getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (bp.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             ev.setCancelled(true);
             return;
         }
@@ -777,7 +760,7 @@ public class PlayerEvents implements Listener {
             return;
         }
         Location bp = ev.getBlockClicked().getLocation();
-        if (bp.getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (bp.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             ev.setCancelled(true);
             return;
         }
@@ -806,32 +789,22 @@ public class PlayerEvents implements Listener {
 
             if (checkBlock.getType() == Material.CHEST) {
                 Chest c = (Chest) checkBlock.getState();
-                for (ItemStack stack : c.getBlockInventory().getContents()) {
-                    if (stack != null && (stack.getType() == Material.WRITTEN_BOOK || stack.getType() == Material.BOOK_AND_QUILL)) {
-                        BookMeta m = (BookMeta) stack.getItemMeta();
-                        if (KoM.debugMode) {
-                            KoM.log.info("Book found!" + (m.hasTitle() ? " '" + m.getTitle() + "' by " + m.getAuthor() : "Book and Quill"));
-                        }
-                        if (checkBlock.getRelative(BlockFace.UP).getType() == Material.DIAMOND_BLOCK) {
-                            if (!p.hasPermission("kom.vip")) {
-                                p.sendMessage(ChatColor.RED + L.m("Apenas nobres podem usar este portal"));
-                                return;
-                            }
-                        }
+                ItemStack stack = c.getBlockInventory().getItem(0);
+                if (stack != null && (stack.getType() == Material.WRITTEN_BOOK || stack.getType() == Material.BOOK_AND_QUILL)) {
+                    BookMeta m = (BookMeta) stack.getItemMeta();
+                    if (KoM.debugMode) {
+                        KoM.log.info("Book found!" + (m.hasTitle() ? " '" + m.getTitle() + "' by " + m.getAuthor() : "Book and Quill"));
+                    }
 
-                        if (m.getTitle() != null && m.getTitle().equalsIgnoreCase("TP")) {
-                            BungLocation loc = BookPortal.getLocationFromBook(stack);
-                            if (loc != null) {
-                                p.sendMessage(ChatColor.LIGHT_PURPLE + "* poof *");
-                                // PlayEffect.play(VisualEffect.SOUND, p.getLocation(), "type:PORTAL_TRAVEL pitch:3");
-                                BungeeCordKom.tp(p, loc);
-                                return;
-                            } else {
-
-                            }
-                            break;
+                    if (checkBlock.getRelative(BlockFace.UP).getType() == Material.DIAMOND_BLOCK) {
+                        if (!p.hasPermission("kom.vip")) {
+                            p.sendMessage(ChatColor.RED + L.m("Apenas nobres podem usar este portal"));
+                            return;
                         }
                     }
+
+                    BookPortal.teleport(c, ev.getPlayer());
+                    break;
                 }
                 return;
             }
@@ -849,6 +822,11 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void cmd(PlayerCommandPreprocessEvent ev) {
+        if (ev.getPlayer().isConversing()) {
+            ev.getPlayer().playSound(ev.getPlayer().getLocation(), Sound.BLOCK_ANVIL_LAND, 1, 1);
+            TitleAPI.sendActionBar(ev.getPlayer(), "§c§lAlgo está esperando sua resposta, digite no chat !");
+            ev.setCancelled(true);
+        }
         if (ev.getMessage().startsWith("/quests top")) {
             ev.getPlayer().sendMessage(ChatColor.RED + L.m("Deus Jabu não gosta deste comando..."));
             ev.setCancelled(true);
@@ -866,6 +844,7 @@ public class PlayerEvents implements Listener {
             if (level > 20) {
                 if (!ev.getTo().getWorld().getWorldBorder().isInside(ev.getTo())) {
                     ev.getPlayer().sendMessage(ChatColor.RED + "Seu teleporte ia te levar a uma zona fora do mundo...");
+                    KoM.log.info(ev.getPlayer().getName() + " em " + LocUtils.loc2str(ev.getFrom()) + " tá tentando ir para " + LocUtils.loc2str(ev.getTo()));
                     ev.getPlayer().getWorld().strikeLightning(ev.getPlayer().getLocation());
                     ev.setCancelled(true);
                     return;
@@ -910,19 +889,11 @@ public class PlayerEvents implements Listener {
             ev.setCancelled(true);
             return;
         }
-        if (ev.getTo().getWorld().getName().equalsIgnoreCase("dungeon") || ev.getTo().getWorld().getName().equalsIgnoreCase("vila")) {
+        if (ev.getTo().getWorld().getName().equalsIgnoreCase("NewDungeon") || ev.getTo().getWorld().getName().equalsIgnoreCase("vila")) {
             if (ev.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL) {
                 ev.setCancelled(true);
                 return;
             }
-
-        }
-        if (!ev.getTo().getWorld().getName().equalsIgnoreCase(ev.getFrom().getWorld().getName()) && !ev.getTo().getWorld().getName().equalsIgnoreCase("vila")) {
-            ev.getPlayer().sendMessage(ChatColor.RED + "~ Zona Nivel " + ClanLand.getMobLevel(ev.getTo()) * 5);
-        }
-
-        if (ev.getPlayer().getVehicle() != null) {
-
         }
 
         if (ev.getTo().getWorld().getName().equalsIgnoreCase("Vila")) {
@@ -932,11 +903,11 @@ public class PlayerEvents implements Listener {
         if (!KoM.database.hasRegisteredClass(ev.getPlayer().getUniqueId().toString())) {
             //ev.getPlayer().teleport(CFG.localTutorial);
 
-            if (!ev.getTo().getWorld().getName().equalsIgnoreCase("dungeon")) {
+            if (!ev.getTo().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
 
                 ev.getPlayer().sendMessage(ChatColor.RED + "Você só pode sair daqui quando terminar o tutorial");
 
-                World d = Bukkit.getWorld("dungeon");
+                World d = Bukkit.getWorld("NewDungeon");
                 if (d != null) {
                     ev.setTo(CFG.localTutorial.toLocation());
                 } else {

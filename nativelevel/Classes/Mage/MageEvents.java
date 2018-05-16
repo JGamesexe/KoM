@@ -5,26 +5,22 @@
  */
 package nativelevel.Classes.Mage;
 
-import java.util.ArrayList;
-import java.util.List;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
+import nativelevel.Attributes.Mana;
+import nativelevel.Classes.Thief;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.RecipeBook;
 import nativelevel.Jobs;
 import nativelevel.Jobs.Sucesso;
+import nativelevel.Jobs.TipoClasse;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.MetaShit;
-import nativelevel.Attributes.Mana;
-import nativelevel.Classes.Thief;
-import nativelevel.Jobs.TipoClasse;
-import nativelevel.sisteminhas.KomSystem;
 import nativelevel.RecipeBooks.BookTypes;
 import nativelevel.integration.WorldGuardKom;
-import nativelevel.sisteminhas.XP;
+import nativelevel.sisteminhas.KomSystem;
 import nativelevel.utils.Cooldown;
-import nativelevel.utils.ScreenTitle;
 import nativelevel.utils.TitleAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -37,6 +33,9 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MageEvents extends KomSystem {
 
     @EventHandler
@@ -44,15 +43,15 @@ public class MageEvents extends KomSystem {
         if (ev.getHand() == EquipmentSlot.OFF_HAND) {
             return;
         }
-        if (ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() == Material.WRITTEN_BOOK) {
+        if (ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.WRITTEN_BOOK) {
 
             if (Thief.taInvisivel(ev.getPlayer())) {
                 Thief.revela(ev.getPlayer());
             }
 
-            CustomItem ci = CustomItem.getItem(ev.getPlayer().getItemInHand());
+            CustomItem ci = CustomItem.getItem(ev.getPlayer().getInventory().getItemInMainHand());
             if (ci instanceof RecipeBook) {
-                ItemStack inHand = ev.getPlayer().getItemInHand();
+                ItemStack inHand = ev.getPlayer().getInventory().getItemInMainHand();
                 BookMeta meta = (BookMeta) inHand.getItemMeta();
                 if (meta.getAuthor() == null || meta.getAuthor().equalsIgnoreCase("ninguem...")) {
                     meta.setAuthor(ev.getPlayer().getName());
@@ -68,7 +67,7 @@ public class MageEvents extends KomSystem {
                 }
 
                 RecipeBook book = (RecipeBook) ci;
-                if (book.getBookType(ev.getPlayer().getItemInHand()) == BookTypes.Magia) {
+                if (book.getBookType(ev.getPlayer().getInventory().getItemInMainHand()) == BookTypes.Magia) {
 
                     if (WorldGuardKom.ehSafeZone(ev.getPlayer().getLocation())) {
                         ev.getPlayer().sendMessage(ChatColor.RED + "Você não pode usar magias em cidades. Imagina a loucura que seria ?");
@@ -118,7 +117,7 @@ public class MageEvents extends KomSystem {
                         } else {
                             // checking if i have the spell recipe
                             boolean casted = false;
-                            List<String> recipes = book.getRecipes(ev.getPlayer().getItemInHand());
+                            List<String> recipes = book.getRecipes(ev.getPlayer().getInventory().getItemInMainHand());
                             for (String recipe : recipes) {
                                 MageSpell spell = SpellLoader.spells.get(recipe);
                                 Elements[] summonedElements = elements.toArray(new Elements[3]);
@@ -144,9 +143,9 @@ public class MageEvents extends KomSystem {
                                     int minSkill = spell.getMinSkill();
                                     double mySkill = ev.getPlayer().getLevel();
 
-                                    if(tipo==TipoClasse.PRIMARIA)
+                                    if (tipo == TipoClasse.PRIMARIA)
                                         minSkill -= 15;
-                                    if(minSkill < 1)
+                                    if (minSkill < 1)
                                         minSkill = 1;
 
                                     Sucesso sucesso = Jobs.hasSuccess(minSkill, Jobs.Classe.Mago, ev.getPlayer(), 0);

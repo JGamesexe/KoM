@@ -1,8 +1,9 @@
 package nativelevel.phatloots.loot;
 
+import org.bukkit.inventory.ItemStack;
+
 import java.util.LinkedList;
 import java.util.List;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * A LootBundle is a collection of items, commands, money, and experience that has been rolled for

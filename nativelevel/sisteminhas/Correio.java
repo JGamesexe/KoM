@@ -1,22 +1,7 @@
 package nativelevel.sisteminhas;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
 import nativelevel.KoM;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -30,11 +15,15 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.*;
+import java.util.logging.Level;
 
 /**
- *
- *
  * @author Ben Sergent V
  */
 public class Correio {
@@ -138,49 +127,49 @@ public class Correio {
             //<editor-fold defaultstate="collapsed" desc="Intruction Commands">
             if (args.length == 0 || (args.length < 2 && args[0].equals("1"))) { // Show crafting
                 sender.sendMessage(new String[]{
-                    ChatColor.GOLD + "" + ChatColor.BOLD + "RealMail - Crafting Recipes",
-                    ChatColor.GOLD + "Mailbox:",
-                    ChatColor.DARK_GRAY + "  --" + ChatColor.WHITE + "w   w" + ChatColor.WHITE + " = wool (1x)",
-                    ChatColor.GRAY + "  i i i   i" + ChatColor.WHITE + " = iron ingot (5x)",
-                    ChatColor.GRAY + "  i " + ChatColor.DARK_RED + "c" + ChatColor.GRAY + "i   " + ChatColor.DARK_RED + "c" + ChatColor.WHITE + " = chest (1x)",
-                    ChatColor.GOLD + "Stationery:",
-                    ChatColor.WHITE + "  1x paper and 1x feather",
-                    ChatColor.WHITE + "Use /mail 2 for usage"
+                        ChatColor.GOLD + "" + ChatColor.BOLD + "RealMail - Crafting Recipes",
+                        ChatColor.GOLD + "Mailbox:",
+                        ChatColor.DARK_GRAY + "  --" + ChatColor.WHITE + "w   w" + ChatColor.WHITE + " = wool (1x)",
+                        ChatColor.GRAY + "  i i i   i" + ChatColor.WHITE + " = iron ingot (5x)",
+                        ChatColor.GRAY + "  i " + ChatColor.DARK_RED + "c" + ChatColor.GRAY + "i   " + ChatColor.DARK_RED + "c" + ChatColor.WHITE + " = chest (1x)",
+                        ChatColor.GOLD + "Stationery:",
+                        ChatColor.WHITE + "  1x paper and 1x feather",
+                        ChatColor.WHITE + "Use /mail 2 for usage"
                 });
             } else if (args.length < 2) {
                 if (args[0].equals("2")) { // Show usage
                     sender.sendMessage(new String[]{
-                        ChatColor.GOLD + "" + ChatColor.BOLD + "RealMail - Usage information",
-                        ChatColor.GOLD + "Sending a letter:",
-                        ChatColor.WHITE + "  1. Craft some stationery" + (KoM._instance.getConfig().getBoolean("let_players_spawn_stationary", false) ? " or use /mail new" : ""),
-                        ChatColor.WHITE + "  2. Type your letter",
-                        ChatColor.WHITE + "    - Type [Subject:mySubject] on first line for subject",
-                        ChatColor.WHITE + "  3. Attach items if you wish (see /mail 3)",
-                        ChatColor.WHITE + "  4. Sign the book/stationery as the recipient's username",
-                        ChatColor.WHITE + "  5. Right-click a mailbox with the letter",
-                        ChatColor.WHITE + "Use /mail 3 for packaging"
+                            ChatColor.GOLD + "" + ChatColor.BOLD + "RealMail - Usage information",
+                            ChatColor.GOLD + "Sending a letter:",
+                            ChatColor.WHITE + "  1. Craft some stationery" + (KoM._instance.getConfig().getBoolean("let_players_spawn_stationary", false) ? " or use /mail new" : ""),
+                            ChatColor.WHITE + "  2. Type your letter",
+                            ChatColor.WHITE + "    - Type [Subject:mySubject] on first line for subject",
+                            ChatColor.WHITE + "  3. Attach items if you wish (see /mail 3)",
+                            ChatColor.WHITE + "  4. Sign the book/stationery as the recipient's username",
+                            ChatColor.WHITE + "  5. Right-click a mailbox with the letter",
+                            ChatColor.WHITE + "Use /mail 3 for packaging"
                     });
                 } else if (args[0].equals("3")) { // Show attachments
                     sender.sendMessage(new String[]{
-                        ChatColor.GOLD + "" + ChatColor.BOLD + "RealMail - Packaging",
-                        ChatColor.GOLD + "Attach:",
-                        ChatColor.WHITE + "  1. Pick up the item to be attached with your cursor",
-                        ChatColor.WHITE + "  2. Drop it/left-click again on the letter (" + KoM._instance.getConfig().getInt("max_attachments", 4) + " stacks max)",
-                        ChatColor.GOLD + "Detach:",
-                        ChatColor.WHITE + "  1. Pick up the package with your cursor",
-                        ChatColor.WHITE + "  2. Right-click empty slots with the package",
-                        ChatColor.WHITE + "    Example: http://bit.ly/1Cijgbl",
-                        sender.hasPermission("realmail.admin.seeAdminHelp") ? ChatColor.WHITE + "Use /mail 4 for administration" : ChatColor.WHITE + "Use /mail 1 for crafting"
+                            ChatColor.GOLD + "" + ChatColor.BOLD + "RealMail - Packaging",
+                            ChatColor.GOLD + "Attach:",
+                            ChatColor.WHITE + "  1. Pick up the item to be attached with your cursor",
+                            ChatColor.WHITE + "  2. Drop it/left-click again on the letter (" + KoM._instance.getConfig().getInt("max_attachments", 4) + " stacks max)",
+                            ChatColor.GOLD + "Detach:",
+                            ChatColor.WHITE + "  1. Pick up the package with your cursor",
+                            ChatColor.WHITE + "  2. Right-click empty slots with the package",
+                            ChatColor.WHITE + "    Example: http://bit.ly/1Cijgbl",
+                            sender.hasPermission("realmail.admin.seeAdminHelp") ? ChatColor.WHITE + "Use /mail 4 for administration" : ChatColor.WHITE + "Use /mail 1 for crafting"
                     });
                 } else if (args[0].equals("4")) { // Show adminministration
                     if (sender.hasPermission("realmail.admin.seeAdminHelp")) {
                         sender.sendMessage(new String[]{
-                            ChatColor.GOLD + "" + ChatColor.BOLD + "RealMail - Administration",
-                            ChatColor.GOLD + "/mail send " + ChatColor.WHITE + " Send the letter in your hand to the addressed player",
-                            ChatColor.GOLD + "/mail bulksend " + ChatColor.WHITE + " Send the letter in your hand to all players with mailboxes",
-                            ChatColor.GOLD + "/mail spawn <mailbox|stationery> " + ChatColor.WHITE + " Spawn in a mailbox or some stationery",
-                            ChatColor.GOLD + "/mail open [player] " + ChatColor.WHITE + " Open your mailbox or that of another player",
-                            ChatColor.WHITE + "Use /mail 1 for crafting"
+                                ChatColor.GOLD + "" + ChatColor.BOLD + "RealMail - Administration",
+                                ChatColor.GOLD + "/mail send " + ChatColor.WHITE + " Send the letter in your hand to the addressed player",
+                                ChatColor.GOLD + "/mail bulksend " + ChatColor.WHITE + " Send the letter in your hand to all players with mailboxes",
+                                ChatColor.GOLD + "/mail spawn <mailbox|stationery> " + ChatColor.WHITE + " Spawn in a mailbox or some stationery",
+                                ChatColor.GOLD + "/mail open [player] " + ChatColor.WHITE + " Open your mailbox or that of another player",
+                                ChatColor.WHITE + "Use /mail 1 for crafting"
                         });
                     } else {
                         sender.sendMessage(prefix + ChatColor.WHITE + languageConfig.getString("noperm.seeAdminHelp", "You do not have permission to see the admin commands."));
@@ -199,7 +188,7 @@ public class Correio {
                     if (args.length >= 1) {
                         if (args[0].equals("send")) {
                             if (player.hasPermission("realmail.admin.sendmailAnywhere")) {
-                                ItemStack itemHand = player.getItemInHand();
+                                ItemStack itemHand = player.getInventory().getItemInMainHand();
                                 if (itemHand.getType() == Material.WRITTEN_BOOK && itemHand.hasItemMeta() && itemHand.getItemMeta().hasDisplayName() && (itemHand.getItemMeta().getDisplayName().contains("Letter") || itemHand.getItemMeta().getDisplayName().contains("Package"))) {
                                     BookMeta bookMeta = (BookMeta) itemHand.getItemMeta();
                                     OfflinePlayer recipient = Bukkit.getOfflinePlayer(bookMeta.getTitle());
@@ -212,7 +201,7 @@ public class Correio {
                             }
                         } else if (args[0].equals("bulksend")) {
                             if (player.hasPermission("realmail.admin.bulkmail")) {
-                                ItemStack itemHand = player.getItemInHand();
+                                ItemStack itemHand = player.getInventory().getItemInMainHand();
                                 if (itemHand.getType() == Material.WRITTEN_BOOK && itemHand.hasItemMeta() && itemHand.getItemMeta().hasDisplayName() && (itemHand.getItemMeta().getDisplayName().contains("Letter") || itemHand.getItemMeta().getDisplayName().contains("Package"))) {
                                     List<String> players = (List<String>) mailboxesConfig.getList("players", new LinkedList<String>());
                                     for (String p : players) {
@@ -598,7 +587,7 @@ public class Correio {
             } // End empty hand detection
 
             /* Open Mailbox */
-            if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock() != null && e.getClickedBlock().getType().equals(Material.SKULL) && e.getPlayer().getItemInHand().getType() != Material.WRITTEN_BOOK) {
+            if (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock() != null && e.getClickedBlock().getType().equals(Material.SKULL) && e.getPlayer().getInventory().getItemInMainHand().getType() != Material.WRITTEN_BOOK) {
                 List<String> players = (List<String>) mailboxesConfig.getList("players", new LinkedList<String>());
                 OfflinePlayer mailboxOwner = null;
                 for (String p : players) {

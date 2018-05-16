@@ -14,18 +14,11 @@
  */
 package nativelevel.sisteminhas;
 
-import org.bukkit.entity.Player;
-import java.util.ArrayList;
-import java.util.List;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.MetaShit;
 import nativelevel.utils.BookUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
@@ -40,10 +33,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Dungeon extends KomSystem {
 
     public static int LUZ_DO_ESCURO = 2;
-    
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onAsyncChat(AsyncPlayerChatEvent event) {
         Dungeon.textoAtivaRedstone(event);
@@ -63,7 +59,7 @@ public class Dungeon extends KomSystem {
     }
 
     public static void textoAtivaRedstone(final AsyncPlayerChatEvent ev) {
-        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             if (ev.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType() == Material.DIAMOND_BLOCK) {
                 if (ev.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getRelative(BlockFace.DOWN).getType() == Material.CHEST) {
                     KoM.log.info("MSG :" + ev.getMessage());
@@ -110,62 +106,62 @@ public class Dungeon extends KomSystem {
     }
 
     public static void itemAtivaRedstone(PlayerInteractEvent ev) {
-       // if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon")) {
-            if (ev.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                Block clicado = ev.getClickedBlock();
-                if (clicado != null && ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() != Material.AIR) {
-                    Block emBaixo = clicado.getRelative(BlockFace.DOWN);
-                    for (int x = 0; x < 3; x++) {
-                        emBaixo = emBaixo.getRelative(BlockFace.DOWN);
-                        if (emBaixo.getType() == Material.SPONGE) {
-                            if (emBaixo.getRelative(BlockFace.DOWN).getType() == Material.CHEST) {
-                                Chest c = (Chest) emBaixo.getRelative(BlockFace.DOWN).getState();
-                                for (ItemStack ss : c.getBlockInventory().getContents()) {
-                                    if (ss == null) {
-                                        continue;
-                                    }
-                                    if (ss.getType() == ev.getPlayer().getItemInHand().getType()) {
-                                        ItemMeta m1 = ss.getItemMeta();
-                                        ItemMeta m2 = ev.getPlayer().getItemInHand().getItemMeta();
-                                        if (((m1.getLore() == null && m2.getLore() == null)
-                                                || m1.getLore().size() == m2.getLore().size() && m1.getLore().equals(m2.getLore())) && (m1.getDisplayName() != null && m2.getDisplayName() != null && m1.getDisplayName().equalsIgnoreCase(m2.getDisplayName()))) {
+        // if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
+        if (ev.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            Block clicado = ev.getClickedBlock();
+            if (clicado != null && ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() != Material.AIR) {
+                Block emBaixo = clicado.getRelative(BlockFace.DOWN);
+                for (int x = 0; x < 3; x++) {
+                    emBaixo = emBaixo.getRelative(BlockFace.DOWN);
+                    if (emBaixo.getType() == Material.SPONGE) {
+                        if (emBaixo.getRelative(BlockFace.DOWN).getType() == Material.CHEST) {
+                            Chest c = (Chest) emBaixo.getRelative(BlockFace.DOWN).getState();
+                            for (ItemStack ss : c.getBlockInventory().getContents()) {
+                                if (ss == null) {
+                                    continue;
+                                }
+                                if (ss.getType() == ev.getPlayer().getInventory().getItemInMainHand().getType()) {
+                                    ItemMeta m1 = ss.getItemMeta();
+                                    ItemMeta m2 = ev.getPlayer().getInventory().getItemInMainHand().getItemMeta();
+                                    if (((m1.getLore() == null && m2.getLore() == null)
+                                            || m1.getLore().size() == m2.getLore().size() && m1.getLore().equals(m2.getLore())) && (m1.getDisplayName() != null && m2.getDisplayName() != null && m1.getDisplayName().equalsIgnoreCase(m2.getDisplayName()))) {
 
-                                            if(!m2.getDisplayName().contains("[Quest]")) {
-                                                int qtd = ev.getPlayer().getItemInHand().getAmount();
-                                                if(qtd==1)
-                                                    ev.getPlayer().setItemInHand(null);
-                                                else
-                                                    ev.getPlayer().getItemInHand().setAmount((qtd-1));
-                                            }
-                                            final Block bbb = emBaixo;
-                                            //PlayEffect.play(VisualEffect.SMOKE, clicado.getLocation(), "num:3");
-                                            clicado.getWorld().playEffect(clicado.getLocation(), Effect.SMOKE, 3);
-                                            emBaixo.setType(Material.REDSTONE_BLOCK);
-                                            Runnable r = new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Block bloco = bbb.getLocation().getBlock();
-                                                    if (bloco.getType() == Material.REDSTONE_BLOCK) {
-                                                        bloco.setType(Material.SPONGE);
-                                                    }
-                                                }
-                                            };
-                                            Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, r, 20 * 20);
-                                            KoM.rewind.put(emBaixo, Material.SPONGE);
+                                        if (!m2.getDisplayName().contains("[Quest]")) {
+                                            int qtd = ev.getPlayer().getInventory().getItemInMainHand().getAmount();
+                                            if (qtd == 1)
+                                                ev.getPlayer().setItemInHand(null);
+                                            else
+                                                ev.getPlayer().getInventory().getItemInMainHand().setAmount((qtd - 1));
                                         }
+                                        final Block bbb = emBaixo;
+                                        //PlayEffect.play(VisualEffect.SMOKE, clicado.getLocation(), "num:3");
+                                        clicado.getWorld().playEffect(clicado.getLocation(), Effect.SMOKE, 3);
+                                        emBaixo.setType(Material.REDSTONE_BLOCK);
+                                        Runnable r = new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Block bloco = bbb.getLocation().getBlock();
+                                                if (bloco.getType() == Material.REDSTONE_BLOCK) {
+                                                    bloco.setType(Material.SPONGE);
+                                                }
+                                            }
+                                        };
+                                        Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, r, 20 * 20);
+                                        KoM.rewind.put(emBaixo, Material.SPONGE);
                                     }
                                 }
-                                break;
                             }
+                            break;
                         }
                     }
                 }
             }
-       // }
+        }
+        // }
     }
 
     public static void empurraBloco(PlayerInteractEvent ev) {
-        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             if (ev.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 Block clicked = ev.getClickedBlock();
                 if (clicked != null) {
@@ -228,8 +224,8 @@ public class Dungeon extends KomSystem {
                                 ultimo.getState().setData(clicked.getState().getData());
                                 clicked.setType(Material.AIR);
                                 for (Block b : passar) {
-                                     b.getLocation().getWorld().playEffect(b.getLocation(), Effect.SMOKE, 1);
-                                     //clicked.getLocation().getWorld().playEffect(b.getLocation(), Effect.SMOKE, 1);
+                                    b.getLocation().getWorld().playEffect(b.getLocation(), Effect.SMOKE, 1);
+                                    //clicked.getLocation().getWorld().playEffect(b.getLocation(), Effect.SMOKE, 1);
                                     //PlayEffect.play(VisualEffect.SMOKE, b.getLocation(), "num:3");
                                     //PlayEffect.play(VisualEffect.SMOKE, clicked.getLocation(), "num:3");
                                 }
@@ -246,56 +242,56 @@ public class Dungeon extends KomSystem {
     }
 
     public static void itemActivatesRedstone(PlayerInteractEvent ev) {
-            if (ev.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                Block clicado = ev.getClickedBlock();
-                if (clicado != null && ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() != Material.AIR) {
-                    Block emBaixo = clicado.getRelative(BlockFace.DOWN);
-                    for (int x = 0; x < 3; x++) {
-                        emBaixo = emBaixo.getRelative(BlockFace.DOWN);
-                        if (emBaixo.getType() == Material.GOLD_BLOCK) {
-                            if (emBaixo.getRelative(BlockFace.DOWN).getType() == Material.CHEST) {
-                                Chest c = (Chest) emBaixo.getRelative(BlockFace.DOWN).getState();
-                                for (ItemStack ss : c.getBlockInventory().getContents()) {
-                                    if (ss == null) {
-                                        continue;
-                                    }
-                                    if (ss.getType() == ev.getPlayer().getItemInHand().getType()) {
-                                        ItemMeta m1 = ss.getItemMeta();
-                                        ItemMeta m2 = ev.getPlayer().getItemInHand().getItemMeta();
-                                        if (((m1.getLore() == null && m2.getLore() == null)
-                                                || m1.getLore().size() == m2.getLore().size() && m1.getLore().equals(m2.getLore())) && (m1.getDisplayName() != null && m2.getDisplayName() != null && m1.getDisplayName().equalsIgnoreCase(m2.getDisplayName()))) {
+        if (ev.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            Block clicado = ev.getClickedBlock();
+            if (clicado != null && ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() != Material.AIR) {
+                Block emBaixo = clicado.getRelative(BlockFace.DOWN);
+                for (int x = 0; x < 3; x++) {
+                    emBaixo = emBaixo.getRelative(BlockFace.DOWN);
+                    if (emBaixo.getType() == Material.GOLD_BLOCK) {
+                        if (emBaixo.getRelative(BlockFace.DOWN).getType() == Material.CHEST) {
+                            Chest c = (Chest) emBaixo.getRelative(BlockFace.DOWN).getState();
+                            for (ItemStack ss : c.getBlockInventory().getContents()) {
+                                if (ss == null) {
+                                    continue;
+                                }
+                                if (ss.getType() == ev.getPlayer().getInventory().getItemInMainHand().getType()) {
+                                    ItemMeta m1 = ss.getItemMeta();
+                                    ItemMeta m2 = ev.getPlayer().getInventory().getItemInMainHand().getItemMeta();
+                                    if (((m1.getLore() == null && m2.getLore() == null)
+                                            || m1.getLore().size() == m2.getLore().size() && m1.getLore().equals(m2.getLore())) && (m1.getDisplayName() != null && m2.getDisplayName() != null && m1.getDisplayName().equalsIgnoreCase(m2.getDisplayName()))) {
 
-                                            if(!m2.getDisplayName().contains("[Quest]")) {
-                                                int qtd = ev.getPlayer().getItemInHand().getAmount();
-                                                if(qtd==1)
-                                                    ev.getPlayer().setItemInHand(null);
-                                                else
-                                                    ev.getPlayer().getItemInHand().setAmount((qtd-1));
-                                            }
-                                            final Block bbb = emBaixo;
-                                           // PlayEffect.play(VisualEffect.SMOKE, clicado.getLocation(), "num:3");
-                                            emBaixo.setType(Material.REDSTONE_BLOCK);
-                                            Runnable r = new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Block bloco = bbb.getLocation().getBlock();
-                                                    if (bloco.getType() == Material.REDSTONE_BLOCK) {
-                                                        bloco.setType(Material.GOLD_BLOCK);
-                                                    }
-                                                }
-                                            };
-                                            Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, r, 20 * 20);
-                                            KoM.rewind.put(emBaixo, Material.GOLD_BLOCK);
-                                            //Rewind.add(emBaixo, Material.GOLD_BLOCK);
+                                        if (!m2.getDisplayName().contains("[Quest]")) {
+                                            int qtd = ev.getPlayer().getInventory().getItemInMainHand().getAmount();
+                                            if (qtd == 1)
+                                                ev.getPlayer().setItemInHand(null);
+                                            else
+                                                ev.getPlayer().getInventory().getItemInMainHand().setAmount((qtd - 1));
                                         }
+                                        final Block bbb = emBaixo;
+                                        // PlayEffect.play(VisualEffect.SMOKE, clicado.getLocation(), "num:3");
+                                        emBaixo.setType(Material.REDSTONE_BLOCK);
+                                        Runnable r = new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Block bloco = bbb.getLocation().getBlock();
+                                                if (bloco.getType() == Material.REDSTONE_BLOCK) {
+                                                    bloco.setType(Material.GOLD_BLOCK);
+                                                }
+                                            }
+                                        };
+                                        Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, r, 20 * 20);
+                                        KoM.rewind.put(emBaixo, Material.GOLD_BLOCK);
+                                        //Rewind.add(emBaixo, Material.GOLD_BLOCK);
                                     }
                                 }
-                                break;
                             }
+                            break;
                         }
                     }
                 }
             }
+        }
     }
 
 
@@ -303,13 +299,12 @@ public class Dungeon extends KomSystem {
         if (ev.getPlayer().isOp()) {
             return;
         }
-        if (ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() == Material.WATER_BUCKET) {
+        if (ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.WATER_BUCKET) {
             ev.setCancelled(true);
         }
     }
 
-  
-    
+
     public static void blockPlace(BlockPlaceEvent event) {
         if (event.getPlayer().isOp()) {
             return;

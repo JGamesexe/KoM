@@ -3,13 +3,14 @@ package nativelevel.phatloots.listeners;
 import nativelevel.phatloots.PhatLoots;
 import nativelevel.phatloots.events.PreMobDropLootEvent;
 import nativelevel.phatloots.events.PrePlayerLootEvent;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
+
+import java.util.List;
 
 /**
  * Applies looting bonuses based on Player permissions
@@ -64,7 +65,7 @@ public class LootingBonusListener implements Listener {
      *
      * @param event The PreMobDropLootEvent that occurred
      */
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onPreMobDropLoot(PreMobDropLootEvent event) {
         Player player = event.getKiller();
         if (player != null) {
@@ -79,7 +80,7 @@ public class LootingBonusListener implements Listener {
      *
      * @param event The PrePlayerLootEvent that occurred
      */
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onPrePlayerLoot(PrePlayerLootEvent event) {
         Player player = event.getLooter();
         double lootingBonus = event.getLootingBonus();

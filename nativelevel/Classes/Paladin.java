@@ -17,45 +17,119 @@ package nativelevel.Classes;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
 import nativelevel.Custom.CustomItem;
+import nativelevel.Custom.Items.Adaga;
 import nativelevel.Custom.Items.Ank;
-import nativelevel.Custom.Items.FolhaDeMana;
 import nativelevel.Jobs;
-import nativelevel.Menu.Menu;
 import nativelevel.KoM;
-import nativelevel.MetaShit;
-import nativelevel.Attributes.Mana;
-import nativelevel.spec.PlayerSpec;
-import nativelevel.sisteminhas.Tralhas;
+import nativelevel.Menu.Menu;
+import nativelevel.skills.SkillMaster;
 import org.bukkit.ChatColor;
-import org.bukkit.Effect;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 
 public class Paladin {
 
     private static final Material[] lootsExtras = {Material.GOLDEN_APPLE, Material.CAKE, Material.EMERALD, Material.GLOWSTONE_DUST, Material.COOKIE, Material.COOKIE, Material.COOKIE, Material.COOKIE, Material.COOKIE, Material.COOKIE};
+    public static final String name = "Paladino";
 
-    public static boolean ehEspada(Material m) {
-        if (m == Material.WOOD_SWORD || m == Material.STONE_SWORD || m == Material.IRON_SWORD || m == Material.GOLD_SWORD || m == Material.DIAMOND_SWORD) {
-            return true;
+    //  ლ(ಠ益ಠლ) paladinos...odeiam....magos... !!!
+
+    public static void onHit(EntityDamageByEntityEvent ev) {
+
+        Player attacker = (Player) ev.getDamager();
+        ItemStack weapon = attacker.getInventory().getItemInMainHand();
+
+
+        if (weapon.getType().toString().contains("SWORD") && !Adaga.isAdaga(weapon)) {
+
+            int chance;
+            if (SkillMaster.temSkill(attacker, name, "Usar Espadas")) chance = attacker.getLevel();
+            else chance = 0;
+
+            if (Jobs.hasSuccess(-35, name, attacker)) {
+                ev.setCancelled(true);
+                attacker.sendMessage("§cVocê errou o ataque.");
+                return;
+            }
+
+            if (weapon.getType().name().contains("GOLD")) ev.setDamage(ev.getDamage() + 0.5);
+
+            ev.setDamage(ev.getDamage() * 1.10);
+
         }
-        return false;
     }
-    //  ლ(ಠ益ಠლ) paladinos...odeia....magos... !!!
 
-    public static void swordHit(EntityDamageByEntityEvent event, Player bateu) {
+    public static void onHitSec(EntityDamageByEntityEvent ev) {
+
+        Player attacker = (Player) ev.getDamager();
+        ItemStack weapon = attacker.getInventory().getItemInMainHand();
+
+        if (!Adaga.isAdaga(weapon) && weapon.getType().toString().contains("SWORD")) {
+
+            int chance;
+            if (SkillMaster.temSkill(attacker, name, "Usar Espadas")) chance = (attacker.getLevel() / 2);
+            else chance = 0;
+
+            if (Jobs.hasSuccess(-35, name, attacker)) {
+                ev.setCancelled(true);
+                attacker.sendMessage("§cVocê errou o ataque.");
+                return;
+            }
+        }
+
+    }
+
+    public static void noHit(EntityDamageByEntityEvent ev) {
+
+        Player attacker = (Player) ev.getDamager();
+        ItemStack weapon = attacker.getInventory().getItemInMainHand();
+
+        if (!Adaga.isAdaga(weapon) && weapon.getType().toString().contains("SWORD")) {
+            int chance = (attacker.getLevel() / 3);
+            if (Jobs.hasSuccess(-35, name, attacker)) {
+                ev.setCancelled(true);
+                attacker.sendMessage("§cVocê errou o ataque.");
+            }
+        }
+    }
+
+    public static void onDamaged(EntityDamageEvent ev) {
+
+        Player damaged = (Player) ev.getEntity();
+
+        if (SkillMaster.temSkill(damaged, "Paladino", "Jabu está entre nós")) {
+            if (Jobs.rnd.nextInt(21) == 1) {
+                ev.setDamage(ev.getDamage() * 0.10);
+                damaged.playSound(damaged.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1, 1.2f);
+                damaged.spawnParticle(Particle.FLAME, damaged.getLocation().add(0, 0.3, 0), 20);
+                damaged.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Paladino") + " " + ChatColor.GOLD + "Deus Jabu te protege do mal !");
+            }
+        }
+
+        if (ev.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)) ev.setDamage(ev.getDamage() * 0.90);
+
+    }
+
+    public static void onDamagedSec(EntityDamageEvent ev) {
+        Player damaged = (Player) ev.getEntity();
+
+        if (SkillMaster.temSkill(damaged, "Paladino", "Jabu está entre nós")) {
+            if (Jobs.rnd.nextInt(51) == 1) {
+                ev.setDamage(ev.getDamage() * 0.10);
+                damaged.playSound(damaged.getLocation(), Sound.ENTITY_GHAST_SHOOT, 1, 1.2f);
+                damaged.spawnParticle(Particle.FLAME, damaged.getLocation().add(0, 0.3, 0), 20);
+                damaged.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Paladino") + " " + ChatColor.GOLD + "Deus Jabu te protege do mal !");
+            }
+        }
 
     }
 
@@ -97,7 +171,7 @@ public class Paladin {
     }
 
     public static void pegaDropsExtrasDeMobs(Entity e, Player p) {
-        if (!ehEspada(p.getItemInHand().getType())) {
+        if (!p.getInventory().getItemInMainHand().getType().name().contains("SWORD")) {
             return;
         }
         if (e instanceof Creature) {
@@ -135,10 +209,10 @@ public class Paladin {
 
             // BLOQUEIO COM PORTA (retirado)
             /*
-             if (p.getItemInHand().getType() == Material.IRON_DOOR && p.getLocation().getBlock().getType() == Material.WEB) {
+             if (p.getInventory().getItemInMainHand().getType() == Material.IRON_DOOR && p.getLocation().getBlock().getType() == Material.WEB) {
              p.sendMessage(ChatColor.RED + "Voce nao conseguiu bloquear o ataque por estar preso em teias");
              } else {
-             if (p.getItemInHand().getType() == Material.IRON_DOOR && (ev.getCause() == DamageCause.ENTITY_ATTACK || ev.getCause() == DamageCause.CONTACT || ev.getCause() == DamageCause.PROJECTILE)) {
+             if (p.getInventory().getItemInMainHand().getType() == Material.IRON_DOOR && (ev.getCause() == DamageCause.ENTITY_ATTACK || ev.getCause() == DamageCause.CONTACT || ev.getCause() == DamageCause.PROJECTILE)) {
              Entity causador = null;
              if (ev instanceof EntityDamageByEntityEvent) {
              causador = ((EntityDamageByEntityEvent) ev).getDamager();
@@ -191,9 +265,6 @@ public class Paladin {
         if (rnd != 0) {
             if (Jobs.rnd.nextInt(rnd) == 1) {
                 ev.setDamage(0);
-                p.playEffect(p.getLocation(), Effect.MOBSPAWNER_FLAMES, 20);
-                p.playEffect(p.getLocation(), Effect.GHAST_SHOOT, 20);
-                p.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Paladino") + " " + ChatColor.GOLD + "Deus Jabu te protege do mal !");
                 return;
             }
         } else {
@@ -215,4 +286,5 @@ public class Paladin {
             ev.setDamage(ev.getDamage() - reducao);
         }
     }
+
 }

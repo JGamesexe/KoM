@@ -5,15 +5,9 @@
  */
 package nativelevel.Classes.Blacksmithy;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
 import nativelevel.Custom.CustomItem;
-import nativelevel.Custom.CustomPotion;
 import nativelevel.Custom.Items.RecipeBook;
 import nativelevel.Jobs;
 import nativelevel.Jobs.Sucesso;
@@ -21,23 +15,21 @@ import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.Lang.LangMinecraft;
 import nativelevel.MetaShit;
-import nativelevel.sisteminhas.KomSystem;
 import nativelevel.RecipeBooks.BookTypes;
 import nativelevel.bencoes.TipoBless;
 import nativelevel.rankings.Estatistica;
 import nativelevel.rankings.RankDB;
+import nativelevel.sisteminhas.KomSystem;
 import nativelevel.sisteminhas.XP;
 import nativelevel.utils.Cooldown;
 import nativelevel.utils.GeneralUtils;
 import nativelevel.utils.LocUtils;
-import nativelevel.utils.TitleAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -53,10 +45,13 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
 /**
- *
  * @author User
- *
  */
 public class BlacksmithAnvil extends KomSystem {
 
@@ -84,7 +79,7 @@ public class BlacksmithAnvil extends KomSystem {
             ev.setCancelled(true);
         }
     }
-    
+
     @EventHandler
     public void monstroPega(EntityPickupItemEvent ev) {
         if (flutuando.contains(ev.getItem())) {
@@ -198,12 +193,12 @@ public class BlacksmithAnvil extends KomSystem {
                 return;
             }
 
-            if (ev.getPlayer().getItemInHand() == null || ev.getPlayer().getItemInHand().getType() == Material.AIR && !ev.getPlayer().hasMetadata("dicaitem") && ev.getPlayer().getLevel() < 20) {
+            if (ev.getPlayer().getInventory().getItemInMainHand() == null || ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR && !ev.getPlayer().hasMetadata("dicaitem") && ev.getPlayer().getLevel() < 20) {
                 MetaShit.setMetaObject("dicaitem", bigorna, true);
                 ev.getPlayer().sendMessage(ChatColor.RED + "Coloque um item na mão para colocar na bigorna ou segure shift para retirar items da bigorna ");
             }
 
-            ItemStack inHand = ev.getPlayer().getItemInHand();
+            ItemStack inHand = ev.getPlayer().getInventory().getItemInMainHand();
 
             List<ItemStack> ingredientsIn = new ArrayList<ItemStack>();
 
@@ -221,7 +216,7 @@ public class BlacksmithAnvil extends KomSystem {
                 ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Você pegou os materiais"));
                 ev.getPlayer().getInventory().addItem(ingredientsIn.toArray(new ItemStack[ingredientsIn.size()]));
                 bigorna.removeMetadata("ingredients", KoM._instance);
-                 bigorna.removeMetadata("hits", KoM._instance);
+                bigorna.removeMetadata("hits", KoM._instance);
                 if (bigorna.hasMetadata("mainitem")) {
                     ItemStack mainItem = (ItemStack) MetaShit.getMetaObject("mainitem", bigorna);
                     ev.getPlayer().getInventory().addItem(mainItem);
@@ -238,8 +233,8 @@ public class BlacksmithAnvil extends KomSystem {
                     MetaShit.setMetaObject("mainitem", bigorna, mainItem);
                     ev.getPlayer().sendMessage(ChatColor.GREEN + "Voce colocou o item na bigorna.");
                     BlacksmithAnvil.displayItem(bigorna, inHand, new Vector(0.5, 1, 0.5));
-                    if (ev.getPlayer().getItemInHand().getAmount() > 1) {
-                        ev.getPlayer().getItemInHand().setAmount(ev.getPlayer().getItemInHand().getAmount() - 1);
+                    if (ev.getPlayer().getInventory().getItemInMainHand().getAmount() > 1) {
+                        ev.getPlayer().getInventory().getItemInMainHand().setAmount(ev.getPlayer().getInventory().getItemInMainHand().getAmount() - 1);
                     } else {
                         ev.getPlayer().setItemInHand(null);
                     }
@@ -262,8 +257,8 @@ public class BlacksmithAnvil extends KomSystem {
                     displayItem(bigorna, inHand, this.getLocal());
 
                     MetaShit.setMetaObject("ingredients", bigorna, ingredientsIn);
-                    if (ev.getPlayer().getItemInHand().getAmount() > 1) {
-                        ev.getPlayer().getItemInHand().setAmount(ev.getPlayer().getItemInHand().getAmount() - 1);
+                    if (ev.getPlayer().getInventory().getItemInMainHand().getAmount() > 1) {
+                        ev.getPlayer().getInventory().getItemInMainHand().setAmount(ev.getPlayer().getInventory().getItemInMainHand().getAmount() - 1);
                     } else {
                         ev.getPlayer().setItemInHand(null);
                     }
@@ -272,7 +267,7 @@ public class BlacksmithAnvil extends KomSystem {
                     ///////////////////////////////////////////////////////////////
                     // Anvil is full, making potion or gettin ingredients out //
                     ///////////////////////////////////////////////////////////////
-                    if (ev.getPlayer().getItemInHand().getType() == Material.WRITTEN_BOOK) {
+                    if (ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.WRITTEN_BOOK) {
                         CustomItem ci = CustomItem.getItem(inHand);
                         if (ci == null || !(ci instanceof RecipeBook) || ((RecipeBook) ci).getBookType(inHand) != BookTypes.Ferraria) {
                             ev.getPlayer().sendMessage(ChatColor.RED + L.m("Use um §2Livro de Receitas de Ferraria§4 para pegar o item ou click com shift para pegar os materiais novamente !"));
@@ -407,7 +402,7 @@ public class BlacksmithAnvil extends KomSystem {
                                 if (lore == null) {
                                     lore = new ArrayList<String>();
                                 }
-                                if(lore.size()> 1)
+                                if (lore.size() > 1)
                                     lore.add(lore.size() - 1, ChatColor.GREEN + "Aprimorado por " + ChatColor.YELLOW + ev.getPlayer().getName());
                                 else
                                     lore.add(ChatColor.GREEN + "Aprimorado por " + ChatColor.YELLOW + ev.getPlayer().getName());
@@ -445,7 +440,7 @@ public class BlacksmithAnvil extends KomSystem {
 
             KoM.debug("LEFT NA BIGORNA");
 
-            if (ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType().name().contains("SPADE")) {
+            if (ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType().name().contains("SPADE")) {
 
                 ev.setCancelled(true);
 
@@ -499,7 +494,7 @@ public class BlacksmithAnvil extends KomSystem {
                                     GeneralUtils.removeInventoryItems(ev.getPlayer().getInventory(), custo.getType(), 1, custo.getData().getData());
 
                                     short danoDoItem = mainitem.getDurability();
-                                  
+
                                     dificuldade += mainitem.getEnchantments().size() * 12;
                                     int raridadeItem = CustomItem.getRaridadeItem(mainitem);
                                     if (raridadeItem == CustomItem.INCOMUM) {
@@ -548,7 +543,7 @@ public class BlacksmithAnvil extends KomSystem {
                     }
                 }
 
-                ItemStack martelo = ev.getPlayer().getItemInHand();
+                ItemStack martelo = ev.getPlayer().getInventory().getItemInMainHand();
                 ev.getPlayer().playSound(ev.getPlayer().getLocation(), Sound.BLOCK_ANVIL_LAND, 1, 0);
                 ev.getPlayer().getWorld().playEffect(ev.getClickedBlock().getLocation(), Effect.LAVA_POP, 1);
                 PlayEffect.play(VisualEffect.LAVA, ev.getClickedBlock().getLocation().add(0.5, 0.5, 0.5), "num:2");

@@ -1,51 +1,44 @@
 package nativelevel.Classes.Blacksmithy;
 
+import nativelevel.KoM;
+import nativelevel.RecipeBooks.RecipePage;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import nativelevel.KoM;
-import nativelevel.RecipeBooks.RecipePage;
 
 /**
- *
  * @author vntgasl
  */
-public class RecipeLoader
-{
+public class RecipeLoader {
 
     public static HashMap<String, CustomCrafting> customItems = new HashMap<String, CustomCrafting>();
     public static HashMap<Class, CustomCrafting> customItemsClass = new HashMap<Class, CustomCrafting>();
- 
-    public static void load()
-    {
+
+    public static void load() {
         File f = new File(KoM.class.getProtectionDomain().getCodeSource().getLocation().getFile().replaceAll("%20", " ")).getAbsoluteFile();
         JarFile jf;
-        try
-        {
+        try {
             jf = new JarFile(f);
-        } catch (IOException ex)
-        {
+        } catch (IOException ex) {
             ex.printStackTrace();
             return;
         }
-        
+
         KoM.log.info("Carregando receitas de crafting");
-        
+
         Enumeration en = jf.entries();
 
-        while (en.hasMoreElements())
-        {
+        while (en.hasMoreElements()) {
 
             Object entry = en.nextElement();
             Object addon = getCarta(entry);
 
-            if (addon != null)
-            {
-                if (addon instanceof CustomCrafting)
-                {
+            if (addon != null) {
+                if (addon instanceof CustomCrafting) {
                     CustomCrafting h = (CustomCrafting) addon;
                     KoM.log.info("Carregou custom crafting " + h.name + " !");
                     customItems.put(h.name, h);
@@ -57,42 +50,34 @@ public class RecipeLoader
 
     }
 
-    private static Object getCarta(Object ne)
-    {
+    private static Object getCarta(Object ne) {
         JarEntry entry = (JarEntry) ne;
         String name = entry.getName();
         name = name.replaceAll("/", ".");
-        if (!name.endsWith(".class"))
-        {
+        if (!name.endsWith(".class")) {
             return null;
         }
         name = name.replace(".class", "");
-        if (!name.contains("Blacksmithy.recipes"))
-        {
+        if (!name.contains("Blacksmithy.recipes")) {
             return null;
         }
         Class c;
-        try
-        {
+        try {
             c = Class.forName(name);
-        } catch (ClassNotFoundException ex)
-        {
+        } catch (ClassNotFoundException ex) {
 
             ex.printStackTrace();
             return null;
         }
-        if (CustomCrafting.class.isAssignableFrom(c))
-        {
-          
+        if (CustomCrafting.class.isAssignableFrom(c)) {
+
             CustomCrafting w = null;
-            try
-            {
+            try {
 
                 w = (CustomCrafting) c.newInstance();
                 return w;
 
-            } catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 return null;
             }

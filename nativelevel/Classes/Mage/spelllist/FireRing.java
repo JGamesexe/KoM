@@ -5,19 +5,12 @@
  */
 package nativelevel.Classes.Mage.spelllist;
 
-import me.fromgate.playeffect.PlayEffect;
-import me.fromgate.playeffect.VisualEffect;
-import nativelevel.Listeners.GeneralListener;
 import nativelevel.Classes.Mage.Elements;
 import nativelevel.Classes.Mage.MageSpell;
-import nativelevel.MetaShit;
-import nativelevel.spec.PlayerSpec;
-import org.bukkit.entity.Fireball;
+import nativelevel.Listeners.GeneralListener;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.SmallFireball;
 
 /**
- *
  * @author User
  */
 public class FireRing extends MageSpell {
@@ -28,7 +21,7 @@ public class FireRing extends MageSpell {
 
     @Override
     public void cast(Player p) {
-       GeneralListener.wizard.soltaFireNova(p);
+        GeneralListener.wizard.soltaFireNova(p);
     }
 
     @Override

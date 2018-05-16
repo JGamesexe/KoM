@@ -14,13 +14,12 @@
  */
 package nativelevel.Custom.Items;
 
-import java.util.logging.Level;
+import nativelevel.Attributes.Mana;
 import nativelevel.Classes.Thief;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
-import nativelevel.Attributes.Mana;
 import nativelevel.spec.PlayerSpec;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,7 +42,7 @@ public class BombaFumaca extends CustomItem {
             }
 
             long delay = 20 * 25l;
-            if (player.getWorld().getName().equalsIgnoreCase("dungeon")) {
+            if (player.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                 delay /= 2;
             }
 
@@ -63,14 +62,14 @@ public class BombaFumaca extends CustomItem {
 
                 if (PlayerSpec.temSpec(player, PlayerSpec.Assassino)) {
                     mana = 5;
-                } else  if (PlayerSpec.temSpec(player, PlayerSpec.Ranger)) {
+                } else if (PlayerSpec.temSpec(player, PlayerSpec.Ranger)) {
                     mana = 25;
                 }
                 if (!Mana.spendMana(player, mana)) {
                     return true;
                 }
-                if (player.getItemInHand().getAmount() > 1) {
-                    player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
+                if (player.getInventory().getItemInMainHand().getAmount() > 1) {
+                    player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
                 } else {
                     player.setItemInHand(null);
                 }

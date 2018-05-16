@@ -16,9 +16,9 @@ package nativelevel.Comandos;
 
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
+import nativelevel.sisteminhas.ClanLand;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -40,12 +40,12 @@ public class Spawn implements CommandExecutor {
                 Location l = p.getLocation();
                 p.getWorld().setSpawnLocation(l.getBlockX(), l.getBlockY(), l.getBlockZ());
             } else {
-                if (p.getWorld().getName().equalsIgnoreCase("arena") || p.getWorld().getName().equalsIgnoreCase("vila") || p.getWorld().getName().equalsIgnoreCase("dungeon") || p.isOp() || p.getWorld().getName().equalsIgnoreCase("eventos")) {
+                if (p.getWorld().getName().equalsIgnoreCase("arena") || p.getWorld().getName().equalsIgnoreCase("vila") || p.getWorld().getName().equalsIgnoreCase("NewDungeon") || p.isOp() || p.getWorld().getName().equalsIgnoreCase("eventos")) {
                     p.teleport(p.getWorld().getSpawnLocation());
                     PlayEffect.play(VisualEffect.FIREWORKS_SPARK, p.getLocation(), "color:purple type:burst");
                 } else {
                     String type = ClanLand.getTypeAt(p.getLocation());
-                    if(!type.equalsIgnoreCase("safe"))
+                    if (!type.equalsIgnoreCase("safe"))
                         p.sendMessage(ChatColor.RED + L.m("Voce pode apenas fazer isto em aventuras !"));
                     else
                         p.teleport(p.getWorld().getSpawnLocation());

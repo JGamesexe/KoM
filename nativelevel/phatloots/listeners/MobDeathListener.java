@@ -11,7 +11,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
  * @author Codisimus
  */
 public class MobDeathListener extends MobListener {
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
         LivingEntity entity = event.getEntity();
         PhatLoot phatLoot = getPhatLoot(entity);

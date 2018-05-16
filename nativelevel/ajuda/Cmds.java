@@ -1,28 +1,27 @@
 package nativelevel.ajuda;
 
-import java.sql.Connection;
+import nativelevel.ajuda.database.DBDefault;
+import nativelevel.ajuda.database.MetodosAdição;
+import nativelevel.ajuda.database.MetodosGet;
+import nativelevel.ajuda.database.MetodosRemover;
+import nativelevel.sisteminhas.ClanLand;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import ru.tehkode.permissions.PermissionUser;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nativelevel.ajuda.database.*;
-import nativelevel.sisteminhas.ClanLand;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 public class Cmds
         implements CommandExecutor {
@@ -84,8 +83,8 @@ public class Cmds
                     return true;
                 }
                 if ((args.length < 2) && (args[0].equalsIgnoreCase("lista"))) {
-               
-           
+
+
                     return true;
                 }
                 if ((!args[0].equalsIgnoreCase("adicionar")) && (!args[0].equalsIgnoreCase("remover")) && (!args[0].equalsIgnoreCase("lista"))) {
@@ -110,7 +109,7 @@ public class Cmds
             }
             Object nome;
             if (comando.equalsIgnoreCase("responder")) {
-          
+
                 if (p.hasPermission("kom.ajd")) {
                     if (args.length < 1) {
                         p.sendMessage(KomAjuda.f("&cDigite /responder <id> <resposta>"));
@@ -159,10 +158,10 @@ public class Cmds
                         MetodosRemover.removerResposta(id);
                         jogador.sendMessage(KomAjuda.f("&6Se sua dúvida foi respondida certinho, digite &a/like " + ChatColor.YELLOW + " :)"));
                         Cmds.possiveisLikes.put(jogador.getUniqueId(), p.getUniqueId());
-                        for(Player pl: Bukkit.getOnlinePlayers()) {
-                            if(pl.hasPermission("kom.verresposta")) {
-                                pl.sendMessage(ChatColor.AQUA+p.getName()+" respondeu a pergunta "+pergunta);
-                                pl.sendMessage(ChatColor.AQUA+myString);
+                        for (Player pl : Bukkit.getOnlinePlayers()) {
+                            if (pl.hasPermission("kom.verresposta")) {
+                                pl.sendMessage(ChatColor.AQUA + p.getName() + " respondeu a pergunta " + pergunta);
+                                pl.sendMessage(ChatColor.AQUA + myString);
                             }
                         }
                         jogador.sendMessage("");
@@ -175,7 +174,7 @@ public class Cmds
                     return true;
                 }
                 if (args[0].equalsIgnoreCase("servidor")) {
-               
+
                     if (p.hasPermission("kom.ajd")) {
                         try {
                             ResultSet rs = this.db.getConnection().createStatement().executeQuery("SELECT * FROM Pixel_Perguntas");
@@ -192,7 +191,7 @@ public class Cmds
                         }
                     }
                 } else if (args[0].equalsIgnoreCase("todas")) {
-                
+
                     if (p.hasPermission("kom.ajd")) {
                         try {
                             ResultSet rs = this.db.getConnection().createStatement().executeQuery("SELECT * FROM Pixel_Perguntas");
@@ -212,14 +211,14 @@ public class Cmds
                 }
             }
             if (comando.equalsIgnoreCase("ajuda")) {
-               
+
                 List<String> online = new ArrayList<String>();
-                for(Player pll : Bukkit.getOnlinePlayers()) {
-                    if(pll.hasPermission("kom.ajd")) {
+                for (Player pll : Bukkit.getOnlinePlayers()) {
+                    if (pll.hasPermission("kom.ajd")) {
                         online.add(pll.getName());
                     }
                 }
-                
+
                 if (args.length == 0) {
                     p.sendMessage(KomAjuda.f("&7Digite &a/ajuda <mensagem> &7para solicitar ajuda de nossos ajudantes!"));
                     return true;

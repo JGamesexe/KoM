@@ -14,18 +14,15 @@
  */
 package nativelevel.Custom.Items;
 
-import java.util.HashSet;
+import nativelevel.Attributes.Mana;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
-import nativelevel.Attributes.Mana;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
+
+import java.util.HashSet;
 
 public class Ank extends CustomItem {
 
@@ -42,10 +39,10 @@ public class Ank extends CustomItem {
             return true;
         } else {
             if (protegidos.contains(player.getName())) {
-                player.sendMessage(ChatColor.GOLD +L.m( "Voce ja esta protegido !"));
+                player.sendMessage(ChatColor.GOLD + L.m("Voce ja esta protegido !"));
                 return true;
             }
-            if(!Mana.spendMana(player, 50)) {
+            if (!Mana.spendMana(player, 50)) {
                 return true;
             }
             player.sendMessage(ChatColor.GOLD + L.m("A luz comeca a brilhar te circulando por 5 segundos !"));

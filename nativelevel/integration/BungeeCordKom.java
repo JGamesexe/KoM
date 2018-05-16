@@ -14,21 +14,22 @@
  */
 package nativelevel.integration;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-//import mania.net32.kombungeehomes.BungeeHomesAPI;
-//import mania.net32.kombungeehomes.LocBungeeCord;
 import nativelevel.KoM;
 import nativelevel.utils.BungLocation;
 import nativelevel.utils.TitleAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.messaging.PluginMessageRecipient;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+//import mania.net32.kombungeehomes.BungeeHomesAPI;
+//import mania.net32.kombungeehomes.LocBungeeCord;
 
 /**
  * @author usuario
@@ -47,7 +48,7 @@ public class BungeeCordKom {
             }
             //p.teleport(l);
             //TODO Aparentemente mesmo com a causa sendo o plugin ele cancela o TP.... [O AntiHack do Spigot ta pegando o tp como Move Wrongly]
-            p.teleport(l, PlayerTeleportEvent.TeleportCause.PLUGIN);
+            p.teleport(l, PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
         } else {
             // faz tp do bungee entre servidores sei la como eu
 

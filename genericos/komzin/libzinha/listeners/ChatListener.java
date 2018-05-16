@@ -2,14 +2,9 @@ package genericos.komzin.libzinha.listeners;
 
 import genericos.komzin.libzinha.InstaMCLibKom;
 import genericos.komzin.libzinha.PlayerInfo;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
 import me.asofold.bpl.simplyvanish.SimplyVanish;
 import nativelevel.KoM;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
-import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
@@ -19,9 +14,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.metadata.FixedMetadataValue;
-import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class ChatListener implements Listener {
 
@@ -126,6 +123,7 @@ public class ChatListener implements Listener {
                 return;
             }
             String channel = ChatColor.BLUE + "[BigBoss]";
+            KoM.log.info(ChatColor.translateAlternateColorCodes('§', channel + " " + getFormatedPrefix(p) + "§r" + tagclan + "§f" + ev.getPlayer().getName() + "§7: §e" + ev.getMessage()));
             for (Player px : Bukkit.getOnlinePlayers()) {
                 if (px.hasPermission("kom.staff")) {
                     px.sendMessage(channel + " " + getFormatedPrefix(p) + "§r" + tagclan + "§f" + ev.getPlayer().getName() + "§7: §e" + ev.getMessage());
@@ -168,7 +166,8 @@ public class ChatListener implements Listener {
     public static String getFormatedPrefix(Player p) {
         PermissionUser u = PermissionsEx.getPermissionManager().getUser(p);
         String prefixo = u.getPrefix();
-        prefixo = prefixo.replaceAll("\\&", "§");;
+        prefixo = prefixo.replaceAll("\\&", "§");
+        ;
         return prefixo;
     }
 }

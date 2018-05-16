@@ -1,31 +1,18 @@
 package nativelevel.titulos;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.UUID;
-import nativelevel.Jobs;
 import nativelevel.karma.KarmaFameTables;
 import nativelevel.mercadinho.Utils;
 import nativelevel.rankings.RankCache;
-import nativelevel.titulos.TituloDB.PData;
-import nativelevel.scores.SBCoreListener;
 import nativelevel.scores.ScoreboardManager;
-import nativelevel.sisteminhas.ClanLand;
-import org.bukkit.Bukkit;
+import nativelevel.titulos.TituloDB.PData;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.scoreboard.DisplaySlot;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
+import java.util.*;
+
 /**
- *
  * @author Carlos André Feldmann Júnior
  */
 public class Titulos {
@@ -101,7 +88,7 @@ public class Titulos {
         }
         String sufix = (title != null && !title.equals("")) ? " " + title : "";
         ScoreboardManager.addToTeam(p.getName(), name, prefixo + r, sufix, false);
-    } 
+    }
 
     static HashMap<UUID, ScoreCache> cache = new HashMap();
 

@@ -24,8 +24,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.Potion;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 public class VenenoNatural extends CustomItem {
@@ -48,10 +46,10 @@ public class VenenoNatural extends CustomItem {
         ThrownPotion thrownPotion = player.launchProjectile(ThrownPotion.class);
         MetaShit.setMetaObject("teia", thrownPotion, 1);
         thrownPotion.setItem(itemStack);
-        if (player.getItemInHand().getAmount() == 1) {
+        if (player.getInventory().getItemInMainHand().getAmount() == 1) {
             player.setItemInHand(null);
         } else {
-            player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
+            player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
         }
         return false;
     }

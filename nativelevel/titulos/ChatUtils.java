@@ -8,7 +8,6 @@ package nativelevel.titulos;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author gabripj
  */
 public class ChatUtils {

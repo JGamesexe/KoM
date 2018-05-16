@@ -5,9 +5,6 @@
  */
 package nativelevel.bencoes;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import nativelevel.KoM;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,10 +15,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author User
- *
  */
 public enum TipoBless {
 
@@ -42,9 +41,9 @@ public enum TipoBless {
     public static SaveMaroto save = new SaveMaroto();
 
     public static void interage(PlayerInteractEvent ev) {
-        if (ev.getPlayer().getItemInHand() != null) {
-            if (ev.getPlayer().getItemInHand().getType() == Material.NETHER_STAR) {
-                ItemMeta meta = ev.getPlayer().getItemInHand().getItemMeta();
+        if (ev.getPlayer().getInventory().getItemInMainHand() != null) {
+            if (ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.NETHER_STAR) {
+                ItemMeta meta = ev.getPlayer().getInventory().getItemInMainHand().getItemMeta();
                 if (meta.getLore().get(2).contains("Benção")) {
                     String nome = meta.getDisplayName().split(" ")[2];
                     KoM.log.info(nome);
@@ -57,10 +56,10 @@ public enum TipoBless {
                     save.add(ev.getPlayer(), tipo);
                     Player p = ev.getPlayer();
                     int tempo = save.tem(ev.getPlayer());
-                    if (p.getItemInHand().getAmount() == 1) {
+                    if (p.getInventory().getItemInMainHand().getAmount() == 1) {
                         p.setItemInHand(null);
                     } else {
-                        p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+                        p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
                     }
                     ev.getPlayer().sendMessage(ChatColor.GREEN + "Voce ativou a benção " + tipo.name() + " por " + tempo + " segundos");
                     ev.getPlayer().sendMessage(ChatColor.GREEN + "Digite /kom bencao para saber quanto tempo falta!");

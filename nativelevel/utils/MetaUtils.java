@@ -14,18 +14,18 @@
  */
 package nativelevel.utils;
 
-import java.util.Arrays;
-import java.util.List;
 import nativelevel.Jobs;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
-import org.bukkit.entity.Llama;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class MetaUtils {
 
@@ -36,7 +36,7 @@ public class MetaUtils {
             lore[i] = ChatColor.RESET + lore[i];
         }
         if (item.getType() == Material.POTION) {
-            PotionMeta im = (PotionMeta)item.getItemMeta();
+            PotionMeta im = (PotionMeta) item.getItemMeta();
             im.setDisplayName(ChatColor.RESET + name);
             im.setLore(Arrays.asList(lore));
             im.setColor(Color.fromRGB(Jobs.rnd.nextInt(255), Jobs.rnd.nextInt(255), Jobs.rnd.nextInt(255)));

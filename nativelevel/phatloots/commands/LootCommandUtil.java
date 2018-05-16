@@ -5,12 +5,13 @@ import nativelevel.phatloots.PhatLoots;
 import nativelevel.phatloots.PhatLootsUtil;
 import nativelevel.phatloots.loot.Loot;
 import nativelevel.phatloots.loot.LootCollection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Utility methods commonly used in the LootCommand class
@@ -22,11 +23,11 @@ public class LootCommandUtil {
     /**
      * Adds/Removes a Loot to the specified PhatLoot
      *
-     * @param sender The CommandSender modifying the PhatLoot
+     * @param sender       The CommandSender modifying the PhatLoot
      * @param phatLootName The name of the PhatLoot to be modified or null to indicate all linked PhatLoots
-     * @param add True the Loot will be added, false if it will be removed
-     * @param collName The name of the collection if any
-     * @param loot The Loot that will be added/removed
+     * @param add          True the Loot will be added, false if it will be removed
+     * @param collName     The name of the collection if any
+     * @param loot         The Loot that will be added/removed
      */
     public static void setLoot(CommandSender sender, String phatLootName, boolean add, String collName, Loot loot) {
         String lootDescription = loot.toString();
@@ -100,7 +101,7 @@ public class LootCommandUtil {
      * If no name is provided then each PhatLoot that is linked to the target Block will be in the List
      *
      * @param sender The CommandSender targeting a Block
-     * @param name The name of the PhatLoot to be found
+     * @param name   The name of the PhatLoot to be found
      * @return The a LinkedList of PhatLoots
      */
     public static LinkedList<PhatLoot> getPhatLoots(CommandSender sender, String name) {
@@ -111,7 +112,7 @@ public class LootCommandUtil {
             PhatLoot phatLoot = PhatLoots.getPhatLoot(name);
 
             //Inform the sender if the PhatLoot does not exist
-            if (phatLoot != null ) {
+            if (phatLoot != null) {
                 phatLoots.add(phatLoot);
             } else {
                 sender.sendMessage("§4PhatLoot §6" + name + "§4 does not exist.");
@@ -173,7 +174,7 @@ public class LootCommandUtil {
     public static Map<Enchantment, Integer> getEnchantments(String string) {
         Map<Enchantment, Integer> enchantments = new HashMap<>();
         try {
-            for (String split: string.split("&")) {
+            for (String split : string.split("&")) {
                 Enchantment enchantment = null;
                 int level = -1;
 
@@ -183,7 +184,7 @@ public class LootCommandUtil {
                     split = split.substring(0, index);
                 }
 
-                for (Enchantment enchant: Enchantment.values()) {
+                for (Enchantment enchant : Enchantment.values()) {
                     if (enchant.getName().equalsIgnoreCase(split)) {
                         enchantment = enchant;
                     }

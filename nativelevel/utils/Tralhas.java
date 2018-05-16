@@ -15,11 +15,8 @@
 package nativelevel.utils;
 
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.StateFlag.State;
-import java.util.ArrayList;
-import java.util.List;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import org.bukkit.Effect;
@@ -33,13 +30,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Tralhas {
 
     /**
-     * @param entities List of nearby entities
-     * @param startPos starting position
-     * @param Radius distance cone travels
-     * @param Degrees angle of cone
+     * @param entities  List of nearby entities
+     * @param startPos  starting position
+     * @param radius    distance cone travels
+     * @param degrees   angle of cone
      * @param direction direction of the cone
      * @return All entities inside the cone
      */
@@ -63,9 +63,9 @@ public class Tralhas {
     }
 
     /**
-     * @param startPos starting position
-     * @param radius distance cone travels
-     * @param degrees angle of cone
+     * @param startPos  starting position
+     * @param radius    distance cone travels
+     * @param degrees   angle of cone
      * @param direction direction of the cone
      * @return All block positions inside the cone
      */
@@ -111,14 +111,13 @@ public class Tralhas {
     /**
      * Gets entities inside a cone.
      *
-     * @see Utilities#getPlayersInCone(List, Location, int, int, int)
-     *
-     * @param entities - {@code List<Entity>}, list of nearby entities
+     * @param entities   - {@code List<Entity>}, list of nearby entities
      * @param startpoint - {@code Location}, center point
-     * @param radius - {@code int}, radius of the circle
-     * @param degrees - {@code int}, angle of the cone
-     * @param direction - {@code int}, direction of the cone
+     * @param radius     - {@code int}, radius of the circle
+     * @param degrees    - {@code int}, angle of the cone
+     * @param direction  - {@code int}, direction of the cone
      * @return {@code List<Entity>} - entities in the cone
+//     * @see Utilities#getPlayersInCone(List, Location, int, int, int)
      */
     public static List<Entity> getEntitiesInCone(List<Entity> entities, Location startpoint, int radius, int degrees, int direction) {
         List<Entity> newEntities = new ArrayList<Entity>();

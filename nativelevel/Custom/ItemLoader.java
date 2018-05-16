@@ -1,22 +1,19 @@
 package nativelevel.Custom;
 
+import nativelevel.KoM;
+
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import nativelevel.KoM;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandExecutor;
 
 public class ItemLoader {
 
-    public static HashMap<Class,CustomItem> loaded = new HashMap<Class,CustomItem>();
-    public static HashMap<String,CustomItem> porNome = new HashMap<String,CustomItem>();
-    
+    public static HashMap<Class, CustomItem> loaded = new HashMap<Class, CustomItem>();
+    public static HashMap<String, CustomItem> porNome = new HashMap<String, CustomItem>();
+
     public static void load() {
         File f = new File(KoM.class.getProtectionDomain().getCodeSource().getLocation().getFile().replaceAll("%20", " ")).getAbsoluteFile();
         JarFile jf;
@@ -36,7 +33,7 @@ public class ItemLoader {
                     CustomItem h = (CustomItem) addon;
                     loaded.put(h.getClass(), h);
                     porNome.put(h.name, h);
-                    KoM.log.info("Loaded item "+h.name);
+                    KoM.log.info("Loaded item " + h.name);
                 }
             }
         }

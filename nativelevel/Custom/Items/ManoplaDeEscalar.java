@@ -22,7 +22,7 @@ import org.bukkit.entity.Player;
 public class ManoplaDeEscalar extends CustomItem {
 
     public ManoplaDeEscalar() {
-        super(Material.LEATHER_LEGGINGS,L.m( "Calcas de Escalar"),L.m( "Permite escalar vinhas"), CustomItem.EPICO);
+        super(Material.LEATHER_LEGGINGS, L.m("Calcas de Escalar"), L.m("Permite escalar vinhas"), CustomItem.EPICO);
     }
 
     @Override

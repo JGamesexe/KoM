@@ -2,10 +2,6 @@ package nativelevel.phatloots.loot;
 
 import nativelevel.phatloots.PhatLoot;
 import nativelevel.phatloots.PhatLoots;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,6 +9,11 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * A Message is an in game message which is shown to the looter
@@ -55,7 +56,7 @@ public class Message extends Loot {
     /**
      * Adds this message to the LootBundle
      *
-     * @param lootBundle The loot that has been rolled for
+     * @param lootBundle   The loot that has been rolled for
      * @param lootingBonus The increased chance of getting rarer loots
      */
     @Override

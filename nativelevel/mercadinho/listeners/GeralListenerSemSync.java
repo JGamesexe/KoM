@@ -3,7 +3,9 @@ package nativelevel.mercadinho.listeners;
 //<editor-fold defaultstate="collapsed" desc="imports">
 //import cashgame.loja.TipoCompra;
 //import cashgame.principal.VipManiaEpic;
-import java.util.UUID;
+
+import cashgame.loja.TipoCompra;
+import cashgame.principal.VipManiaEpic;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.Lang.LangMinecraft;
@@ -22,12 +24,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.UUID;
 //</editor-fold>
 
 /**
- *
  * @author Gabriel
- *
  */
 
 public class GeralListenerSemSync extends KomSystem {
@@ -127,8 +129,8 @@ public class GeralListenerSemSync extends KomSystem {
             }
         }
 
-       // if ((!vip && ClanLand.econ.getBalance(p.getName()) >= preco) || (vip && VipManiaEpic.databaseCodigos.has(p, (int) preco))) {
-        if ((!vip && ClanLand.econ.getBalance(p.getName()) >= preco)) {
+        if ((!vip && ClanLand.econ.getBalance(p.getName()) >= preco) || (vip && VipManiaEpic.databaseCodigos.has(p, (int) preco))) {
+//        if ((!vip && ClanLand.econ.getBalance(p.getName()) >= preco)) {
             if (p.getInventory().firstEmpty() != -1) {
                 MarketItem mi = new MarketItem(DonoItemClick, ev.getCurrentItem(), preco, nickdono, shopid, vip);
                 if (MercadoSQL.ExisteProduto(mi) && MercadoSQL.RemoverProduto(mi)) {
@@ -136,7 +138,7 @@ public class GeralListenerSemSync extends KomSystem {
                     if (!vip) {
                         ClanLand.econ.withdrawPlayer(p.getName(), (int) preco);
                     } else {
-                       // VipManiaEpic.databaseCodigos.gastaCash(p, TipoCompra.ITEM, "Mercado:" + ev.getCurrentItem().getType().name(), 1,(int)preco);
+                        VipManiaEpic.databaseCodigos.gastaCash(p, TipoCompra.ITEM, "Mercado:" + ev.getCurrentItem().getType().name(), 1, (int) preco);
                     }
 
                     Player recebeu = Bukkit.getPlayer(DonoItemClick);
@@ -147,9 +149,9 @@ public class GeralListenerSemSync extends KomSystem {
                     if (!vip) {
                         MercadoSQL.addRetorno(DonoItemClick, (int) preco);
                     } else {
-                        //VipManiaEpic.databaseCodigos.addCash(DonoItemClick.toString(), (int) preco);
+                        VipManiaEpic.databaseCodigos.addCash(DonoItemClick.toString(), (int) preco);
                     }
-                    
+
                     p.getInventory().addItem(comprando);
                     p.sendMessage(L.m("§2[Mercado] §aItem comprado com sucesso!"));
                     String name = null;
@@ -159,9 +161,9 @@ public class GeralListenerSemSync extends KomSystem {
                         name = LangMinecraft.get().get(mi.getClearItem());
                     }
                     Player dono = Bukkit.getPlayer(mi.nickdono);
-                    if (dono != null ) {
+                    if (dono != null) {
                         dono.sendMessage(L.m("§2[Mercado] §3Você vendeu §e") + mi.getClearItem().getAmount() + " §c" + name + L.m(" §3para §c") + p.getName() + L.m("§3 e ganhou: §6$") + preco + (vip ? " CASH" : " Esmeraldas!"));
-                        if(!vip)
+                        if (!vip)
                             dono.sendMessage("§2[Mercado] §3Vá até o mercado para receber suas esmeraldas");
                     }
 
@@ -176,7 +178,7 @@ public class GeralListenerSemSync extends KomSystem {
             }
         } else {
             p.closeInventory();
-            p.sendMessage(L.m("§2[Mercado] §cVoce nao possui "+(vip?"CASH":"Esmeraldas")+" para comprar este item!"));
+            p.sendMessage(L.m("§2[Mercado] §cVoce nao possui " + (vip ? "CASH" : "Esmeraldas") + " para comprar este item!"));
             return;
         }
     }

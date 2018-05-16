@@ -1,16 +1,15 @@
 package nativelevel.blococomando;
 
-import java.util.List;
 import nativelevel.KoM;
 import nativelevel.sisteminhas.KomSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import java.util.List;
+
 /**
- *
  * @author Ziden
- *
  */
 public class BlocoComandoListener extends KomSystem {
 

@@ -9,15 +9,14 @@ import nativelevel.Lang.L;
 import org.bukkit.ChatColor;
 
 /**
- *
  * @author User
  */
 public enum BookTypes {
 
-    
+
     Magia, Alquimia, Ferraria;
 
-    
+
     public static String getFirstPage(BookTypes type) {
         String name = getRecipeTitle(type);
         String page = "";
@@ -31,8 +30,8 @@ public enum BookTypes {
         }
         return page;
     }
-    
-    
+
+
     public static String getRecipeTitle(BookTypes t) {
         if (t == Magia) {
             return "Pergaminho";

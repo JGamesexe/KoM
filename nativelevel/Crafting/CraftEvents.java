@@ -5,59 +5,41 @@
  */
 package nativelevel.Crafting;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.Classes.Blacksmithy.Blacksmith;
+import nativelevel.Classes.Blacksmithy.CustomCrafting;
+import nativelevel.Classes.Blacksmithy.RecipeLoader;
 import nativelevel.Custom.CustomItem;
 import nativelevel.CustomEvents.BeginCraftEvent;
 import nativelevel.CustomEvents.FinishCraftEvent;
+import nativelevel.Equipment.WeaponDamage;
 import nativelevel.Jobs;
+import nativelevel.Jobs.TipoClasse;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.Lang.LangMinecraft;
-import nativelevel.Listeners.GeneralListener;
-import nativelevel.Menu.Menu;
-import nativelevel.Equipment.WeaponDamage;
-import nativelevel.Classes.Blacksmithy.CustomCrafting;
-import nativelevel.Classes.Blacksmithy.RecipeLoader;
-import nativelevel.Jobs.TipoClasse;
 import nativelevel.bencoes.TipoBless;
 import nativelevel.gemas.Raridade;
 import nativelevel.sisteminhas.XP;
-import nativelevel.rankings.Estatistica;
-import nativelevel.rankings.RankDB;
 import nativelevel.utils.GeneralUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.Furnace;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.inventory.BrewEvent;
-import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.FurnaceBurnEvent;
-import org.bukkit.event.inventory.FurnaceSmeltEvent;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author User
- *
  */
 public class CraftEvents {
 

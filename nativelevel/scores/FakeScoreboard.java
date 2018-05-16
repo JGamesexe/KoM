@@ -1,18 +1,17 @@
 package nativelevel.scores;
 
 /**
- *
  * @author Gabriel
  */
-
-import java.util.Collection;
-import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
 
+import java.util.Collection;
+import java.util.HashMap;
+
 public class FakeScoreboard {
-    
+
     private HashMap<DisplaySlot, String> displayNames = new HashMap<DisplaySlot, String>();
     private HashMap<DisplaySlot, HashMap<String, Integer>> objectives = new HashMap<DisplaySlot, HashMap<String, Integer>>();
     private HashMap<String, FakeTeam> teams = new HashMap<String, FakeTeam>();
@@ -60,7 +59,7 @@ public class FakeScoreboard {
             }
         }
         for (FakeTeam fakeTeam : teams.values()) {
-            for (int x =0;x<fakeTeam.getPlayers().size();x++) {
+            for (int x = 0; x < fakeTeam.getPlayers().size(); x++) {
                 String p = fakeTeam.getPlayers().get(x);
                 ScoreboardManager.addToTeam(player, p, fakeTeam.getTeamName(), fakeTeam.getPrefix(), fakeTeam.getSuffix(),
                         fakeTeam.canSeeInvisiblePlayers());

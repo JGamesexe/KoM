@@ -11,6 +11,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
 public class GUIsHelp {
 
@@ -20,10 +21,10 @@ public class GUIsHelp {
 
         if (event.getClickedInventory() != null) {
             if (MetaShit.getMetaObject("guiAberta", p) != null) {
-                if (event.getClickedInventory().getName().equals(MetaShit.getMetaObject("guiAberta", p))) {
+                if (event.getClickedInventory().getName().equals(((GUI) (MetaShit.getMetaObject("guiAberta", p))).inventory.getName())) {
                     event.setCancelled(true);
                     GUI gui = (GUI) MetaShit.getMetaObject("guiAberta", p);
-                    gui.interage(p, event.getSlot(), event.getAction());
+                    gui.interage(event);
                     event.setCancelled(gui.cancelaInteract);
 
                 }
@@ -50,10 +51,12 @@ public class GUIsHelp {
 
         if (player.isOp() || player.hasPermission("kom.editspawner")) {
             if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                if (event.getClickedBlock().getType().equals(Material.MOB_SPAWNER)) {
-                    event.setCancelled(true);
-                    GUI gui = new SpawnerGUIMain((CreatureSpawner) event.getClickedBlock().getState());
-                    GUI.open(player, gui);
+                if (event.getHand().equals(EquipmentSlot.HAND)) {
+                    if (event.getClickedBlock().getType().equals(Material.MOB_SPAWNER)) {
+                        event.setCancelled(true);
+                        GUI gui = new SpawnerGUIMain((CreatureSpawner) event.getClickedBlock().getState());
+                        GUI.open(player, gui);
+                    }
                 }
             }
         }

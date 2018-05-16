@@ -13,232 +13,69 @@
  */
 package nativelevel.Listeners;
 
-import nativelevel.phatloots.PhatLoots;
-import nativelevel.phatloots.events.MobDropLootEvent;
-import nativelevel.phatloots.events.PlayerLootEvent;
-import nativelevel.phatloots.events.PhatLootChestEvent;
-import nativelevel.phatloots.events.PreMobDropLootEvent;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.flags.StateFlag.State;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import nativelevel.utils.TitleAPI;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.Level;
-import me.asofold.bpl.simplyvanish.SimplyVanish;
-import me.asofold.bpl.simplyvanish.config.VanishConfig;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.Auras.Aura;
 import nativelevel.CFG;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Classes.Alchemy.Alchemist;
-import nativelevel.Classes.Blacksmithy.Blacksmith;
-import nativelevel.Classes.Engineer;
 import nativelevel.Classes.Farmer;
-import nativelevel.Classes.Lumberjack;
-import nativelevel.Classes.Minerador;
-import nativelevel.Classes.Paladin;
-import nativelevel.Classes.Thief;
 import nativelevel.Classes.Mage.Wizard;
+import nativelevel.Classes.Minerador;
+import nativelevel.Classes.Thief;
 import nativelevel.Comandos.Terreno;
-import nativelevel.Custom.Buildings.Portal;
-import nativelevel.Custom.CustomItem;
-import nativelevel.Custom.ItemListener;
-import nativelevel.Custom.Items.Armadilha;
-import nativelevel.Custom.Items.Atadura;
-import nativelevel.Custom.Items.CapaInvisvel;
-import nativelevel.Custom.Items.Ponte;
-import nativelevel.Custom.Items.Detonador;
-import nativelevel.Custom.Items.Encaixe;
-import nativelevel.Custom.Items.FolhaDeMana;
-import nativelevel.Custom.Items.ItemRaroAleatorio;
-import nativelevel.Custom.Items.LogoutTrap;
-import nativelevel.Custom.Items.PedraDoPoder;
-import nativelevel.Custom.Items.Runa;
-import nativelevel.Custom.Items.SeguroDeItems;
+import nativelevel.Custom.Buildings.Construcao;
 import nativelevel.Custom.Items.SuperBomba;
-import nativelevel.Dano;
-import nativelevel.sisteminhas.Deuses;
-import nativelevel.sisteminhas.Dungeon;
-import static nativelevel.sisteminhas.Dungeon.LUZ_DO_ESCURO;
-import nativelevel.ExecutaSkill;
-import nativelevel.sisteminhas.Mobs;
-import nativelevel.sisteminhas.Mobs.EfeitoMobs;
+import nativelevel.Equipment.Generator.EquipGenerator;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
-import nativelevel.Language.LNG;
-import nativelevel.Language.MSG;
-import nativelevel.Language.TRL;
-import nativelevel.Menu.Menu;
-import nativelevel.Menu.netMenu;
 import nativelevel.MetaShit;
-import nativelevel.Attributes.AttributeInfo;
-import nativelevel.Custom.Buildings.Construcao;
-import nativelevel.Equipment.Generator.EquipGenerator;
-import nativelevel.bencoes.TipoBless;
 import nativelevel.gemas.Raridade;
-import nativelevel.integration.BungeeCordKom;
-import nativelevel.integration.SimpleClanKom;
 import nativelevel.integration.WorldGuardKom;
-import nativelevel.karma.Karma;
+import nativelevel.phatloots.PhatLoots;
+import nativelevel.phatloots.events.MobDropLootEvent;
+import nativelevel.phatloots.events.PlayerLootEvent;
+import nativelevel.phatloots.events.PreMobDropLootEvent;
 import nativelevel.rankings.Estatistica;
 import nativelevel.rankings.RankDB;
-import nativelevel.spec.PlayerSpec;
-import nativelevel.sisteminhas.BookPortal;
-import nativelevel.utils.BookUtil;
-import nativelevel.utils.BungLocation;
-import nativelevel.sisteminhas.IronGolem;
-import nativelevel.sisteminhas.Lobo;
-import nativelevel.lojaagricola.LojaAgricola;
-import nativelevel.skills.Skill;
-import nativelevel.skills.SkillMaster;
-import nativelevel.sisteminhas.Horses;
+import nativelevel.sisteminhas.ClanLand;
+import nativelevel.sisteminhas.Mobs;
+import nativelevel.sisteminhas.Mobs.EfeitoMobs;
 import nativelevel.sisteminhas.XP;
-import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.events.DisbandClanEvent;
-import org.bukkit.Achievement;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
-import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BrewingStand;
-import org.bukkit.block.Chest;
 import org.bukkit.block.CommandBlock;
-import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Dropper;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Sign;
-import org.bukkit.command.BlockCommandSender;
 import org.bukkit.craftbukkit.v1_12_R1.projectiles.CraftBlockProjectileSource;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.AnimalTamer;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.EnderPearl;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ThrownExpBottle;
-import org.bukkit.entity.Fish;
-import org.bukkit.entity.FishHook;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Minecart;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Pig;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.SmallFireball;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.entity.Tameable;
-import org.bukkit.entity.Vehicle;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.Wolf;
-import org.bukkit.event.Event;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockBurnEvent;
-import org.bukkit.event.block.BlockDispenseEvent;
-import org.bukkit.event.block.BlockExpEvent;
-import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.BlockRedstoneEvent;
-import org.bukkit.event.entity.ExpBottleEvent;
-import org.bukkit.event.block.BlockSpreadEvent;
-import org.bukkit.event.block.LeavesDecayEvent;
-import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
-
-import org.bukkit.event.entity.EntityCreatePortalEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.entity.EntityTameEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.entity.HorseJumpEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.entity.PlayerLeashEntityEvent;
-import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
-import org.bukkit.event.inventory.BrewEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.FurnaceExtractEvent;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerAdvancementDoneEvent;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.server.ServerCommandEvent;
-import org.bukkit.event.vehicle.VehicleEnterEvent;
-import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.inventory.BrewerInventory;
-import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
-import org.bukkit.material.Button;
-import org.bukkit.material.Cake;
 import org.bukkit.material.Dispenser;
-import org.bukkit.material.Door;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.Openable;
 import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.potion.Potion;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.potion.PotionType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-import ru.tehkode.permissions.PermissionGroup;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
-import org.bukkit.event.player.PlayerAdvancementDoneEvent;
-import org.bukkit.event.player.PlayerFishEvent;
+
+import java.util.*;
 
 public class GeneralListener implements Listener {
 
@@ -301,25 +138,25 @@ public class GeneralListener implements Listener {
         }
     }
 
-    public static String [] comeu = new String[]{"Voce comeu e ficou com o panduio cheio", "Eita comida boa", "Você se alimentou", "Você está satisfeito", "Tava uma delícia...", "A comida lhe alimentou bem", "Voce comeu a comida e se sujou todo", 
-    "Voce comeu tudo com uma bocada só", "Você sente sua pança cheia", "Seu estomago faz um barulho estranho", "Voce se sente satisfeito", "A comida lhe satisfaz", "Voce da um tapinha na barriga cheia", "Que comida delicia", "Ooo delicia de comida", "O rango tava ótimo !", "Voce comeu tudo até o finalzinho", 
-    "Ahh como comer é bom", "Eita pança cheia, delícia", "Voce comeu igual um porco", "Voce comeu com classe", "Voce comeu muito rapido", "Voce comeu devagar saboreando cada pedaço"};
-    
-    public static String [] barriga = new String[] {"Sua barriga deu uma roncada", "Voce ouve barulhos de sua barriga", "Sua barriga parece um barco velho contorcendo", "Voce sente muita fome", "Voce sente muito desejo de comer", "Parece que tem muito ar na sua barriga", "Voce precisa comer alguma coisa", "A fome está pegando", "Voce sente uma larica danada", 
-        "Tudo q passa em sua mente agora é comida", "Voce gostaria muito de uma refeição", "Seu estomago ronca", "Seu estomago faz um barulho bizarro", "Seu estomago está vazio", "Voce precisa comer algo", "Sua fome está lhe deixando fraco"};
-    
+    public static String[] comeu = new String[]{"Voce comeu e ficou com o panduio cheio", "Eita comida boa", "Você se alimentou", "Você está satisfeito", "Tava uma delícia...", "A comida lhe alimentou bem", "Voce comeu a comida e se sujou todo",
+            "Voce comeu tudo com uma bocada só", "Você sente sua pança cheia", "Seu estomago faz um barulho estranho", "Voce se sente satisfeito", "A comida lhe satisfaz", "Voce da um tapinha na barriga cheia", "Que comida delicia", "Ooo delicia de comida", "O rango tava ótimo !", "Voce comeu tudo até o finalzinho",
+            "Ahh como comer é bom", "Eita pança cheia, delícia", "Voce comeu igual um porco", "Voce comeu com classe", "Voce comeu muito rapido", "Voce comeu devagar saboreando cada pedaço"};
+
+    public static String[] barriga = new String[]{"Sua barriga deu uma roncada", "Voce ouve barulhos de sua barriga", "Sua barriga parece um barco velho contorcendo", "Voce sente muita fome", "Voce sente muito desejo de comer", "Parece que tem muito ar na sua barriga", "Voce precisa comer alguma coisa", "A fome está pegando", "Voce sente uma larica danada",
+            "Tudo q passa em sua mente agora é comida", "Voce gostaria muito de uma refeição", "Seu estomago ronca", "Seu estomago faz um barulho bizarro", "Seu estomago está vazio", "Voce precisa comer algo", "Sua fome está lhe deixando fraco"};
+
     @EventHandler
     public void onFoodChange(FoodLevelChangeEvent ev) {
-        
+
         Block checkBlock = ev.getEntity().getWorld().getBlockAt(ev.getEntity().getLocation().getBlockX(), 0, ev.getEntity().getLocation().getBlockZ());
         if (checkBlock != null && checkBlock.getType() == Material.DIAMOND_BLOCK) {
             ev.setCancelled(true);
             return;
         }
-        
-        
+
+
         if (ev.getEntity() instanceof Player) {
-            Player p = (Player)ev.getEntity();
+            Player p = (Player) ev.getEntity();
             if (p.getLevel() <= 10) {
                 ev.setFoodLevel(20);
                 p.setFoodLevel(20);
@@ -327,32 +164,31 @@ public class GeneralListener implements Listener {
                 return;
             }
             // se ta subindo a comida
-            if(ev.getFoodLevel() > p.getFoodLevel()) {
+            if (ev.getFoodLevel() > p.getFoodLevel()) {
                 int diferenca = ev.getFoodLevel() - p.getFoodLevel();
                 diferenca *= 2;
-                int fim = p.getFoodLevel()+diferenca;
-                if(fim > 20)
+                int fim = p.getFoodLevel() + diferenca;
+                if (fim > 20)
                     fim = 20;
-                if(fim==20 && Jobs.rnd.nextInt(3)==1) {
-                    p.sendMessage(ChatColor.GREEN+comeu[Jobs.rnd.nextInt(comeu.length)]);
+                if (fim == 20 && Jobs.rnd.nextInt(3) == 1) {
+                    p.sendMessage(ChatColor.GREEN + comeu[Jobs.rnd.nextInt(comeu.length)]);
                 }
                 ev.setFoodLevel(fim);
             } else {
                 // se ta ficando com fome
-                if(Jobs.rnd.nextBoolean()) {
+                if (Jobs.rnd.nextBoolean()) {
                     ev.setCancelled(true);
                     return;
                 }
-                 
-                if(ev.getFoodLevel() < 10) {
-                     if(Jobs.rnd.nextInt(10)==1)
-                        p.sendMessage(ChatColor.GREEN+barriga[Jobs.rnd.nextInt(barriga.length)]);
+
+                if (ev.getFoodLevel() < 10) {
+                    if (Jobs.rnd.nextInt(10) == 1)
+                        p.sendMessage(ChatColor.GREEN + barriga[Jobs.rnd.nextInt(barriga.length)]);
                 }
             }
         }
 
-   
-      
+
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -363,7 +199,8 @@ public class GeneralListener implements Listener {
             ClanPlayer cp = null;
             if (ev.getEntity().getShooter() != null && ((Entity) ev.getEntity().getShooter()).getType() == EntityType.PLAYER) {
                 if (ev.getEntity().hasMetadata("modDano")) {
-                    double mod = (double) MetaShit.getMetaObject("modDano", ev.getEntity());;
+                    double mod = (double) MetaShit.getMetaObject("modDano", ev.getEntity());
+                    ;
                     if (KoM.debugMode) {
                         KoM.log.info("Mod dano projectileHit firebola: " + mod);
                     }
@@ -376,7 +213,7 @@ public class GeneralListener implements Listener {
             if (!ev.getEntity().hasMetadata("NPC")) {
                 for (Entity e : ev.getEntity().getNearbyEntities(5, 5, 5)) {
                     if (e instanceof LivingEntity) {
-                        if (e.getType() == EntityType.PLAYER && ev.getEntity().getWorld().getName().equalsIgnoreCase("dungeon")) {
+                        if (e.getType() == EntityType.PLAYER && ev.getEntity().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                             continue;
                         }
                         double danoBase = dano;
@@ -392,7 +229,7 @@ public class GeneralListener implements Listener {
                         }
                         le.damage(danoBase, (LivingEntity) ev.getEntity().getShooter());
                         le.setFireTicks(10);
-                        if (le instanceof Player && (le.getLocation().getWorld().getName().equalsIgnoreCase("dungeon") || ClanLand.getTypeAt(le.getLocation()).equalsIgnoreCase("SAFE"))) {
+                        if (le instanceof Player && (le.getLocation().getWorld().getName().equalsIgnoreCase("NewDungeon") || ClanLand.getTypeAt(le.getLocation()).equalsIgnoreCase("SAFE"))) {
                         } else {
                             Vector v = e.getLocation().toVector().subtract(ev.getEntity().getLocation().toVector()).normalize().multiply(1.8D);
                             v.setY(0.75d);
@@ -416,16 +253,16 @@ public class GeneralListener implements Listener {
             return;
         }
 
-        if(ev.getItem().getType().name().contains("MINECART")) {
+        if (ev.getItem().getType().name().contains("MINECART")) {
             ev.setCancelled(true);
             return;
         }
-        
+
         if (stack.getType() == Material.LAVA || stack.getType() == Material.LAVA_BUCKET) {
             ev.setCancelled(true);
         }
 
-        if (ev.getBlock().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (ev.getBlock().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
 
             Dispenser dispenser = (Dispenser) ev.getBlock().getState().getData(); //.getState() ?
             Block alvo = ev.getBlock().getRelative(dispenser.getFacing());
@@ -588,8 +425,7 @@ public class GeneralListener implements Listener {
 
         }
     }
-    
-   
+
 
     public static void givePlayerExperience(double quanto, Player p) {
         XP.changeExp(p, quanto, 1);
@@ -599,7 +435,7 @@ public class GeneralListener implements Listener {
     public static Wizard wizard = new Wizard();
     public static Minerador miner = new Minerador();
     private KoM plug;
-    public static List<Material> pistaoNaoEmpurra = Arrays.asList(new Material[]{Material.SUGAR_CANE_BLOCK, Material.SUGAR_CANE, Material.CACTUS, Material.PUMPKIN, Material.NETHER_WARTS, Material.CAULDRON, Material.ANVIL, Material.FURNACE, Material.DISPENSER, Material.DROPPER, Material.SAND, Material.GRAVEL,Material.OBSERVER});
+    public static List<Material> pistaoNaoEmpurra = Arrays.asList(new Material[]{Material.SUGAR_CANE_BLOCK, Material.SUGAR_CANE, Material.CACTUS, Material.PUMPKIN, Material.NETHER_WARTS, Material.CAULDRON, Material.ANVIL, Material.FURNACE, Material.DISPENSER, Material.DROPPER, Material.SAND, Material.GRAVEL, Material.OBSERVER});
     public static HashMap<UUID, UUID> ultimoDano = new HashMap<UUID, UUID>();
     public static HashMap<UUID, List<ItemStack>> loots = new HashMap<UUID, List<ItemStack>>();
     public static Material gambiarra = Material.REDSTONE_BLOCK;
@@ -685,14 +521,13 @@ public class GeneralListener implements Listener {
 
             int lvl = Jobs.getJobLevel("Fazendeiro", ev.getPlayer());
             int dificuldade = 85;
-            int sucesso = Jobs.hasSuccess(dificuldade, "Fazendeiro", ev.getPlayer());
-            if (sucesso != Jobs.success) {
+            if (Jobs.hasSuccess(dificuldade, "Fazendeiro", ev.getPlayer())) {
                 ev.getPlayer().sendMessage(ChatColor.RED + L.m("Voce falhou em colocar a coleira no animal !"));
                 ev.setCancelled(true);
-                if (ev.getPlayer().getItemInHand().getAmount() == 1) {
+                if (ev.getPlayer().getInventory().getItemInMainHand().getAmount() == 1) {
                     ev.getPlayer().setItemInHand(null);
                 } else {
-                    ev.getPlayer().getItemInHand().setAmount(ev.getPlayer().getItemInHand().getAmount() - 1);
+                    ev.getPlayer().getInventory().getItemInMainHand().setAmount(ev.getPlayer().getInventory().getItemInMainHand().getAmount() - 1);
                 }
             }
         }
@@ -733,7 +568,7 @@ public class GeneralListener implements Listener {
                         BookMeta livro = (BookMeta) item.getItemMeta();
                         long longtempoA = System.currentTimeMillis() / 1000;
                         String tempoA = Long.toString(longtempoA);
-                        if (livro.hasPages() == false) {
+                        if (!livro.hasPages()) {
                             livro.addPage("5");
                             item.setItemMeta(livro);
                         }
@@ -800,11 +635,12 @@ public class GeneralListener implements Listener {
         if (ev.getEntity() instanceof ThrownExpBottle) {
             if (ev.getEntity().getShooter() instanceof Player) {
                 Player atirador = (Player) ev.getEntity().getShooter();
-                ItemStack mao = atirador.getItemInHand();
+                ItemStack mao = atirador.getInventory().getItemInMainHand();
                 ItemMeta meta = mao.getItemMeta();
                 List<String> lore = meta.getLore();
                 if (lore != null && lore.size() > 1) {
                     int exp = Integer.valueOf(ChatColor.stripColor(lore.get(1).trim()));
+                    KoM.debug(atirador.getName() + "ta jogando uma pot de xp com " + exp);
                     bottles.put(ev.getEntity().getUniqueId(), exp);
                 }
             }
@@ -901,11 +737,11 @@ public class GeneralListener implements Listener {
         return false;
     }
 
-    private static boolean desativaRegen = false;
-    
+    private static boolean desativaRegen = true;
+
     @EventHandler(priority = EventPriority.NORMAL)
     public void load(ChunkLoadEvent ev) {
-        if(desativaRegen)
+        if (desativaRegen)
             return;
         KoM.generator.load(ev);
         if (ev.isNewChunk()) {
@@ -922,21 +758,21 @@ public class GeneralListener implements Listener {
                     return;
                 }
             }
-            
-            if(Construcao.chunkConstruido(ev.getChunk()))
-                    return;
+
+            if (Construcao.chunkConstruido(ev.getChunk()))
+                return;
 
             ev.getChunk().getBlock(5, 0, 5).setType(gambiarra);
             ev.getChunk().getBlock(5, 1, 5).setType(Material.BEDROCK);
             String type = ClanLand.getTypeAt(ev.getChunk().getBlock(0, 0, 0).getLocation());
             if (type.equalsIgnoreCase("WILD")) {
                 //ClanLand.removeClanAt(ev.getChunk().getBlock(0, 0, 0).getLocation());
-        
+
                 desativaRegen = true;
-                boolean guildaProxima = Terreno.temGuildaPerto(null, ev.getChunk().getBlock(0, 0, 0).getLocation());
-               
-                
-                if(!guildaProxima) {
+                boolean guildaProxima = Terreno.temGuildaPerto(null, ev.getChunk().getBlock(0, 0, 0).getLocation(), true);
+
+
+                if (!guildaProxima) {
                     ev.getChunk().getWorld().regenerateChunk(ev.getChunk().getX(), ev.getChunk().getZ());
                 }
                 desativaRegen = false;
@@ -957,10 +793,10 @@ public class GeneralListener implements Listener {
             return;
         }
     }
-    
+
     @EventHandler
     public void advancement(PlayerAdvancementDoneEvent ev) {
-        
+
     }
 
     @EventHandler
@@ -973,7 +809,7 @@ public class GeneralListener implements Listener {
 
         if (ev.getPhatLoot().name.equalsIgnoreCase("lvl3") || ev.getPhatLoot().name.equalsIgnoreCase("lvl4") || ev.getPhatLoot().name.equalsIgnoreCase("lvl5")) {
             for (Player p : Bukkit.getOnlinePlayers()) {
-                p.sendMessage(ChatColor.BLUE + L.m("[Dungeon]" + ChatColor.GREEN + " O Jogador " + ChatColor.YELLOW + "%" + ChatColor.GREEN + " acaba de pegar um tesouro raro ! ", ev.getLooter().getName()));
+                p.sendMessage(ChatColor.BLUE + L.m("[Dungeon]" + ChatColor.GREEN + " O JogadorDAO " + ChatColor.YELLOW + "%" + ChatColor.GREEN + " acaba de pegar um tesouro raro ! ", ev.getLooter().getName()));
             }
         }
 
@@ -1043,11 +879,11 @@ public class GeneralListener implements Listener {
                 xp *= 10;
                 money = 100;
                 ev.getItemList().add(EquipGenerator.gera(Raridade.Incomum, level));
-               // ev.getItemList().add(EquipGenerator.gera(Raridade.Incomum, level));
-               // ev.getItemList().add(EquipGenerator.gera(Raridade.Incomum, level));
+                // ev.getItemList().add(EquipGenerator.gera(Raridade.Incomum, level));
+                // ev.getItemList().add(EquipGenerator.gera(Raridade.Incomum, level));
                 ev.getItemList().add(EquipGenerator.gera(Raridade.Comum, level));
-               // ev.getItemList().add(EquipGenerator.gera(level));
-               // ev.getItemList().add(EquipGenerator.gera(level));
+                // ev.getItemList().add(EquipGenerator.gera(level));
+                // ev.getItemList().add(EquipGenerator.gera(level));
                 ev.getItemList().add(EquipGenerator.gera(level));
                 ev.getItemList().add(EquipGenerator.gera(level));
             }
@@ -1073,11 +909,11 @@ public class GeneralListener implements Listener {
             }
 
             money = Jobs.rnd.nextInt(money / 2) + money / 2;
-            
-            double ratioMoney = level/100d;
-            
-            money = (int)Math.ceil(money * ratioMoney);
-            
+
+            double ratioMoney = level / 100d;
+
+            money = (int) Math.ceil(money * ratioMoney);
+
             ev.getItemList().add(new ItemStack(Material.EMERALD, money));
 
             if (xp > 0) {
@@ -1123,11 +959,20 @@ public class GeneralListener implements Listener {
 
     @EventHandler
     public void onLeafDecay(LeavesDecayEvent event) {
-        if (event.getBlock().getWorld().getName().equalsIgnoreCase("dungeon") || event.getBlock().getWorld().getName().equalsIgnoreCase("vila")) {
+        if (event.getBlock().getWorld().getName().equalsIgnoreCase("NewDungeon") || event.getBlock().getWorld().getName().equalsIgnoreCase("vila")) {
             event.setCancelled(true);
             return;
         } else if (ClanLand.getTypeAt(event.getBlock().getLocation()).equalsIgnoreCase("SAFE") || WorldGuardKom.ehSafeZone(event.getBlock().getLocation())) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void manipulaArmorStand(PlayerArmorStandManipulateEvent ev) {
+        String where = ClanLand.getTypeAt(ev.getRightClicked().getLocation());
+        if (!where.equals("WILD") || where.equals("CLAN") && !ClanLand.getClanAt(ev.getRightClicked().getLocation()).getTag().equals(ClanLand.manager.getClanPlayer(ev.getPlayer()).getTag())) {
+            ev.setCancelled(true);
+            KoM.debug("Cancelei Manipulação de ArmorStand");
         }
     }
 

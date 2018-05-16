@@ -6,7 +6,6 @@
 package nativelevel.rankings;
 
 /**
- *
  * @author vntgasl
  */
 public enum Estatistica {
@@ -25,10 +24,10 @@ public enum Estatistica {
     AJUDANTE("Ajudante"),
     ARENA("Gladiador"),
     DUNGEONS("Explorador");
-    
-    
+
+
     public String titulo;
-    
+
     private Estatistica(String titulo) {
         this.titulo = titulo;
     }

@@ -5,60 +5,66 @@
  */
 package nativelevel.Comandos;
 
-import com.sk89q.worldedit.CuboidClipboard;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.MaxChangedBlocksException;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.bukkit.BukkitWorld;
-import com.sk89q.worldedit.data.DataException;
-import java.io.File;
-import java.io.IOException;
 import nativelevel.KoM;
 import nativelevel.Listeners.GeneralListener;
 import nativelevel.sisteminhas.QuestsIntegracao;
 import nativelevel.sisteminhas.XP;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- *
  * @author vntgasl
- * 
  */
 
 public class DarExp implements CommandExecutor {
 
-    
-    
+
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
-        
-      if(args.length==2) {
-          
-          String player = args[0];
-          int level = Integer.valueOf(args[1]);
-          
-          int exp = (int)(XP.getExpPorAcao(level) * QuestsIntegracao.XP_MOD);
-          
-          Player p = Bukkit.getPlayer(player);
-          if(p!=null) {
-              p.sendMessage(ChatColor.GREEN+"Voce ganhou "+exp+" EXP por fazer a quest");
-              GeneralListener.givePlayerExperience(exp,p);
-              
-          }
-          
-          
-      }
-        
-      return true;
+
+        if (args.length >= 2) {
+
+            String player = args[0];
+
+            int level;
+            int exp;
+
+            if (args.length >= 3) {
+
+                level = Integer.valueOf(args[2]);
+
+                args[1] = args[1].replaceAll("%", "");
+
+                exp = ((XP.getExpProximoNivel(level) * Integer.valueOf(args[1])) / 100);
+                KoM.debug("Tentando dar " + Integer.valueOf(args[2]) + "% de XP do level " + level + " pro " + player);
+
+            } else {
+
+                level = Integer.valueOf(args[1]);
+                exp = (XP.getExpPorAcao(level) * QuestsIntegracao.XP_MOD);
+                KoM.debug("Tentando dar XP de ação do " + level + " pro " + player);
+
+            }
+
+            Player p = Bukkit.getPlayer(player);
+
+            if (p != null) {
+
+                p.sendMessage(ChatColor.GREEN + "Voce ganhou " + exp + " EXP por fazer a quest");
+                GeneralListener.givePlayerExperience(exp, p);
+                KoM.debug("Dei XP pro " + player);
+
+            }
+
+
+        }
+
+        return true;
     }
-    
-  
+
+
 }

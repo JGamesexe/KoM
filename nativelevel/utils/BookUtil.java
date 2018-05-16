@@ -14,17 +14,13 @@
  */
 package nativelevel.utils;
 
-import java.util.List;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.RecipeBook;
-import nativelevel.MetaShit;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
-import nativelevel.integration.BungeeCordKom;
+import nativelevel.MetaShit;
 import nativelevel.sisteminhas.BookPortal;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -33,6 +29,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.List;
 
 public class BookUtil {
 
@@ -46,22 +44,22 @@ public class BookUtil {
         }
         return type == Material.BOOK_AND_QUILL;
     }
-    
+
     public static boolean ehLivroDeQuest(ItemStack otroLivro) {
-        if(otroLivro.getType()==Material.WRITTEN_BOOK) {
-            
-             CustomItem cu = CustomItem.getItem(otroLivro);
-             if(cu!=null && cu instanceof RecipeBook) {
-                 return true;
-             }
-            
-              BookMeta m = (BookMeta) otroLivro.getItemMeta();
-                if((m != null && m.getTitle()!=null && m.getTitle().contains("Quest")) || (m.getDisplayName()!=null && m.getDisplayName().contains("Quest"))) {
-                    return true;
-                }
-        } else if(otroLivro.getType()==Material.TRIPWIRE_HOOK) {
+        if (otroLivro.getType() == Material.WRITTEN_BOOK) {
+
+            CustomItem cu = CustomItem.getItem(otroLivro);
+            if (cu != null && cu instanceof RecipeBook) {
+                return true;
+            }
+
+            BookMeta m = (BookMeta) otroLivro.getItemMeta();
+            if ((m != null && m.getTitle() != null && m.getTitle().contains("Quest")) || (m.getDisplayName() != null && m.getDisplayName().contains("Quest"))) {
+                return true;
+            }
+        } else if (otroLivro.getType() == Material.TRIPWIRE_HOOK) {
             ItemMeta m = otroLivro.getItemMeta();
-            if(m!=null && m.getDisplayName()!=null && m.getDisplayName().contains("[Chave]"))
+            if (m != null && m.getDisplayName() != null && m.getDisplayName().contains("[Chave]"))
                 return true;
         }
         return false;
@@ -75,24 +73,24 @@ public class BookUtil {
                 Chest c = (Chest) possivel.getState();
                 for (ItemStack coisa : c.getBlockInventory().getContents()) {
                     if (coisa != null && (coisa.getType() == Material.WRITTEN_BOOK)) {
-                        
+
                         CustomItem ci = CustomItem.getItem(coisa);
-                        if(ci != null && ci instanceof RecipeBook) {
+                        if (ci != null && ci instanceof RecipeBook) {
                             return;
                         }
-                        
+
                         ItemStack otroLivro = coisa.clone();
                         BookMeta m = (BookMeta) otroLivro.getItemMeta();
-                        if(m != null && m.getTitle().contains("Quest") || (m.getDisplayName()!=null && m.getDisplayName().contains("Quest"))) {
+                        if (m != null && m.getTitle().contains("Quest") || (m.getDisplayName() != null && m.getDisplayName().contains("Quest"))) {
                             return;
                         }
-                        if(m!=null && m.getAuthor()!=null && m.getAuthor().equalsIgnoreCase("Jabu"))
+                        if (m != null && m.getAuthor() != null && m.getAuthor().equalsIgnoreCase("Jabu"))
                             return;
                         if (ev.getPlayer().hasMetadata(m.getTitle())) {
                             ev.getPlayer().sendMessage(ChatColor.RED + L.m("Voce ja tem este livro !"));
                             return;
                         }
-                        
+
                         ev.getPlayer().getInventory().addItem(otroLivro);
                         ev.getPlayer().updateInventory();
                         ev.getPlayer().sendMessage(ChatColor.AQUA + L.m("Voce pegou o livro !"));
@@ -124,51 +122,32 @@ public class BookUtil {
             possivel = possivel.getRelative(BlockFace.DOWN);
             if (possivel.getType() == Material.CHEST) {
                 Chest c = (Chest) possivel.getState();
-                for (ItemStack coisa : c.getBlockInventory().getContents()) {
-                    if (coisa != null && (coisa.getType() == Material.WRITTEN_BOOK || coisa.getType() == Material.BOOK_AND_QUILL)) {
-                        BookMeta m = (BookMeta) coisa.getItemMeta();
-                        if (KoM.debugMode) {
-                            KoM.log.info(" achei o livro !");
-                        }
-                        if (m.getTitle() != null && m.getTitle().equalsIgnoreCase("musica")) {
-                            //Music.tocaMusica(ev.getPlayer(), m.getPage(1));
-                            break;
+                ItemStack coisa = c.getBlockInventory().getItem(0);
+                if (coisa != null && (coisa.getType() == Material.WRITTEN_BOOK || coisa.getType() == Material.BOOK_AND_QUILL)) {
+                    BookMeta m = (BookMeta) coisa.getItemMeta();
+                    KoM.debug(" achei o livro !");
 
-                        } else if (m.getTitle() != null && m.getTitle().equalsIgnoreCase("TP")) {
-                            BungLocation l = BookPortal.getLocationFromBook(coisa);
-                            if (l != null) {
-                                if (ev.getPlayer().isOp() && !ev.getPlayer().isSneaking()) {
-                                    return;
-                                }
-                                if (m.getPageCount() == 6) {
-                                    BungeeCordKom.tp(ev.getPlayer(), l);
-                                } else {
-                                    BungeeCordKom.tp(ev.getPlayer(), l, BookPortal.getTitle(coisa), BookPortal.getSubtitle(coisa));
-                                }
-                                ev.getPlayer().sendMessage(ChatColor.LIGHT_PURPLE + "* poof *");
-                                //PlayEffect.play(VisualEffect.FIREWORK, l, "color:purple type:burst");
-                            } else {
-                                ev.getPlayer().sendMessage(ChatColor.RED + L.m("Este teleporter...esta...velho..."));
-                            }
-                        } else {
-                            if (!ev.getPlayer().isSneaking()) {
-                                String jaLeu = MetaShit.getMetaString(c.getLocation().toString(), ev.getPlayer());
-                                if (jaLeu == null) {
-                                    MetaShit.setMetaString(c.getLocation().toString(), ev.getPlayer(), "wololo");
-                                } else {
-                                    return;
-                                }
-                            }
-                            for (String msg : m.getPages()) {
-                                ev.getPlayer().sendMessage(ChatColor.DARK_AQUA + "[" + ChatColor.AQUA + ChatColor.BOLD + (m.getTitle() == null ? "Jabu" : L.m(m.getTitle())) + ChatColor.DARK_AQUA + "]" + ChatColor.GOLD + " " + L.m(msg.replace("\n", " ")));
-                            }
-                            break;
-                        }
+                    if (m.getTitle() != null && m.getTitle().equalsIgnoreCase("TP")) {
 
+                        if (ev.getPlayer().isOp() && !ev.getPlayer().isSneaking()) return;
+                        BookPortal.teleport(c, ev.getPlayer());
+
+                    } else {
+                        if (!ev.getPlayer().isSneaking()) {
+                            String jaLeu = MetaShit.getMetaString(c.getLocation().toString(), ev.getPlayer());
+
+                            if (jaLeu == null)
+                                MetaShit.setMetaString(c.getLocation().toString(), ev.getPlayer(), "wololo");
+                            else return;
+
+                        }
+                        for (String msg : m.getPages()) {
+                            ev.getPlayer().sendMessage(ChatColor.DARK_AQUA + "[" + ChatColor.AQUA + ChatColor.BOLD + (m.getTitle() == null ? "Jabu" : L.m(m.getTitle())) + ChatColor.DARK_AQUA + "]" + ChatColor.GOLD + " " + L.m(msg.replace("\n", " ")));
+                        }
                     }
                 }
-                break;
             }
+
         }
     }
 

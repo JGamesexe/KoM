@@ -8,18 +8,17 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- *
  * @author Ziden
  */
 public class SpellHitEvent extends Event {
 
     public static HandlerList handlers = new HandlerList();
-    
+
     private LivingEntity hit;
     private Location loc;
     private Projectile proj;
     private MageSpell spell;
-    
+
     public SpellHitEvent(LivingEntity hit, Location loc, Projectile proj, MageSpell spell) {
         this.hit = hit;
         this.loc = loc;
@@ -55,7 +54,6 @@ public class SpellHitEvent extends Event {
     public HandlerList getHandlers() {
         return this.getHandlers();
     }
-    
-    
-    
+
+
 }

@@ -14,9 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author Carlos André Feldmann Júnior
- * 
  */
 public class EscolheSexo implements Listener {
 
@@ -67,7 +65,7 @@ public class EscolheSexo implements Listener {
                         boolean jaTem = StageDB.getPlayerStage(p).stagesCompleted.contains(PredefinedStages.ESCOLHEUSEXO);
                         if (jaTem) {
 
-                            p.sendMessage(ChatColor.RED+"Voce ja escolheu seu gênero");
+                            p.sendMessage(ChatColor.RED + "Voce ja escolheu seu gênero");
 
                         } else {
                             TituloDB.PData data = TituloDB.getPlayerData(p);

@@ -6,9 +6,7 @@
 package nativelevel.Equipment;
 
 /**
- *
  * @author vntgasl
- *
  */
 public enum Atributo {
 
@@ -29,15 +27,15 @@ public enum Atributo {
     Armadura(false, 1, 13), //
 
     Dano_Fisico(true, 1, 20), //
-    
+
     Regen_Mana(true, 2, 20), //
-    
+
     Regen_Stamina(true, 2, 20), //
 
     Mana(false, 5, 50), //
-    
+
     Stamina(false, 5, 50), //
-    
+
     Magia(true, 1, 20),//
 
     Dano_Distancia(true, 1, 20);
@@ -45,7 +43,7 @@ public enum Atributo {
     public boolean pct = false;
     public int min;
     public int max;
-    
+
     private Atributo(boolean pct, int min, int max) {
         this.pct = pct;
         this.min = min;

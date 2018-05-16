@@ -5,10 +5,6 @@ import nativelevel.phatloots.PhatLoots;
 import nativelevel.phatloots.PhatLootsUtil;
 import nativelevel.phatloots.gui.Button;
 import nativelevel.phatloots.gui.InventoryListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -16,6 +12,11 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * A Money is a range of money to be given to the looter
@@ -91,7 +92,7 @@ public class Money extends Loot {
     /**
      * Adds this money to the LootBundle
      *
-     * @param lootBundle The loot that has been rolled for
+     * @param lootBundle   The loot that has been rolled for
      * @param lootingBonus The increased chance of getting rarer loots
      */
     @Override
@@ -137,7 +138,7 @@ public class Money extends Loot {
      * Modifies the amount of money that is to be looted
      *
      * @param amount The amount to modify by (may be negative)
-     * @param both Whether both the upper and lower bounds are being modified
+     * @param both   Whether both the upper and lower bounds are being modified
      * @return true because the money amount has changed
      */
     @Override
@@ -178,8 +179,8 @@ public class Money extends Loot {
         }
         sb.append(" ");
         sb.append(PhatLoots.econ == null
-                  ? "money"
-                  : PhatLoots.econ.currencyNamePlural());
+                ? "money"
+                : PhatLoots.econ.currencyNamePlural());
         sb.append(" @ ");
         //Only display the decimal values if the probability is not a whole number
         sb.append(String.valueOf(Math.floor(probability) == probability ? (int) probability : probability));

@@ -5,16 +5,16 @@
  */
 package nativelevel.utils;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author Gabriel
  */
 public class LocUtils {
@@ -29,7 +29,7 @@ public class LocUtils {
         return loc;
     }
 
-  
+
     //Convert Location To String
     public static String loc2str(Location loc) {
         return loc.getWorld().getName() + ":" + loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
@@ -99,9 +99,9 @@ public class LocUtils {
     /**
      * Gets the horizontal Block Face from a given yaw angle
      *
-     * @param yaw angle
+     * @param yaw                      angle
      * @param useSubCardinalDirections setting, True to allow NORTH_WEST to be
-     * returned
+     *                                 returned
      * @return The Block Face of the angle
      */
     public static BlockFace yawToFace(float yaw, boolean useSubCardinalDirections) {
@@ -159,7 +159,7 @@ public class LocUtils {
         if (vec.getY() > yMax) {
             vec.setY(yMax);
         }
-     
+
         ent.setFallDistance(0.0F);
         ent.setVelocity(vec);
     }

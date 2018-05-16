@@ -11,15 +11,14 @@ import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 import org.bukkit.Bukkit;
 
 /**
- *
  * @author USER
  */
 public class Clans {
-    public static ClanManager manager; 
+    public static ClanManager manager;
 
-public void onEnable(){
-           manager = ((SimpleClans) Bukkit.getServer().getPluginManager()
+    public void onEnable() {
+        manager = ((SimpleClans) Bukkit.getServer().getPluginManager()
                 .getPlugin("SimpleClans")).getClanManager();
-}
+    }
 
 }

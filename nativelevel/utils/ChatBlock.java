@@ -2,6 +2,7 @@ package nativelevel.utils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
  */
 
 public class ChatBlock {
-    
+
     private static final int lineLength = 319;
     private ArrayList<Boolean> columnFlexes = new ArrayList<>();
     private ArrayList<Integer> columnSizes = new ArrayList<>();

@@ -9,7 +9,7 @@ public class Tontura extends Aura {
 
     @Override
     public String getNome() {
-        return "Brilhos";    
+        return "Brilhos";
     }
 
     @Override
@@ -26,6 +26,6 @@ public class Tontura extends Aura {
     public void tick(Player p, boolean newTick) {
         PlayEffect.play("instantspell", "loc:" + p.getLocation().getWorld().getName() + "," + p.getLocation().getBlockX() + "," + p.getLocation().getBlockY() + "," + p.getLocation().getBlockZ());
     }
-    
-   
+
+
 }

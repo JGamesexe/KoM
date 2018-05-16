@@ -16,38 +16,20 @@ package nativelevel.sisteminhas;
 
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import nativelevel.utils.TitleAPI;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nativelevel.ArenaGuilda2x2.Arena2x2;
+import nativelevel.Attributes.AttributeInfo;
 import nativelevel.Comandos.Terreno;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
-import nativelevel.Attributes.AttributeInfo;
 import nativelevel.MetaShit;
+import nativelevel.utils.TitleAPI;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
-import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import net.sacredlabyrinth.phaed.simpleclans.managers.ClanManager;
 import net.sacredlabyrinth.phaed.simpleclans.managers.StorageManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -59,9 +41,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
- *
- * @author Daniel
+ * @author Daniel Carts
  */
 public class ClanLand {
 
@@ -156,44 +145,38 @@ public class ClanLand {
 
     public static void update(Player p, Location to) {
         String type = getTypeAt(to);
+
         if (type.equalsIgnoreCase("SAFE")) {
             //rawMsg(p, ChatColor.AQUA + " ~" + ChatColor.GOLD + "SafeZone");
-            TitleAPI.sendTitle(p, 10, 10, 60, ChatColor.GOLD + "Cidade", "");
+            String[] coisasSafe = getCoisasSafe(to);
+            TitleAPI.sendTitle(p, 10, 10, 60, ChatColor.GOLD + "Vila " + coisasSafe[0], coisasSafe[1]);
         } else if (type.equalsIgnoreCase("WARZ")) {
-            TitleAPI.sendTitle(p, 10, 10, 60, ChatColor.DARK_RED + "WarZone", "");
+            TitleAPI.sendTitle(p, 10, 10, 60, ChatColor.DARK_RED + "Zona de Guerra", "§cPvP Ativado com DROP Reduzido.");
             // rawMsg(p, ChatColor.AQUA + " ~" + ChatColor.DARK_RED + "WarZone");
         } else if (type.equalsIgnoreCase("WILD")) {
             //rawMsg(p, ChatColor.AQUA + " ~" + ChatColor.DARK_GREEN + L.m("Terras sem Dono"));
             TitleAPI.sendTitle(p, 10, 10, 60, ChatColor.DARK_GREEN + L.m("Terras sem Dono"), "");
         } else {
             Clan c = getClanAt(to);
-            if (c.getAllMembers().contains(getPlayer(p.getName()))) {
-                String owner = getOwnerAt(to);
-                if (owner.equals("none")) {
+            if (c.getAllMembers().contains(ClanLand.manager.getClanPlayer(p))) {
+                String[] owner = getOwnerAt(to);
+                if (owner[0].equals("none")) {
                     // rawMsg(p, ChatColor.AQUA + "~§r" + c.getColorTag() + ChatColor.AQUA
                     //        + " - " + "§r" + c.getName() + ChatColor.AQUA
                     //         + " - " + ChatColor.DARK_GREEN + L.m("Publico"));
                     TitleAPI.sendTitle(p, 10, 10, 60, c.getColorTag() + ChatColor.AQUA
-                            + " - " + "§r" + c.getName() + ChatColor.AQUA, ChatColor.AQUA + "Terreno Publico");
+                            + " - " + "§r" + c.getName() + ChatColor.AQUA, ChatColor.AQUA + tipoTerreno(to) + ", Público");
                 } else {
-                    OfflinePlayer dono = Bukkit.getPlayer(UUID.fromString(owner));
-                    if (dono == null) {
-                        dono = Bukkit.getOfflinePlayer(UUID.fromString(owner));
-                    }
-                    if (dono == null) {
-                        owner = L.m("erro, falar com staff !");
-                    }
-                    owner = dono.getName();
                     //rawMsg(p, ChatColor.AQUA + "~§r" + c.getColorTag() + ChatColor.AQUA
                     //        + " - " + "§r" + c.getName() + ChatColor.AQUA
                     //        + " - " + ChatColor.DARK_GREEN + L.m("Terreno de") + "§r" + owner);
                     TitleAPI.sendTitle(p, 10, 10, 60, c.getColorTag() + ChatColor.AQUA
-                            + " - " + "§r" + c.getName() + ChatColor.AQUA, ChatColor.AQUA + "Terreno de " + owner);
+                            + " - " + "§r" + c.getName() + ChatColor.AQUA, ChatColor.AQUA + tipoTerreno(to) + ", Privado de " + owner[1]);
                 }
             } else {
                 //rawMsg(p, ChatColor.AQUA + "~§r" + c.getColorTag() + ChatColor.AQUA + " - " + "§r" + c.getName());
                 TitleAPI.sendTitle(p, 10, 10, 60, c.getColorTag() + ChatColor.AQUA
-                        + " - " + "§r" + c.getName() + ChatColor.AQUA, "");
+                        + " - " + "§r" + c.getName() + ChatColor.AQUA, ChatColor.AQUA + tipoTerreno(to));
             }
         }
     }
@@ -329,15 +312,15 @@ public class ClanLand {
         setupPermissions();
         String dbName = KoM.config.getConfig().getString("database.name");
         String connStr = "jdbc:mysql://localhost:3306/kom?autoReconnect=true";
-        if(KoM.serverTestes)
-                connStr = "jdbc:mysql://localhost:3306/komtestes?autoReconnect=true";
+        if (KoM.serverTestes)
+            connStr = "jdbc:mysql://localhost:3306/komtestes?autoReconnect=true";
         KoM._instance.getDataFolder().mkdirs();
-        Bukkit.getPluginCommand("terreno").setExecutor(new Terreno());
+        Bukkit.getPluginCommand("terrenox").setExecutor(new Terreno());
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             est = KoM.database.pegaConexao().createStatement();
             est.executeUpdate("CREATE TABLE IF NOT EXISTS kk ("
-                    + "tag VARCHAR(10) PRIMARY KEY, "
+                    + "tag VARCHAR(10), "
                     + "world VARCHAR(20), "
                     + "x INT, "
                     + "z INT, "
@@ -347,9 +330,10 @@ public class ClanLand {
                     + "minhaTag VARCHAR(10) PRIMARY KEY, "
                     + "tagInimiga VARCHAR(3), "
                     + "ptos INT ); ");
-            est.executeUpdate("CREATE TABLE IF NOT EXISTS poder ("
-                    + "minhaTag VARCHAR(10) PRIMARY KEY, "
-                    + "qtd INT ); ");
+            est.executeUpdate("CREATE TABLE IF NOT EXISTS guilda ("
+                    + "minhaTag VARCHAR(10) PRIMARY KEY,"
+                    + "founder VARCHAR(36),"
+                    + "poder INT ); ");
 
         } catch (Exception ex) {
             log.log(Level.SEVERE, null, ex);
@@ -400,26 +384,38 @@ public class ClanLand {
         return econ != null;
     }
 
-    public static int getQtdTerrenos(String minhaTag) {
-        int ptos = 0;
-        ResultSet rs = null;
-        try {
-            est = KoM.database.pegaConexao().createStatement();
-            rs = est.executeQuery("select count(tag) as qtd from kk where tag='" + minhaTag + "'");
-            if (rs.next()) {
-                return rs.getInt("qtd");
-            }
-        } catch (SQLException ex) {
-            log.log(Level.SEVERE, ex.getMessage(), ex);
-        } finally {
-            try {
-                rs.close();
-                est.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    public static int getQtdTerrenos(String tag) {
+        try (PreparedStatement ps = KoM.database.pegaConexao().prepareStatement("select count(tag) as qtd from kk where tag like ?")) {
+            ps.setString(1, "%" + tag);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt("qtd");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return ptos;
+        return 0;
+    }
+
+    public static int getQtdTerrenos(String tag, boolean primario) {
+        try (PreparedStatement ps = KoM.database.pegaConexao().prepareStatement("select count(tag) as qtd from kk where tag like ?")) {
+            if (primario) ps.setString(1, tag);
+            else ps.setString(1, "#" + tag);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt("qtd");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static int priceOfTerreno(String tag) {
+
+        int qntTerrenos = ClanLand.getQtdTerrenos(tag);
+
+        if (qntTerrenos == 0) return 0;
+        else if (qntTerrenos < 9) return (qntTerrenos * 3);
+        else if (qntTerrenos < 25) return ((8 * 3) + ((qntTerrenos - 8) * 5));
+        else return qntTerrenos * 10;
+
     }
 
     public static int getPoder(String minhaTag) {
@@ -427,11 +423,11 @@ public class ClanLand {
         ResultSet rs = null;
         try {
             est = KoM.database.pegaConexao().createStatement();
-            rs = est.executeQuery("select qtd from poder where minhaTag='" + minhaTag + "'");
+            rs = est.executeQuery("SELECT poder FROM guilda WHERE minhaTag='" + minhaTag + "'");
             if (rs.next()) {
-                return rs.getInt("qtd");
+                return rs.getInt("poder");
             } else {
-                est.execute("insert into poder (minhaTag, qtd) values ('" + minhaTag + "' ,0)");
+                est.execute("INSERT INTO guilda (minhaTag, poder) VALUES ('" + minhaTag + "' ,0)");
             }
             //KnightsOfMania.database.pegaConexao().commit();
         } catch (SQLException ex) {
@@ -452,7 +448,7 @@ public class ClanLand {
     public static void setPoder(String minhaTag, int ptos) {
         try {
             est = KoM.database.pegaConexao().createStatement();
-            est.executeUpdate("update poder set qtd = " + ptos + " where minhaTag='" + minhaTag + "'");
+            est.executeUpdate("UPDATE guilda SET qtd = " + ptos + " WHERE minhaTag='" + minhaTag + "'");
             //KnightsOfMania.database.pegaConexao().commit();
         } catch (SQLException ex) {
             log.log(Level.SEVERE, null, ex);
@@ -526,18 +522,18 @@ public class ClanLand {
         if (bm.getTitle() == null || bm.getTitle().equals("WILD")) {
             return null;
         }
-        return getClan(bm.getTitle());
+        return getClan(bm.getTitle().replace("#", ""));
     }
 
-    public static String getOwnerAt(Location l) {
+    public static String[] getOwnerAt(Location l) {
         BookMeta bm = getBookMeta(l);
-        return bm.getAuthor();
+        return bm.getAuthor().split("@");
     }
 
     public static int[] getChunkLocation(Location l) {
         l = l.getChunk().getBlock(0, 0, 0).getLocation();
         return new int[]{
-            (int) l.getX() / 16, (int) l.getZ() / 16
+                (int) l.getX() / 16, (int) l.getZ() / 16
         };
     }
 
@@ -545,14 +541,18 @@ public class ClanLand {
         return Bukkit.getWorld(w).getChunkAt(x * 16, z * 16).getBlock(0, 0, 0).getLocation();
     }
 
-    public static void setOwnerAt(Location l, String owner) {
-        if (owner == null) {
-            owner = "none";
-        }
+    public static void setOwnerAt(Location l, Player player) {
+        String owner = "none";
+
+        if (player != null) owner = player.getUniqueId() + "@" + player.getName();
 
         BookMeta bm = getBookMeta(l);
         bm.setAuthor(owner);
-        bm.setPage(1, "");
+
+        bm.setLore(null); //Limpar Coisas Antigas
+        bm.setPages(new ArrayList<>()); //Limpar Coisas Antigas
+
+        bm.addPage("");
         setBookMeta(l, bm);
         int[] xz = getChunkLocation(l);
         try {
@@ -571,50 +571,51 @@ public class ClanLand {
         }
     }
 
-    public static void addMemberAt(Location l, String friend) {
+    public static void addMemberAt(Location l, Player player) {
         BookMeta bm = getBookMeta(l);
-        if (bm.getPage(1).isEmpty()) {
-            bm.setPage(1, friend);
-            setBookMeta(l, bm);
-            return;
-        }
-        bm.setPage(1, bm.getPage(1) + "\n" + friend);
+        bm.addPage(player.getUniqueId() + "@" + player.getName());
         setBookMeta(l, bm);
     }
 
-    public static void removeMemberAt(Location l, String friend) {
+    public static void removeMemberAt(Location l, UUID uuid) {
         BookMeta bm = getBookMeta(l);
-        String[] members = bm.getPage(1).split("\n");
-        StringBuilder end = new StringBuilder();
-        for (String member : members) {
-            if (member.equals(friend)) {
-                continue;
-            }
-            end.append(member);
-            if (!members[members.length - 1].equals(member)) {
-                end.append("\n");
-            }
-        }
-        bm.setPage(1, end.toString());
+        ArrayList<String> members = new ArrayList<>(bm.getPages());
+
+        members.removeIf(member -> member.contains(uuid.toString()));
+
+        bm.setPages(members);
         setBookMeta(l, bm);
     }
 
-    public static boolean isMemberAt(Location l, String friend) {
-        return getMembersAt(l).contains(friend);
+    public static UUID nickMemberToUUID(Location l, String nick) {
+        return getMembersAt(l).get(nick);
+    }
+
+    public static boolean isMemberAt(Location l, UUID uuid) {
+        return getMembersAt(l).containsValue(uuid);
     }
 
     public static void clearMembersAt(Location l) {
         BookMeta bm = getBookMeta(l);
-        bm.setPage(1, "");
+        bm.setPages(new ArrayList<>());
         setBookMeta(l, bm);
     }
 
-    public static List<String> getMembersAt(Location l) {
+    public static HashMap<String, UUID> getMembersAt(Location l) {
+        HashMap<String, UUID> membros = new LinkedHashMap<>();
         BookMeta bm = getBookMeta(l);
-        return Arrays.asList(bm.getPage(1).split("\n"));
+
+        for (String s : bm.getPages()) {
+            if (!s.isEmpty()) {
+                String[] membro = s.split("@");
+                membros.put(membro[1], UUID.fromString(membro[0]));
+            }
+        }
+
+        return membros;
     }
 
-    private static BookMeta getBookMeta(Location l) {
+    public static BookMeta getBookMeta(Location l) {
         Block b = l.getChunk().getBlock(0, 0, 0);
         if (!b.getType().equals(Material.CHEST)) {
             b.getRelative(BlockFace.UP).setType(Material.BEDROCK);
@@ -628,7 +629,7 @@ public class ClanLand {
 
         if (inv.getItem(0) == null || !inv.getItem(0).getType().equals(Material.WRITTEN_BOOK)) {
             log.log(Level.INFO, "creating info for chunk {0}, {1}", new Object[]{
-                l.getChunk().getX(), l.getChunk().getZ()
+                    l.getChunk().getX(), l.getChunk().getZ()
             });
             inv.setItem(0, new ItemStack(Material.WRITTEN_BOOK));
             bm = (BookMeta) inv.getItem(0).getItemMeta();
@@ -647,11 +648,11 @@ public class ClanLand {
 
     public static int getMobLevel(Location l) {
         if (l.getWorld().getEnvironment() == Environment.THE_END) {
-            return 19;
+            return 20;
         }
         ApplicableRegionSet set = KoM.worldGuard.getRegionManager(l.getWorld()).getApplicableRegions(l);
         if (set == null || set.size() == 0) {
-            if (l.getWorld().getName().equalsIgnoreCase("dungeon")) {
+            if (l.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                 return 1;
             }
             int distancia = getChunkDistanceFromSpawn(l);
@@ -670,10 +671,10 @@ public class ClanLand {
         }
     }
 
-    private static int calcZona(int distFromSpawn){
+    private static int calcZona(int distFromSpawn) {
         int zona = 0;
-        for (int dist : zonas){
-            if(distFromSpawn <= dist){
+        for (int dist : zonas) {
+            if (distFromSpawn <= dist) {
                 return zona;
             }
             zona++;
@@ -690,6 +691,65 @@ public class ClanLand {
             return false;
         }
         return bm.getTitle().equals("SAFE");
+    }
+
+    public static int getPermLevel(Location l) {
+        if (!getTypeAt(l).equalsIgnoreCase("CLAN")) return -1;
+
+        BookMeta bm = getBookMeta(l);
+
+        if (bm.getLore() == null || bm.getLore().size() < 1) return 0;
+
+        return Integer.valueOf(bm.getLore().get(0));
+    }
+
+    public static void changePermLevel(Location l) {
+        BookMeta bm = getBookMeta(l);
+
+        if (bm.getLore() == null || bm.getLore().size() < 1) {
+
+            List<String> lore = new ArrayList<>();
+            lore.add("0");
+
+            bm.setLore(lore);
+
+        } else {
+
+            int level = Integer.valueOf(bm.getLore().get(0));
+
+            if (level >= 6) {
+                level = -1;
+            }
+
+            List<String> lore = new ArrayList<>();
+            lore.add("" + (level + 1));
+
+            bm.setLore(lore);
+        }
+
+        setBookMeta(l, bm);
+
+    }
+
+    public static String[] getCoisasSafe(Location l) {
+        BookMeta bm = getBookMeta(l);
+
+        if (bm.getLore() == null || bm.getLore().size() < 2) return new String[]{"", ""};
+
+        return new String[]{bm.getLore().get(0), bm.getLore().get(1)};
+    }
+
+    public static void setCoisasSafe(Location l, String nome, String level) {
+
+        nome = nome.replaceAll("_", " ");
+        level = level.replaceAll("_", " ");
+        BookMeta bm = getBookMeta(l);
+        List<String> lore = new ArrayList<>();
+        lore.add(nome);
+        lore.add(level);
+        bm.setLore(lore);
+        setBookMeta(l, bm);
+
     }
 
     public static boolean isWarZone(Location l) {
@@ -771,10 +831,6 @@ public class ClanLand {
         return null;
     }
 
-    public static ClanPlayer getPlayer(String s) {
-        return manager.getClanPlayer(s);
-    }
-
     public static String getTypeAt(Location l) {
         if (l.getWorld().getName().equalsIgnoreCase("woe") || l.getWorld().getName().equalsIgnoreCase("arena")) {
             return "WARZ";
@@ -794,7 +850,63 @@ public class ClanLand {
         }
     }
 
+    public static String tipoTerreno(Location l) {
+        BookMeta bm = getBookMeta(l);
+        if (bm == null) {
+            return null;
+        }
+        if (bm.getTitle() == null || bm.getTitle().equals("WILD")) {
+            return null;
+        }
+        if (bm.getTitle().contains("#")) return "Terreno de Poder";
+        else return "Terreno Primário";
+    }
+
+    public static void setFounder(String tag, UUID founder) {
+
+        try (PreparedStatement ps = KoM.database.pegaConexao().prepareStatement("UPDATE guilda SET founder=? WHERE minhaTag=?")) {
+
+            ps.setString(1, founder.toString());
+            ps.setString(2, tag);
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static UUID getFounder(String tag) {
+
+        try (PreparedStatement ps = KoM.database.pegaConexao().prepareStatement("SELECT founder FROM guilda WHERE minhatag=?")) {
+
+            UUID founder = null;
+
+            ps.setString(1, tag.toLowerCase());
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) founder = UUID.fromString(rs.getString("founder"));
+
+            rs.close();
+
+            return founder;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static boolean isFounder(UUID uuid, String tag) {
+
+        UUID founder = getFounder(tag);
+
+        return founder != null && founder.equals(uuid);
+    }
+
     public static void msg(CommandSender cs, String msg) {
-        cs.sendMessage(ChatColor.RED + "[Kom] " + ChatColor.GREEN + msg);
+        cs.sendMessage(KoM.tag + " " + ChatColor.YELLOW + msg);
     }
 }

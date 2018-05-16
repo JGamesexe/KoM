@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import nativelevel.Classes.Mage.Wizard;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 public class Minerador {
 
-      public static void load() {
+    public static void load() {
         List<Skill> skills = new ArrayList<Skill>();
 
         Skill s1 = new Skill("Obter Minérios", 5, false);
@@ -30,7 +27,7 @@ public class Minerador {
         Skill s4 = new Skill("Desarmar", 2, false);
         s4.setLore(new String[]{"§9Permite desarmar inimigos usando picaretas"});
         skills.add(s4);
-        
+
         Skill s5 = new Skill("Escalar", 3, false);
         s4.setLore(new String[]{"§9Permite escalar paredes com uma picareta"});
         skills.add(s4);
@@ -39,16 +36,16 @@ public class Minerador {
         skills.add(s2);
         skills.add(s3);
         skills.add(s4);
-        
+
         Collections.sort(skills, new Comparator<Skill>() {
             @Override
             public int compare(Skill p1, Skill p2) {
-                return p1.getNivel() - p2.getNivel(); 
+                return p1.getNivel() - p2.getNivel();
             }
         });
 
         SkillMaster.skills.put("minerador", skills);
-        
+
     }
 
 }

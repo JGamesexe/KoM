@@ -5,7 +5,6 @@
  */
 package nativelevel.Custom.Items;
 
-import java.util.List;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
 import nativelevel.Jobs.TipoClasse;
@@ -19,8 +18,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
+
 /**
- *
  * @author User
  */
 public class Lock extends CustomItem {
@@ -53,12 +53,12 @@ public class Lock extends CustomItem {
 
     @Override
     public void interage(PlayerInteractEvent ev) {
-        
-        if(Jobs.getJobLevel(Jobs.Classe.Engenheiro, ev.getPlayer())==TipoClasse.NADA) {
+
+        if (Jobs.getJobLevel(Jobs.Classe.Engenheiro, ev.getPlayer()) == TipoClasse.NADA) {
             ev.getPlayer().sendMessage("Voce nao sabe o que fazer com isto.");
             return;
         }
-        
+
         if (ev.getClickedBlock() != null && ev.getClickedBlock().getType() == Material.ANVIL) {
             if (!GeneralUtils.hasItem(ev.getPlayer().getInventory(), Material.IRON_INGOT, 1, (byte) 0)) {
                 ev.getPlayer().sendMessage(ChatColor.RED + L.m("Voce precisa de uma barra de ferro para fazer a chave desta fechadura !"));
@@ -77,7 +77,7 @@ public class Lock extends CustomItem {
                 Lock lock = (Lock) CustomItem.getItem(Lock.class);
                 LockKey lockKey = (LockKey) CustomItem.getItem(LockKey.class);
 
-                int lockId = lock.getId(ev.getPlayer().getItemInHand());
+                int lockId = lock.getId(ev.getPlayer().getInventory().getItemInMainHand());
                 ItemStack key = lockKey.create(lockId);
                 ev.getPlayer().getInventory().addItem(key);
                 ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Voce criou a chave para esta tranca !"));
@@ -89,7 +89,7 @@ public class Lock extends CustomItem {
                 return;
             } else {
                 GeneralUtils.removeInventoryItems(ev.getPlayer().getInventory(), Material.IRON_INGOT, 3, (byte) 0);
-                int difficulty = getLockLevel(ev.getPlayer().getItemInHand());
+                int difficulty = getLockLevel(ev.getPlayer().getInventory().getItemInMainHand());
                 Jobs.Sucesso sucesso = Jobs.hasSuccess(25, Jobs.Classe.Engenheiro, ev.getPlayer());
                 if (sucesso.acertou == false) {
                     ev.getPlayer().sendMessage(ChatColor.RED + L.m("Voce falhou em copiar a tranca !"));
@@ -97,8 +97,8 @@ public class Lock extends CustomItem {
                 } else {
                     XP.changeExp(ev.getPlayer(), XP.getExpPorAcao(10));
                 }
-                ItemStack newKey = ev.getPlayer().getItemInHand().clone();
-                newKey.setItemMeta(ev.getPlayer().getItemInHand().getItemMeta().clone());
+                ItemStack newKey = ev.getPlayer().getInventory().getItemInMainHand().clone();
+                newKey.setItemMeta(ev.getPlayer().getInventory().getItemInMainHand().getItemMeta().clone());
                 ev.getPlayer().getInventory().addItem(newKey);
                 ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Voce copiou a tranca !"));
             }

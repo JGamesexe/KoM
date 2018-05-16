@@ -2,10 +2,11 @@ package nativelevel.phatloots.gui;
 
 import nativelevel.phatloots.PhatLoot;
 import nativelevel.phatloots.loot.Loot;
-import java.util.List;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 /**
  * Buttons execute actions on click
@@ -21,8 +22,8 @@ public abstract class Button {
     /**
      * Completes the Button's action
      *
-     * @param click The type of click
-     * @param inv The current GUI Inventory
+     * @param click    The type of click
+     * @param inv      The current GUI Inventory
      * @param phatLoot The PhatLoot Which is being modified
      * @param lootList The current List of Loot (may be a collection)
      * @return true if the page should be refreshed

@@ -5,40 +5,26 @@
  */
 package nativelevel.Classes.Mage.spelllist;
 
-import com.sk89q.worldedit.math.MathUtils;
-import java.util.List;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.KoM;
-import nativelevel.Listeners.GeneralListener;
 import nativelevel.Classes.Mage.Elements;
 import nativelevel.Classes.Mage.MageSpell;
-import nativelevel.Classes.Mage.SpellParticleEffects;
 import nativelevel.Equipment.Atributo;
 import nativelevel.Equipment.EquipManager;
-import nativelevel.MetaShit;
-import nativelevel.efeitos.ParticleEffect;
 import nativelevel.integration.SimpleClanKom;
 import nativelevel.integration.WorldGuardKom;
 import nativelevel.sisteminhas.ClanLand;
 import nativelevel.utils.Tralhas;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import java.util.List;
+
 /**
- *
  * @author User
  */
 public class ConeOfCold extends MageSpell {
@@ -46,7 +32,7 @@ public class ConeOfCold extends MageSpell {
     public ConeOfCold() {
         super("Cone de Frio");
     }
-    
+
     PotionEffect efeito = new PotionEffect(PotionEffectType.SLOW, 20 * 6, 2);
 
     @Override
@@ -60,20 +46,20 @@ public class ConeOfCold extends MageSpell {
         for (Entity e : lista) {
             if (e instanceof Monster || e.getType() == EntityType.PLAYER) {
                 if (e.getType() == EntityType.PLAYER) {
-                    Player alvo = (Player)e;             
+                    Player alvo = (Player) e;
                     if (!SimpleClanKom.canPvp(p, (Player) e) || WorldGuardKom.ehSafeZone(e.getLocation())) {
                         continue;
                     }
                     ClanPlayer clanAlvo = ClanLand.manager.getClanPlayer(alvo);
                     // nao pegar em aliados
-                    if(clanAlvo != null && eu != null && (eu.isAlly(alvo) || eu.getTag().equalsIgnoreCase(clanAlvo.getTag()))) {
+                    if (clanAlvo != null && eu != null && (eu.isAlly(alvo) || eu.getTag().equalsIgnoreCase(clanAlvo.getTag()))) {
                         continue;
                     }
                 }
-                ((LivingEntity)e).addPotionEffect(efeito);
+                ((LivingEntity) e).addPotionEffect(efeito);
                 Vector ve = e.getLocation().toVector();
                 Vector v = ve.subtract(p.getLocation().toVector()).normalize();
-                v.setY(0.32 * (1+magia/100/2));
+                v.setY(0.32 * (1 + magia / 100 / 2));
                 e.setVelocity(v);
             }
         }

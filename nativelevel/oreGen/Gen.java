@@ -14,12 +14,9 @@
  */
 package nativelevel.oreGen;
 
-import java.util.HashSet;
-import java.util.Random;
-import java.util.logging.Logger;
 import nativelevel.Classes.Minerador;
-import nativelevel.MetaShit;
 import nativelevel.KoM;
+import nativelevel.MetaShit;
 import nativelevel.bencoes.TipoBless;
 import nativelevel.spec.PlayerSpec;
 import org.bukkit.Chunk;
@@ -34,6 +31,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
+
+import java.util.HashSet;
+import java.util.Random;
+import java.util.logging.Logger;
 
 public class Gen {
 
@@ -87,6 +88,7 @@ public class Gen {
         }
         return true;
     }
+
     BlockFace[] faces = {BlockFace.UP, BlockFace.DOWN, BlockFace.EAST, BlockFace.WEST, BlockFace.NORTH, BlockFace.SOUTH};
     Random rnd = new Random();
 
@@ -211,7 +213,7 @@ public class Gen {
                 return Material.GOLD_ORE;
             } else if (chance > 700 && chance < 720) {
                 return Material.REDSTONE_ORE;
-            }  else if (chance > 800 && chance < 1200) {
+            } else if (chance > 800 && chance < 1200) {
                 return Material.GRAVEL;
             }
         } else if (y < 20) {
@@ -235,7 +237,7 @@ public class Gen {
                 return Material.SOUL_SAND;
             } else if (chance > 1400 && chance < 1415) {
                 return Material.QUARTZ_ORE;
-            } 
+            }
         }
         return null;
     }
@@ -315,7 +317,7 @@ public class Gen {
                     }
                 }
             } else {
-                if (ev.getPlayer().isSneaking() && ev.getPlayer().getEyeLocation().getPitch() == -90 && ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() == Material.APPLE) {
+                if (ev.getPlayer().isSneaking() && ev.getPlayer().getEyeLocation().getPitch() == -90 && ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.APPLE) {
                     checaChunk(ev.getPlayer());
                 }
             }

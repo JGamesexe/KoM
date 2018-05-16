@@ -14,33 +14,30 @@
  */
 package nativelevel.Comandos;
 
-import java.util.List;
-import java.util.UUID;
 import nativelevel.CFG;
 import nativelevel.KoM;
+import nativelevel.Lang.L;
+import nativelevel.rankings.Estatistica;
+import nativelevel.rankings.RankDB;
 import nativelevel.sisteminhas.ClanLand;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import java.util.HashMap;
-import nativelevel.Lang.L;
-import nativelevel.rankings.Estatistica;
-import nativelevel.rankings.RankDB;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class Terreno implements CommandExecutor {
-
-    public static HashMap<Location, String> rewindChunks = new HashMap<Location, String>();
 
     private static void sendHelp(CommandSender cs, boolean leader) {
         ClanLand.msg(cs, L.m("Use: /terreno amigo add (nome)"));
@@ -56,74 +53,139 @@ public class Terreno implements CommandExecutor {
         }
     }
 
-    public static boolean temGuildaPerto(ClanPlayer c, Location l) {
-        String minhaTag = "asdasdasdasd";
-        if (c != null) {
-            minhaTag = c.getTag();
-        } else {
-            minhaTag = "Dacaris, nega do fogo, dona da areia, nega foda rainha da vida";
-        }
-        int x;
-        int y;
-        x = l.getChunk().getBlock(1, 0, 1).getLocation().getBlockX();
-        y = l.getChunk().getBlock(1, 0, 1).getLocation().getBlockZ();
+    public static ArrayList<String> getGuildasPerto(Location l) {
+
+        int x = l.getChunk().getBlock(8, 0, 8).getLocation().getBlockX();
+        int y = l.getChunk().getBlock(8, 0, 8).getLocation().getBlockZ();
+
         Location up = new Location(l.getWorld(), x + 16, 0, y);
-        Clan cUp = ClanLand.getClanAt(up);
-        // nao tem clan em cima ou não é meu clan
-        if (cUp == null || !cUp.getTag().equalsIgnoreCase(minhaTag)) {
-            if (cUp != null && !cUp.getTag().equalsIgnoreCase(minhaTag)) {
-                return true;
-            }
-            Location down = new Location(l.getWorld(), x - 16, 0, y);
-            Clan cDown = ClanLand.getClanAt(down);
-            if (cDown == null || !cDown.getTag().equalsIgnoreCase(minhaTag)) {
-                if (cDown != null && !cDown.getTag().equalsIgnoreCase(minhaTag)) {
-                    return true;
-                }
-                Location left = new Location(l.getWorld(), x, 0, y + 16);
-                Clan cLeft = ClanLand.getClanAt(left);
-                if (cLeft == null || !cLeft.getTag().equalsIgnoreCase(minhaTag)) {
-                    if (cLeft != null && !cLeft.getTag().equalsIgnoreCase(minhaTag)) {
-                        return true;
-                    }
-                    Location right = new Location(l.getWorld(), x, 0, y - 16);
-                    Clan cRight = ClanLand.getClanAt(right);
-                    if (cRight == null || !cRight.getTag().equalsIgnoreCase(minhaTag)) {
-                        if (cRight != null && !cRight.getTag().equalsIgnoreCase(minhaTag)) {
-                            return true;
-                        }
-                        right = new Location(l.getWorld(), x - 16, 0, y - 16);
-                        cRight = ClanLand.getClanAt(right);
-                        if (cRight == null || !cRight.getTag().equalsIgnoreCase(minhaTag)) {
-                            if (cRight != null && !cRight.getTag().equalsIgnoreCase(minhaTag)) {
-                                return true;
-                            }
-                            right = new Location(l.getWorld(), x + 16, 0, y - 16);
-                            cRight = ClanLand.getClanAt(right);
-                            if (cRight == null || !cRight.getTag().equalsIgnoreCase(minhaTag)) {
-                                if (cRight != null && !cRight.getTag().equalsIgnoreCase(minhaTag)) {
-                                    return true;
-                                }
-                                right = new Location(l.getWorld(), x - 16, 0, y + 16);
-                                cRight = ClanLand.getClanAt(right);
-                                if (cRight == null || !cRight.getTag().equalsIgnoreCase(minhaTag)) {
-                                    if (cRight != null && !cRight.getTag().equalsIgnoreCase(minhaTag)) {
-                                        return true;
-                                    }
-                                    right = new Location(l.getWorld(), x + 16, 0, y + 16);
-                                    cRight = ClanLand.getClanAt(right);
-                                    if (cRight == null || !cRight.getTag().equalsIgnoreCase(minhaTag)) {
-                                        if (cRight != null && !cRight.getTag().equalsIgnoreCase(minhaTag)) {
-                                            return true;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+        Location down = new Location(l.getWorld(), x - 16, 0, y);
+        Location right = new Location(l.getWorld(), x, 0, y + 16);
+        Location left = new Location(l.getWorld(), x, 0, y - 16);
+        Location upright = new Location(l.getWorld(), x + 16, 0, y + 16);
+        Location upleft = new Location(l.getWorld(), x + 16, 0, y - 16);
+        Location downright = new Location(l.getWorld(), x - 16, 0, y + 16);
+        Location downleft = new Location(l.getWorld(), x - 16, 0, y - 16);
+
+        Location[] locs = new Location[]{l, up, down, right, left, upright, upleft, downright, downleft};
+
+        ArrayList<String> tipos = new ArrayList<>();
+
+        tipos.add(ClanLand.getTypeAt(l));
+
+        tipos.add(ClanLand.getTypeAt(up));
+        tipos.add(ClanLand.getTypeAt(down));
+        tipos.add(ClanLand.getTypeAt(right));
+        tipos.add(ClanLand.getTypeAt(left));
+
+        tipos.add(ClanLand.getTypeAt(upright));
+        tipos.add(ClanLand.getTypeAt(upleft));
+        tipos.add(ClanLand.getTypeAt(downright));
+        tipos.add(ClanLand.getTypeAt(downleft));
+
+        int index = 0;
+
+        for (String tipo : tipos) {
+            if (tipo.equalsIgnoreCase("CLAN")) tipos.set(index, ClanLand.getClanAt(locs[index]).getTag());
+            index++;
+        }
+
+//        ArrayList<Clan> clans = new ArrayList<>();
+//
+//        clans.add(ClanLand.getClanAt(up));
+//        clans.add(ClanLand.getClanAt(down));
+//        clans.add(ClanLand.getClanAt(right));
+//        clans.add(ClanLand.getClanAt(left));
+//        clans.add(ClanLand.getClanAt(upright));
+//        clans.add(ClanLand.getClanAt(upleft));
+//        clans.add(ClanLand.getClanAt(downright));
+//        clans.add(ClanLand.getClanAt(downleft));
+
+        return tipos;
+    }
+
+    public static boolean temGuildaPerto(Player p, Location l, boolean sogld) {
+
+        ClanPlayer cp = ClanLand.manager.getClanPlayer(p);
+        String minhaTag;
+
+        if (cp != null) minhaTag = cp.getTag();
+        else minhaTag = "Dacaris, nega do fogo, dona da areia, nega foda rainha da vida";
+
+
+        List<String> glds = getGuildasPerto(l);
+
+        for (String gld : glds) {
+            if (sogld) {
+                if (!gld.equalsIgnoreCase(minhaTag)
+                        && !gld.equalsIgnoreCase("WILD")
+                        && !gld.equalsIgnoreCase("WARZ")
+                        && !gld.equalsIgnoreCase("SAFE")) return true;
+            } else {
+                if (!gld.equalsIgnoreCase("WILD") && !gld.equalsIgnoreCase(minhaTag)) return true;
             }
         }
+//        int x;
+//        int y;
+//        x = l.getChunk().getBlock(1, 0, 1).getLocation().getBlockX();
+//        y = l.getChunk().getBlock(1, 0, 1).getLocation().getBlockZ();
+//        Location up = new Location(l.getWorld(), x + 16, 0, y);
+//        Clan cUp = ClanLand.getClanAt(up);
+//        // nao tem clan em cima ou não é meu clan
+//        if (cUp == null || !cUp.getTag().equalsIgnoreCase(minhaTag)) {
+//            if (cUp != null && !cUp.getTag().equalsIgnoreCase(minhaTag)) {
+//                return true;
+//            }
+//            Location down = new Location(l.getWorld(), x - 16, 0, y);
+//            Clan cDown = ClanLand.getClanAt(down);
+//            if (cDown == null || !cDown.getTag().equalsIgnoreCase(minhaTag)) {
+//                if (cDown != null && !cDown.getTag().equalsIgnoreCase(minhaTag)) {
+//                    return true;
+//                }
+//                Location left = new Location(l.getWorld(), x, 0, y + 16);
+//                Clan cLeft = ClanLand.getClanAt(left);
+//                if (cLeft == null || !cLeft.getTag().equalsIgnoreCase(minhaTag)) {
+//                    if (cLeft != null && !cLeft.getTag().equalsIgnoreCase(minhaTag)) {
+//                        return true;
+//                    }
+//                    Location right = new Location(l.getWorld(), x, 0, y - 16);
+//                    Clan cRight = ClanLand.getClanAt(right);
+//                    if (cRight == null || !cRight.getTag().equalsIgnoreCase(minhaTag)) {
+//                        if (cRight != null && !cRight.getTag().equalsIgnoreCase(minhaTag)) {
+//                            return true;
+//                        }
+//                        right = new Location(l.getWorld(), x - 16, 0, y - 16);
+//                        cRight = ClanLand.getClanAt(right);
+//                        if (cRight == null || !cRight.getTag().equalsIgnoreCase(minhaTag)) {
+//                            if (cRight != null && !cRight.getTag().equalsIgnoreCase(minhaTag)) {
+//                                return true;
+//                            }
+//                            right = new Location(l.getWorld(), x + 16, 0, y - 16);
+//                            cRight = ClanLand.getClanAt(right);
+//                            if (cRight == null || !cRight.getTag().equalsIgnoreCase(minhaTag)) {
+//                                if (cRight != null && !cRight.getTag().equalsIgnoreCase(minhaTag)) {
+//                                    return true;
+//                                }
+//                                right = new Location(l.getWorld(), x - 16, 0, y + 16);
+//                                cRight = ClanLand.getClanAt(right);
+//                                if (cRight == null || !cRight.getTag().equalsIgnoreCase(minhaTag)) {
+//                                    if (cRight != null && !cRight.getTag().equalsIgnoreCase(minhaTag)) {
+//                                        return true;
+//                                    }
+//                                    right = new Location(l.getWorld(), x + 16, 0, y + 16);
+//                                    cRight = ClanLand.getClanAt(right);
+//                                    if (cRight == null || !cRight.getTag().equalsIgnoreCase(minhaTag)) {
+//                                        if (cRight != null && !cRight.getTag().equalsIgnoreCase(minhaTag)) {
+//                                            return true;
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
         return false;
     }
 
@@ -139,7 +201,7 @@ public class Terreno implements CommandExecutor {
             return true;
         }
         Player p = (Player) cs;
-        if (!p.isOp() && p.getWorld().getName().equalsIgnoreCase("woe") || p.getWorld().getName().equalsIgnoreCase("vila") || p.getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (!p.isOp() && p.getWorld().getName().equalsIgnoreCase("woe") || p.getWorld().getName().equalsIgnoreCase("vila") || p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             p.sendMessage(ChatColor.RED + L.m("Este comando nao funciona aqui !"));
             return true;
         }
@@ -181,7 +243,7 @@ public class Terreno implements CommandExecutor {
             String player = args[2];
             Player p2 = Bukkit.getPlayer(player);
             if (p2 != null) {
-                String uuid = p2.getUniqueId().toString();
+                UUID uuid = p2.getUniqueId();
                 if (!c.getAllMembers().contains(ClanLand.manager.getClanPlayer(player))) {
                     ClanLand.msg(p, L.m("Este jogador nao eh do seu clan."));
                     return true;
@@ -191,7 +253,7 @@ public class Terreno implements CommandExecutor {
                         ClanLand.msg(p, L.m("Este jogador ja eh membro deste terreno."));
                         return true;
                     }
-                    ClanLand.addMemberAt(p.getLocation(), uuid);
+                    ClanLand.addMemberAt(p.getLocation(), p2);
                     ClanLand.msg(p, L.m("O jogador %" + ChatColor.GREEN + " agora eh membro deste terreno.", player));
                     return true;
                 } else if (args[1].equals("rem") || args[1].equals("remover")) {
@@ -253,12 +315,12 @@ public class Terreno implements CommandExecutor {
                     ClanLand.msg(p, L.m("Este jogador nao esta no seu clan."));
                     return true;
                 }
-                String owner = ClanLand.getOwnerAt(p.getLocation());
-                if (owner != null && owner.equals(alvo.getUniqueId().toString())) {
+                String owner[] = ClanLand.getOwnerAt(p.getLocation());
+                if (owner.length != 0 && owner[0].equals(alvo.getUniqueId().toString())) {
                     ClanLand.msg(p, L.m("Esse terreno ja eh do jogador %", args[1]));
                     return true;
                 }
-                ClanLand.setOwnerAt(p.getLocation(), alvo.getUniqueId().toString());
+                ClanLand.setOwnerAt(p.getLocation(), alvo);
                 ClanLand.msg(p, L.m("Esse terreno agora eh do jogador %" + ChatColor.GREEN + ", do seu clan.", args[1]));
                 ClanLand.update(p, p.getLocation());
                 return true;
@@ -390,7 +452,6 @@ public class Terreno implements CommandExecutor {
                             }
                         }
                     };
-                    rewindChunks.put(p.getLocation(), cp.getTag());
                     Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, r, 20 * 60 * 60);
                 }
                 return true;
@@ -503,26 +564,19 @@ public class Terreno implements CommandExecutor {
                 return true;
             }
             if (cp != null && c.getTag().equals(cp.getClan().getTag())) {
-                String owner = ClanLand.getOwnerAt(p.getLocation());
+                String[] owner = ClanLand.getOwnerAt(p.getLocation());
                 if (owner.equals("none")) {
                     ClanLand.msg(p, L.m("Esse terreno eh publico, do seu clan."));
                     return true;
                 } else {
-                    List<String> membros = ClanLand.getMembersAt(p.getLocation());
-                    ClanLand.msg(p, "Esse terreno eh do jogador " + owner + ChatColor.GREEN + ", do seu clan.");
-                    if (membros.size() == 1 && membros.get(0).isEmpty()) {
+                    HashMap<String, UUID> membros = ClanLand.getMembersAt(p.getLocation());
+                    ClanLand.msg(p, "Esse terreno eh do jogador " + owner[0] + ChatColor.GREEN + ", do seu clan.");
+                    if (membros.size() == 0) {
                         ClanLand.msg(p, L.m("Este terreno nao tem membros."));
                     } else {
                         ClanLand.msg(p, L.m("Membros do terreno:"));
-                        for (String s : membros) {
-                            UUID id = UUID.fromString(s);
-                            OfflinePlayer mem = Bukkit.getPlayer(id);
-                            if (mem == null) {
-                                mem = Bukkit.getOfflinePlayer(id);
-                            }
-                            if (mem != null) {
-                                ClanLand.msg(p, "- " + mem.getName());
-                            }
+                        for (String s : membros.keySet()) {
+                            ClanLand.msg(p, "- " + s);
                         }
                     }
                     return true;
@@ -537,6 +591,7 @@ public class Terreno implements CommandExecutor {
                     ClanLand.msg(p, L.m("Nao eh mais safezone"));
                 } else {
                     ClanLand.setClanAt(p.getLocation(), "SAFE");
+                    if (args.length > 2) ClanLand.setCoisasSafe(p.getLocation(), args[1], args[2]);
                     ClanLand.msg(p, L.m("Agora eh safezone"));
                 }
                 ClanLand.update(p, p.getLocation());

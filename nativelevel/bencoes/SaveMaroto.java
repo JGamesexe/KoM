@@ -5,28 +5,15 @@
  */
 package nativelevel.bencoes;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
-import java.util.logging.Level;
 import nativelevel.Custom.Items.DoubleXP;
-import static nativelevel.Custom.Items.DoubleXP.ativo;
 import nativelevel.KoM;
-import nativelevel.Lang.L;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.io.*;
+import java.util.HashMap;
+import java.util.UUID;
+
 /**
- *
  * @author User
  */
 public class SaveMaroto implements Serializable {
@@ -35,7 +22,7 @@ public class SaveMaroto implements Serializable {
     private HashMap<UUID, Long> tempos = new HashMap<UUID, Long>();
 
     private boolean doubleXP = false;
-    
+
     public int tem(Player p) {
 
         if (tempos.containsKey(p.getUniqueId())) {
@@ -50,7 +37,7 @@ public class SaveMaroto implements Serializable {
             }
         }
         return 0;
-        
+
     }
 
     public TipoBless getTipo(Player p) {
@@ -104,7 +91,7 @@ public class SaveMaroto implements Serializable {
             };
             Bukkit.getScheduler().scheduleSyncDelayedTask(KnightsOfMania._instance, termina, 20 * 60 * 30);
             */
-          }
+        }
 
         return dados;
     }

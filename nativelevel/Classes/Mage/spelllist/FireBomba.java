@@ -14,7 +14,6 @@ import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 
 /**
- *
  * @author User
  */
 public class FireBomba extends MageSpell {
@@ -22,7 +21,7 @@ public class FireBomba extends MageSpell {
     public FireBomba() {
         super("Bomba de Fogo");
     }
-    
+
     @Override
     public void cast(Player p) {
         double magia = EquipManager.getPlayerAttribute(Atributo.Magia, p);
@@ -30,7 +29,7 @@ public class FireBomba extends MageSpell {
         fb = p.launchProjectile(Fireball.class);
         fb.getVelocity().multiply(2);
         fb.setIsIncendiary(false);
-        MetaShit.setMetaObject("modDano", fb, 1 + (magia/100));
+        MetaShit.setMetaObject("modDano", fb, 1 + (magia / 100));
     }
 
     @Override

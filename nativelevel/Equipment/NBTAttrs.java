@@ -5,31 +5,21 @@
  */
 package nativelevel.Equipment;
 
-import java.lang.reflect.Field;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.minecraft.server.v1_12_R1.Item;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.NBTTagList;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
-
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-import org.bukkit.inventory.MerchantRecipe;
+
+import java.lang.reflect.Field;
 
 
 /**
- *
  * @author User
- *
  */
 public class NBTAttrs {
 

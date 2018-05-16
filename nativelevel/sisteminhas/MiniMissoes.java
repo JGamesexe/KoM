@@ -9,16 +9,14 @@ import nativelevel.CFG;
 import org.bukkit.event.world.ChunkLoadEvent;
 
 /**
- *
  * @author User
- * 
  */
 public class MiniMissoes {
-    
+
     public void chunkLoad(ChunkLoadEvent ev) {
-        if(ev.getChunk().getWorld().getName().equalsIgnoreCase(CFG.mundoGuilda)) {
-            
+        if (ev.getChunk().getWorld().getName().equalsIgnoreCase(CFG.mundoGuilda)) {
+
         }
     }
-    
+
 }

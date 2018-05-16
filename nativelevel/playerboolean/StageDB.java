@@ -1,18 +1,16 @@
 package nativelevel.playerboolean;
 
+import nativelevel.KoM;
+import org.bukkit.entity.Player;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
-import nativelevel.KoM;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 /**
- *
  * @author vntgasl
- *
  */
 public class StageDB {
 
@@ -32,7 +30,7 @@ public class StageDB {
             e.printStackTrace();
         }
     }
-    
+
 
     public static Stage getPlayerStage(Player player) {
         Stage data = new Stage();

@@ -14,34 +14,21 @@
  */
 package nativelevel.Comandos;
 
-import com.sk89q.worldedit.LocalWorld;
-import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.bukkit.selections.Selection;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
+import nativelevel.Attributes.Mana;
 import nativelevel.Auras.Aura;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Classes.Farmer;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.TeleportScroll;
 import nativelevel.Custom.Items.ValeSorteio;
-import nativelevel.KoM;
-import nativelevel.Lang.L;
-import nativelevel.Menu.netMenu;
-import nativelevel.MetaShit;
-import nativelevel.Attributes.AttributeInfo;
-import nativelevel.Attributes.Mana;
-import nativelevel.Attributes.MenuAtributos;
 import nativelevel.Equipment.Atributo;
 import nativelevel.Equipment.EquipManager;
 import nativelevel.Equipment.EquipMeta;
 import nativelevel.Jobs;
+import nativelevel.KoM;
+import nativelevel.Lang.L;
+import nativelevel.Menu.netMenu;
+import nativelevel.MetaShit;
 import nativelevel.bencoes.TipoBless;
 import nativelevel.integration.BungeeCordKom;
 import nativelevel.lojaagricola.ConfigLoja;
@@ -50,16 +37,11 @@ import nativelevel.lojaagricola.Vendavel;
 import nativelevel.rankings.Estatistica;
 import nativelevel.rankings.RankDB;
 import nativelevel.rankings.RankedPlayer;
+import nativelevel.sisteminhas.*;
 import nativelevel.skills.SkillMaster;
 import nativelevel.spec.PlayerSpec;
-import nativelevel.sisteminhas.BookPortal;
 import nativelevel.utils.BungLocation;
-import nativelevel.sisteminhas.Html;
-import nativelevel.sisteminhas.IronGolem;
-import nativelevel.sisteminhas.Reseter;
-import nativelevel.sisteminhas.XP;
-import nativelevel.utils.ChatBlock;
-import nativelevel.utils.MetaUtils;
+import nativelevel.utils.JotaGUtils;
 import nativelevel.utils.TableGenerator;
 import nativelevel.utils.TableGenerator.Alignment;
 import nativelevel.utils.TableGenerator.Receiver;
@@ -68,16 +50,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
+import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -85,21 +58,22 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Wolf;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.AnvilInventory;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
 public class Kom implements CommandExecutor {
 
-//    HashMap<String, String> auras = new HashMap<String, String>();
+    //    HashMap<String, String> auras = new HashMap<String, String>();
     public Kom() {
     }
 
@@ -158,7 +132,7 @@ public class Kom implements CommandExecutor {
                     for (int x = 1; x < args.length; x++) {
                         nome += args[x] + " ";
                     }
-                    ItemStack item = p.getItemInHand();
+                    ItemStack item = p.getInventory().getItemInMainHand();
                     if (item != null) {
                         ItemMeta meta = item.getItemMeta();
                         if (meta != null) {
@@ -185,7 +159,7 @@ public class Kom implements CommandExecutor {
                         }
                     } else if (args[0].equals("settype") && p.isOp()) {
                         String type = args[1];
-                        ItemStack naMao = p.getItemInHand();
+                        ItemStack naMao = p.getInventory().getItemInMainHand();
                         naMao.setType(Material.getMaterial(type));
                     } else if (args[0].equals("garrafa") && p.isOp()) {
                         int exp = Integer.valueOf(args[1]);
@@ -327,13 +301,13 @@ public class Kom implements CommandExecutor {
                         }
                         Player w = Bukkit.getPlayer(args[1]);
                         if (w == null) {
-                            p.sendMessage(ChatColor.RED + L.m("Jogador nao encontrado !"));
+                            p.sendMessage(ChatColor.RED + L.m("JogadorDAO nao encontrado !"));
                             return true;
                         }
                         mostraStats(w, p);
                     } else if (args[0].equals("nomeitem") && p.isOp()) {
                         String nome = args[1];
-                        ItemStack item = p.getItemInHand();
+                        ItemStack item = p.getInventory().getItemInMainHand();
                         if (item != null) {
                             ItemMeta meta = item.getItemMeta();
                             if (meta != null) {
@@ -346,7 +320,7 @@ public class Kom implements CommandExecutor {
                         }
                     } else if (args[0].equals("addlore") && p.isOp()) {
                         String nome = args[1];
-                        ItemStack item = p.getItemInHand();
+                        ItemStack item = p.getInventory().getItemInMainHand();
                         if (item != null) {
                             ItemMeta meta = item.getItemMeta();
                             if (meta != null) {
@@ -509,20 +483,20 @@ public class Kom implements CommandExecutor {
                 } else if (args.length == 3) {
                     if (args[0].equals("livro") && p.isOp()) {
                         if (args[1].equalsIgnoreCase("titulo")) {
-                            if (p.getItemInHand().getType() == Material.BOOK_AND_QUILL || p.getItemInHand().getType() == Material.WRITTEN_BOOK) {
-                                BookMeta m = (BookMeta) p.getItemInHand().getItemMeta();
+                            if (p.getInventory().getItemInMainHand().getType() == Material.BOOK_AND_QUILL || p.getInventory().getItemInMainHand().getType() == Material.WRITTEN_BOOK) {
+                                BookMeta m = (BookMeta) p.getInventory().getItemInMainHand().getItemMeta();
                                 m.setTitle(args[2]);
                                 p.sendMessage(ChatColor.GREEN + L.m("Titulo alterado !"));
-                                p.getItemInHand().setItemMeta(m);
+                                p.getInventory().getItemInMainHand().setItemMeta(m);
                             } else {
                                 p.sendMessage(ChatColor.RED + L.m("Bota o livro na mao rapaiz..."));
                             }
                         } else if (args[1].equalsIgnoreCase("autor")) {
-                            if (p.getItemInHand().getType() == Material.BOOK_AND_QUILL || p.getItemInHand().getType() == Material.WRITTEN_BOOK) {
-                                BookMeta m = (BookMeta) p.getItemInHand().getItemMeta();
+                            if (p.getInventory().getItemInMainHand().getType() == Material.BOOK_AND_QUILL || p.getInventory().getItemInMainHand().getType() == Material.WRITTEN_BOOK) {
+                                BookMeta m = (BookMeta) p.getInventory().getItemInMainHand().getItemMeta();
                                 m.setAuthor(args[2]);
                                 p.sendMessage(ChatColor.GREEN + L.m("Autor alterado !"));
-                                p.getItemInHand().setItemMeta(m);
+                                p.getInventory().getItemInMainHand().setItemMeta(m);
                             } else {
                                 p.sendMessage(ChatColor.RED + L.m("Bota o livro na mao rapaiz..."));
                             }
@@ -710,17 +684,17 @@ public class Kom implements CommandExecutor {
                     } else if (args[0].equalsIgnoreCase("aura")) {
                         Aura.abreAuras(p);
                     } else if (args[0].equalsIgnoreCase("regen") && ClanLand.permission.has(p, "kom.mod")) {
-                        if (p.getWorld().getName().equalsIgnoreCase("dungeon") || p.getWorld().getName().equalsIgnoreCase("vila") || p.getWorld().getName().equalsIgnoreCase("woe") || p.getWorld().getName().equalsIgnoreCase("Arena")) {
-                            return true;
-                        }
-                        String tipo = ClanLand.getTypeAt(p.getLocation());
-                        if (tipo.equalsIgnoreCase("WILD")) {
-                            Chunk c = p.getLocation().getChunk();
-                            c.getWorld().regenerateChunk(c.getX(), c.getZ());
-                            p.sendMessage(L.m("Regenerado"));
+                        if (p.getLocation().getWorld().getName().equalsIgnoreCase("NewWorld")) {
+                            String tipo = ClanLand.getTypeAt(p.getLocation());
+                            if (tipo.equalsIgnoreCase("WILD")) {
+                                if (JotaGUtils.regenerateChunk(p.getLocation().getChunk()))
+                                    p.sendMessage(L.m("Regenerado"));
+                            }
+                        } else {
+                            p.sendMessage("§cSe quer que o comando funcione em que mundo? por hora só funciona no NewWorld... [Fala com JotaG]");
                         }
                     } else if (args[0].equalsIgnoreCase("itemnamao") && p.isOp()) {
-                        ItemStack ss = p.getItemInHand();
+                        ItemStack ss = p.getInventory().getItemInMainHand();
                         p.sendMessage("DATA:" + ss.getData().getData());
                         p.sendMessage("typeid:" + ss.getTypeId());
                         p.sendMessage("DUR:" + ss.getDurability());
@@ -802,7 +776,7 @@ public class Kom implements CommandExecutor {
                         }
 
                     } else if (args[0].equalsIgnoreCase("dupe") && p.isOp()) {
-                        ItemStack item = p.getItemInHand();
+                        ItemStack item = p.getInventory().getItemInMainHand();
                         if (item != null) {
                             p.getInventory().addItem(item);
                         }
@@ -813,7 +787,7 @@ public class Kom implements CommandExecutor {
                         while (npcs.hasNext()) {
                             NPC npc = npcs.next();
                             Location loc = npc.getStoredLocation();
-                            if (loc.getWorld().getName().equalsIgnoreCase("dungeon")) {
+                            if (loc.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                                 continue;
                             }
                             KoM.log.info("DESTRUIDO: " + npc.getFullName());
@@ -827,7 +801,7 @@ public class Kom implements CommandExecutor {
                         while (npcs.hasNext()) {
                             NPC npc = npcs.next();
                             Location loc = npc.getStoredLocation();
-                            if (loc.getWorld().getName().equalsIgnoreCase("dungeon")) {
+                            if (loc.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                                 continue;
                             }
                             KoM.log.info("DESTRUIDO: " + npc.getFullName());
@@ -888,7 +862,7 @@ public class Kom implements CommandExecutor {
                         p.sendMessage(ChatColor.GREEN + L.m("Vendo suas classes !"));
                         netMenu.mostraClasses(p);
                     } else if (args[0].equalsIgnoreCase("sethome")) {
-                        ClanPlayer cp = ClanLand.getPlayer(p.getName());
+                        ClanPlayer cp = ClanLand.manager.getClanPlayer(p);
                         if (cp == null) {
                             p.sendMessage(ChatColor.RED + L.m("Voce precisa de uma guilda !"));
                             return true;

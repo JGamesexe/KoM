@@ -5,17 +5,13 @@
  */
 package nativelevel.Custom.Potions;
 
-import nativelevel.Lang.L;
 import nativelevel.Custom.CustomPotion;
 import nativelevel.KoM;
+import nativelevel.Lang.L;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.Effect;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -25,9 +21,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 /**
- *
  * @author User
- *
  */
 public class Velocidade2 extends CustomPotion {
 
@@ -54,9 +48,9 @@ public class Velocidade2 extends CustomPotion {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            new ItemStack(Material.RABBIT_STEW, 1),
-            new ItemStack(Material.GOLDEN_CARROT, 1),
-            new ItemStack(Material.RABBIT_FOOT, 1)};
+                new ItemStack(Material.RABBIT_STEW, 1),
+                new ItemStack(Material.GOLDEN_CARROT, 1),
+                new ItemStack(Material.RABBIT_FOOT, 1)};
     }
 
     @Override

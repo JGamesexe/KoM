@@ -1,6 +1,5 @@
 package nativelevel.Auras.Lista;
 
-import me.fromgate.playeffect.PlayEffect;
 import nativelevel.Auras.Aura;
 import nativelevel.Jobs;
 import nativelevel.utils.Particles;
@@ -39,9 +38,10 @@ public class Natal extends Aura {
         for (int i = 0; i < 15; i++) {
             Particles.ITEM_CRACK.display(new Particles.ItemData(Material.INK_SACK, getRandomColor()), 0.2f, 0.2f, 0.2f, 0, 1, center, 128);
         }
-        if(newTick)
+        if (newTick)
             step++;
     }
+
     private int step;
 
     public static byte getRandomColor() {
@@ -55,5 +55,5 @@ public class Natal extends Aura {
         }
     }
 
-   // VO COPIAR UNS EFEITOS MERMO =X
+    // VO COPIAR UNS EFEITOS MERMO =X
 }

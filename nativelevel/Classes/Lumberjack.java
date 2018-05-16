@@ -14,28 +14,18 @@
  */
 package nativelevel.Classes;
 
-import java.awt.List;
-import java.util.ArrayList;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
+import nativelevel.Attributes.Stamina;
 import nativelevel.CustomEvents.BlockHarvestEvent;
-import nativelevel.Listeners.GeneralListener;
 import nativelevel.Jobs;
-import nativelevel.Lang.PT;
-import nativelevel.Menu.Menu;
-import nativelevel.MetaShit;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
-import nativelevel.Attributes.AttributeInfo;
-import nativelevel.Attributes.Mana;
-import nativelevel.Attributes.Stamina;
+import nativelevel.Menu.Menu;
+import nativelevel.MetaShit;
 import nativelevel.bencoes.TipoBless;
-import nativelevel.config.ConfigKom;
-import nativelevel.config.ItemJob;
-import nativelevel.rankings.Estatistica;
-import nativelevel.rankings.RankDB;
-import nativelevel.spec.PlayerSpec;
 import nativelevel.sisteminhas.XP;
+import nativelevel.spec.PlayerSpec;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -46,10 +36,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -85,6 +73,21 @@ public class Lumberjack {
      return 0;
      }
      */
+
+    public static void onHit(EntityDamageByEntityEvent ev) {
+
+        Player attacker = (Player) ev.getDamager();
+        ItemStack weapon = attacker.getInventory().getItemInMainHand();
+
+        if (weapon.getType().toString().contains("_AXE")) {
+
+            if (weapon.getType().name().contains("GOLD")) ev.setDamage(ev.getDamage() + 0.5);
+
+            ev.setDamage(ev.getDamage() + (ev.getDamage() * 0.10));
+
+        }
+    }
+
     static final int[] monstros = {90, 91, 92, 93};
 
     public static void cortaFolha(Player p) {
@@ -112,10 +115,10 @@ public class Lumberjack {
         if (!Stamina.spendStamina(p, custo)) {
             return;
         }
-        
+
         ItemStack off = p.getInventory().getItemInOffHand();
-        if(off != null && off.getType()!=Material.AIR) {
-            p.sendMessage(ChatColor.RED+"Voce precisa das 2 mãos para conseguir usar a Machadada Épica");
+        if (off != null && off.getType() != Material.AIR) {
+            p.sendMessage(ChatColor.RED + "Voce precisa das 2 mãos para conseguir usar a Machadada Épica");
             return;
         }
 
@@ -195,11 +198,11 @@ public class Lumberjack {
     }
 
     public static void salta(PlayerInteractEvent ev) {
-        if (ev.getPlayer().getLocation().getBlock().getType() == Material.STATIONARY_WATER || ev.getPlayer().isSneaking() || ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (ev.getPlayer().getLocation().getBlock().getType() == Material.STATIONARY_WATER || ev.getPlayer().isSneaking() || ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             return;
         }
 
-        if (ev.getPlayer().getItemInHand().getType() == Material.IRON_AXE || ev.getPlayer().getItemInHand().getType() == Material.GOLD_AXE || ev.getPlayer().getItemInHand().getType() == Material.DIAMOND_AXE || ev.getPlayer().getItemInHand().getType() == Material.WOOD_AXE || ev.getPlayer().getItemInHand().getType() == Material.STONE_AXE) {
+        if (ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.IRON_AXE || ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.GOLD_AXE || ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.DIAMOND_AXE || ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.WOOD_AXE || ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.STONE_AXE) {
 
             if (!Stamina.spendStamina(ev.getPlayer(), 25)) {
                 return;
@@ -213,10 +216,10 @@ public class Lumberjack {
             ev.getPlayer().setVelocity(jumpDir);
         }
     }
-    
+
     public static void corta(BlockHarvestEvent ev) {
         ev.getPlayer().playSound(ev.getBlock().getLocation(), Sound.ENTITY_IRONGOLEM_ATTACK, 1, 1);
-        
+
         TipoBless ativo = TipoBless.save.getTipo(ev.getPlayer());
         if (ativo != null && ativo == TipoBless.Serralheria) {
             int exp = XP.getExpPorAcao(ev.getHarvestable().difficulty);
@@ -229,7 +232,7 @@ public class Lumberjack {
             ev.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20 * 60, 2));
         }
     }
-    
+
 
     public static boolean cortaLenha(Player p, Block b, int exp) {
 
@@ -261,7 +264,7 @@ public class Lumberjack {
          }
          return true;
          */
-        
+
         return true;
     }
 
@@ -339,20 +342,20 @@ public class Lumberjack {
 
     public static void tentaMachadadaEpica(Player tomou, Player bateu, EntityDamageEvent ev) {
         int multiplicador = 7;
-        
+
         if (Thief.taInvisivel(bateu)) {
             multiplicador = 4;
         }
-        
+
         if (ev.getDamage() == 0) {
             return;
         }
-        
+
         ev.setDamage(ev.getDamage() * multiplicador);
-        
-        if(ev.getDamage() > 66.6)
+
+        if (ev.getDamage() > 66.6)
             ev.setDamage(66.6);
-        
+
         if (ev.getEntity() instanceof Player) {
             PlayEffect.play(VisualEffect.FIREWORKS_SPARK, ev.getEntity().getLocation(), "type:ball color:yellow");
             tomou.sendMessage(ChatColor.RED + bateu.getName() + " te acertou uma machadada epica !");
@@ -392,7 +395,7 @@ public class Lumberjack {
             return;
         }
         int bonus = 10 + Jobs.rnd.nextInt(20);
-        if (bateu.getItemInHand() != null && bateu.getItemInHand().getType() == Material.GOLD_AXE) {
+        if (bateu.getInventory().getItemInMainHand() != null && bateu.getInventory().getItemInMainHand().getType() == Material.GOLD_AXE) {
             bonus += 10;
         }
         ev.setDamage(ev.getDamage() + bonus);

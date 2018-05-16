@@ -1,8 +1,5 @@
 package nativelevel.Custom;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 import nativelevel.Classes.Thief;
 import nativelevel.Jobs;
 import nativelevel.Jobs.TipoClasse;
@@ -20,7 +17,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -28,21 +24,21 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
- *
  * @author vntgasl
- *
  */
 
 public class CustomPotionListener extends KomSystem {
 
     public HashSet<UUID> bebendo = new HashSet<UUID>();
 
-    @EventHandler(priority=EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void potionStack(InventoryClickEvent ev) {
         KoM.debug("Custom potion inv click");
         if (ev.getCurrentItem() != null && ev.getCursor() != null) {
@@ -81,9 +77,9 @@ public class CustomPotionListener extends KomSystem {
 
     @EventHandler
     public void consume(PlayerItemConsumeEvent ev) {
-        if(!ev.getPlayer().getItemInHand().isSimilar(ev.getItem())) {
+        if (!ev.getPlayer().getInventory().getItemInMainHand().isSimilar(ev.getItem())) {
             ev.setCancelled(true);
-            ev.getPlayer().sendMessage(ChatColor.RED+"Voce apenas pode usar isto na mão principal");
+            ev.getPlayer().sendMessage(ChatColor.RED + "Voce apenas pode usar isto na mão principal");
             return;
         }
         CustomPotion item = CustomPotion.getCustomItem(ev.getItem());
@@ -96,7 +92,7 @@ public class CustomPotionListener extends KomSystem {
                     ev.setCancelled(true);
                     if (ev.getItem().getAmount() > 1) {
                         ev.getPlayer().getInventory().addItem(new ItemStack(Material.GLASS_BOTTLE, 1));
-                        ev.getPlayer().getItemInHand().setAmount(ev.getItem().getAmount() - 1);
+                        ev.getPlayer().getInventory().getItemInMainHand().setAmount(ev.getItem().getAmount() - 1);
                     } else {
                         ev.getPlayer().setItemInHand(new ItemStack(Material.GLASS_BOTTLE, 1));
                     }
@@ -112,7 +108,7 @@ public class CustomPotionListener extends KomSystem {
     public void potionSplash(PotionSplashEvent event) {
 
         KoM.debug("potion splash");
-        
+
         if ((event.getPotion().getShooter() == null || !(event.getPotion().getShooter() instanceof LivingEntity)) || ((LivingEntity) event.getPotion().getShooter()).getType() != EntityType.PLAYER) {
             return;
         }
@@ -121,9 +117,8 @@ public class CustomPotionListener extends KomSystem {
         if (Thief.taInvisivel(p)) {
             Thief.revela(p);
         }
-        
 
-        
+
         CustomPotion item = CustomPotion.getCustomItem(event.getEntity().getItem());
         if (item != null) {
             KoM.debug("Achei CI");
@@ -133,7 +128,7 @@ public class CustomPotionListener extends KomSystem {
 
             for (Entity e : event.getAffectedEntities()) {
                 if (e.getType() != EntityType.PLAYER
-                        || (!event.getEntity().getWorld().getName().equalsIgnoreCase("dungeon")
+                        || (!event.getEntity().getWorld().getName().equalsIgnoreCase("NewDungeon")
                         && !tipo.equalsIgnoreCase("SAFE")
                         && !WorldGuardKom.ehSafeZone(event.getEntity().getLocation()))) {
                     fica.add((LivingEntity) e);
@@ -166,7 +161,7 @@ public class CustomPotionListener extends KomSystem {
                 if (item != null) {
 
                     if (item.isSplash) {
-                        
+
                         TipoClasse tipo = Jobs.getJobLevel(Jobs.Classe.Alquimista, ev.getPlayer());
 
                         if (Cooldown.isCooldown(ev.getPlayer(), "throwPotion")) {
@@ -177,7 +172,7 @@ public class CustomPotionListener extends KomSystem {
 
                         double alchemySkill = ev.getPlayer().getLevel();
                         double diff = item.getMinimumSkill();
-                        if(diff > 100)
+                        if (diff > 100)
                             diff = 100;
                         if (alchemySkill < diff || tipo != TipoClasse.PRIMARIA) {
                             ev.getPlayer().sendMessage(ChatColor.RED + L.m("Você não tem experiência de alquimia suficiente para arremeçar isso !"));

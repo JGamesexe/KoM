@@ -11,25 +11,23 @@ import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.util.Vector;
 
 /**
- *
  * @author usuario
  */
 public class Reseter {
 
     public static boolean resetMode = false;
-    
+
     public static void limpaGuildas() {
         resetMode = true;
-        if(KoM.debugMode) KoM.log.info("------- Rodando Cmd");
+        if (KoM.debugMode) KoM.log.info("------- Rodando Cmd");
         Thread t = new Thread() {
             @Override
             public void run() {
-                if(KoM.debugMode) KoM.log.info("------- Rodando Thread");
+                if (KoM.debugMode) KoM.log.info("------- Rodando Thread");
                 for (Clan c : ClanLand.manager.getClans()) {
-                    if(KoM.debugMode) KoM.log.info("------- LENDO GUILDA "+c.getTag());
+                    if (KoM.debugMode) KoM.log.info("------- LENDO GUILDA " + c.getTag());
                     if (c.getInactiveDays() > 14) {
                         ClanLand.limpaGuildaEDesfaz(c.getTag(), true);
                         for (ClanPlayer cp : c.getAllMembers()) {
@@ -57,12 +55,12 @@ public class Reseter {
             String tipo = ClanLand.getTypeAt(posInicial);
             if (tipo.equalsIgnoreCase("WILD") || tipo.equalsIgnoreCase("CLAN")) {
                 String tagAli = ClanLand.getGuildaAli(c);
-                if(tagAli==null) {
+                if (tagAli == null) {
                     c.load(true);
                     Bukkit.getWorld(CFG.mundoGuilda).regenerateChunk(c.getX(), c.getZ());
                     KoM.log.info("Regenerei um chunk ! " + c.getX() + " " + c.getZ());
                     c.unload();
-                }  
+                }
             }
             if (posInicial.getX() > 2000) {
                 posInicial.setX(-2000);

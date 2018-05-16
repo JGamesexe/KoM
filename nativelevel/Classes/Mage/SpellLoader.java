@@ -5,6 +5,9 @@
  */
 package nativelevel.Classes.Mage;
 
+import nativelevel.KoM;
+import nativelevel.RecipeBooks.RecipePage;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -12,13 +15,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import nativelevel.KoM;
-import nativelevel.Classes.Mage.MageSpell;
-import nativelevel.RecipeBooks.RecipePage;
-import org.bukkit.Bukkit;
 
 /**
- *
  * @author User
  */
 public class SpellLoader {

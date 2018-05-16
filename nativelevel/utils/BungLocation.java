@@ -11,29 +11,27 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 /**
- *
  * @author usuario
- * 
  */
 
 public class BungLocation {
-    
+
     public String mundo;
     public double x;
     public double y;
     public double z;
     public float pitch;
     public float yaw;
-    
+
     public Location toLocation() {
         World w = Bukkit.getWorld(mundo);
-        if(w==null) return null;
-        Location l = new Location(Bukkit.getWorld(mundo), x,y,z);
+        if (w == null) return null;
+        Location l = new Location(Bukkit.getWorld(mundo), x, y, z);
         l.setPitch(pitch);
         l.setYaw(yaw);
         return l;
     }
-    
+
     public BungLocation(String mundo, double x, double y, double z, float pitch, float yaw) {
         this.mundo = mundo;
         this.x = x;
@@ -42,7 +40,7 @@ public class BungLocation {
         this.pitch = pitch;
         this.yaw = yaw;
     }
-    
+
     public BungLocation(Location l) {
         this.mundo = l.getWorld().getName();
         this.x = l.getX();
@@ -51,5 +49,9 @@ public class BungLocation {
         this.pitch = l.getPitch();
         this.yaw = l.getYaw();
     }
-    
+
+    public static Location toLocation(BungLocation l) {
+        return new Location(Bukkit.getWorld(l.mundo), l.x, l.y, l.z, l.yaw, l.pitch);
+    }
+
 }

@@ -12,15 +12,16 @@
  */
 package nativelevel.sisteminhas;
 
-import nativelevel.utils.TitleAPI;
-import java.text.DecimalFormat;
 import nativelevel.Custom.Items.DoubleXP;
 import nativelevel.KoM;
+import nativelevel.utils.TitleAPI;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import java.text.DecimalFormat;
 
 public class XP {
 
@@ -106,17 +107,18 @@ public class XP {
         return ct;
     }
 
+
     public static void changeExp(Player p, double exp) {
         changeExp(p, exp, 1);
     }
-    
+
     public static void changeExp(Player p, double exp, double ratioBonus) {
 
         KoM.debug(p.getName() + " ganhando " + exp + " com ratio " + ratioBonus);
 
-        if(ratioBonus == 0)
+        if (ratioBonus == 0)
             ratioBonus = 1;
-        
+
         double modAliados = 1;
         int aliados = getAliadosPerto(p);
         aliados--;

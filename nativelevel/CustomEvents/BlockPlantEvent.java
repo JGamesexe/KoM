@@ -1,4 +1,3 @@
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -16,9 +15,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- *
  * @author User
- * 
  */
 
 public class BlockPlantEvent extends Event implements Cancellable {
@@ -30,7 +27,7 @@ public class BlockPlantEvent extends Event implements Cancellable {
         this.harvestable = h;
         this.player = p;
     }
-    
+
     private boolean canceled = false;
     private Block block;
     private Plantable harvestable;

@@ -5,8 +5,6 @@
  */
 package nativelevel.Crafting;
 
-import java.util.ArrayList;
-import java.util.List;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
 import org.bukkit.ChatColor;
@@ -14,8 +12,10 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author User
  */
 public class Craftable {

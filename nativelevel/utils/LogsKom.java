@@ -14,22 +14,15 @@
  */
 package nativelevel.utils;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
-import java.util.logging.XMLFormatter;
 import nativelevel.KoM;
+
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 
 public class LogsKom {
 
     private boolean logON = false;
-    
+
     private final Logger logger = Logger.getLogger(KoM.class
             .getName());
     private FileHandler fh = null;
@@ -51,7 +44,7 @@ public class LogsKom {
     }
 
     public void logEspecial(String msg) {
-        if(logON)
+        if (logON)
             logger.info(msg);
     }
 

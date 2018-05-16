@@ -5,27 +5,18 @@
  */
 package nativelevel.Classes.Mage.spelllist;
 
-import me.fromgate.playeffect.PlayEffect;
-import me.fromgate.playeffect.VisualEffect;
-import nativelevel.Listeners.GeneralListener;
 import nativelevel.Classes.Mage.Elements;
 import nativelevel.Classes.Mage.MageSpell;
 import nativelevel.Equipment.Atributo;
 import nativelevel.Equipment.EquipManager;
 import nativelevel.KoM;
-import nativelevel.MetaShit;
-import nativelevel.spec.PlayerSpec;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.SmallFireball;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 /**
- *
  * @author User
- *
  */
 public class Disperse extends MageSpell {
 

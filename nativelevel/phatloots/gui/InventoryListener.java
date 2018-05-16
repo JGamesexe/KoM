@@ -5,7 +5,6 @@ import nativelevel.phatloots.PhatLoots;
 import nativelevel.phatloots.loot.Item;
 import nativelevel.phatloots.loot.Loot;
 import nativelevel.phatloots.loot.LootCollection;
-import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -20,6 +19,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.*;
 
 /**
  * Listens for interactions with PhatLoot info GUIs
@@ -59,7 +60,7 @@ public class InventoryListener implements Listener {
      * Returns the List of loot for the current Inventory
      *
      * @param phatLoot The PhatLoot that contains the Loot
-     * @param inv The current Inventory
+     * @param inv      The current Inventory
      * @return The List of loot for the PhatLoot/LootCollection
      */
     private static List<Loot> getLootList(PhatLoot phatLoot, Inventory inv) {
@@ -78,7 +79,7 @@ public class InventoryListener implements Listener {
      *
      * @param event The InventoryClickEvent which occurred
      */
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerInvClick(InventoryClickEvent event) {
         HumanEntity human = event.getWhoClicked();
         if (!(human instanceof Player)) {
@@ -115,50 +116,50 @@ public class InventoryListener implements Listener {
         //Check if the Player is holding a Loot
         if (holding.containsKey(playerUUID)) {
             switch (event.getClick()) {
-            case LEFT: //Allow
-                if (loot == null) {
-                    if (slot == lootList.size()) { //Put down Loot
-                        lootList.add(holding.remove(playerUUID));
-                        event.setCurrentItem(event.getCursor());
-                    } else if (slot > lootList.size() && slot < TOOL_SLOT) { //Support adding the Loot to any slot
-                        lootList.add(holding.remove(playerUUID));
-                        inv.setItem(lootList.size() - 1, event.getCursor());
-                        player.updateInventory();
-                    } else if (slot == -999) { //Remove Loot
-                        holding.remove(playerUUID);
-                    } else {
-                        break;
+                case LEFT: //Allow
+                    if (loot == null) {
+                        if (slot == lootList.size()) { //Put down Loot
+                            lootList.add(holding.remove(playerUUID));
+                            event.setCurrentItem(event.getCursor());
+                        } else if (slot > lootList.size() && slot < TOOL_SLOT) { //Support adding the Loot to any slot
+                            lootList.add(holding.remove(playerUUID));
+                            inv.setItem(lootList.size() - 1, event.getCursor());
+                            player.updateInventory();
+                        } else if (slot == -999) { //Remove Loot
+                            holding.remove(playerUUID);
+                        } else {
+                            break;
+                        }
+                        event.setCursor(null);
+                        return;
                     }
-                    event.setCursor(null);
+                    break;
+                case RIGHT: //Go back a page
+                    if (slot < 45) { //Minecraft crash avoidance
+                        up(player);
+                    }
                     return;
-                }
-                break;
-            case RIGHT: //Go back a page
-                if (slot < 45) { //Minecraft crash avoidance
-                    up(player);
-                }
-                return;
-            default: //Deny all other actions
-                return;
+                default: //Deny all other actions
+                    return;
             }
         }
 
         /** Switch Tools **/
         if (slot == -999 || slot == TOOL_SLOT) {
             switch (event.getClick()) {
-            case LEFT: //Previous Tool
-                //Deny switching toos while holding Loot
-                if (!holding.containsKey(playerUUID)) {
-                    inv.setItem(TOOL_SLOT, tool.prevTool().getItem());
+                case LEFT: //Previous Tool
+                    //Deny switching toos while holding Loot
+                    if (!holding.containsKey(playerUUID)) {
+                        inv.setItem(TOOL_SLOT, tool.prevTool().getItem());
+                        player.updateInventory();
+                    }
+                    break;
+                case RIGHT: //Next Tool
+                    inv.setItem(TOOL_SLOT, tool.nextTool().getItem());
                     player.updateInventory();
-                }
-                break;
-            case RIGHT: //Next Tool
-                inv.setItem(TOOL_SLOT, tool.nextTool().getItem());
-                player.updateInventory();
-                break;
-            default: //Do nothing
-                break;
+                    break;
+                default: //Do nothing
+                    break;
             }
             return;
         }
@@ -169,16 +170,16 @@ public class InventoryListener implements Listener {
             if (details.hasDisplayName()) {
                 String name = stack.getItemMeta().getDisplayName();
                 switch (name) {
-                case "§2Up to...":
-                    //Back one view
-                    up(player);
-                    return;
-                case "§2Back to top...":
-                    //Back to first view
-                    viewPhatLoot(player, phatLoot);
-                    return;
-                default:
-                    break;
+                    case "§2Up to...":
+                        //Back one view
+                        up(player);
+                        return;
+                    case "§2Back to top...":
+                        //Back to first view
+                        viewPhatLoot(player, phatLoot);
+                        return;
+                    default:
+                        break;
                 }
             }
         }
@@ -195,34 +196,34 @@ public class InventoryListener implements Listener {
         if (loot == null) {
             if (tool.getID() == NAVIGATE_AND_MOVE) {
                 switch (event.getClick()) {
-                case LEFT: //Pickup or put down an Item
-                    if (slot >= SIZE) {
-                        //Remove Loot (if holding)
-                        Loot l = holding.remove(playerUUID);
-                        //Only pick up AIR if they are not setting an Item down
-                        if (stack.getType() != Material.AIR || l == null) { //Pick up Item (Add loot)
-                            loot = new Item(stack, 0);
-                            holding.put(playerUUID, loot);
-                            event.setCursor(loot.getInfoStack());
-                            event.setCurrentItem(null);
-                        } else { //Pick up nothing
-                            event.setCursor(null);
-                        }
-                        if (l != null && l instanceof Item) { //Put down Item
-                            event.setCurrentItem(((Item) l).getItem());
+                    case LEFT: //Pickup or put down an Item
+                        if (slot >= SIZE) {
+                            //Remove Loot (if holding)
+                            Loot l = holding.remove(playerUUID);
+                            //Only pick up AIR if they are not setting an Item down
+                            if (stack.getType() != Material.AIR || l == null) { //Pick up Item (Add loot)
+                                loot = new Item(stack, 0);
+                                holding.put(playerUUID, loot);
+                                event.setCursor(loot.getInfoStack());
+                                event.setCurrentItem(null);
+                            } else { //Pick up nothing
+                                event.setCursor(null);
+                            }
+                            if (l != null && l instanceof Item) { //Put down Item
+                                event.setCurrentItem(((Item) l).getItem());
+                            }
+                            break;
                         }
                         break;
-                    }
-                    break;
-                case RIGHT: //Go back a page
-                    up(player);
-                    break;
-                case MIDDLE: //Add an Item as Loot
-                    if (slot > SIZE) {
-                        ItemStack item = stack.clone();
-                        lootList.add(new Item(item, 0));
-                        refreshPage(player, inv, lootList);
-                    }
+                    case RIGHT: //Go back a page
+                        up(player);
+                        break;
+                    case MIDDLE: //Add an Item as Loot
+                        if (slot > SIZE) {
+                            ItemStack item = stack.clone();
+                            lootList.add(new Item(item, 0));
+                            refreshPage(player, inv, lootList);
+                        }
                 }
                 return;
             }
@@ -231,31 +232,31 @@ public class InventoryListener implements Listener {
             boolean both = false;
             if (tool.getID() == MODIFY_AMOUNT) {
                 switch (event.getClick()) {
-                case LEFT: //+1 amount
-                    amount = 1;
-                    both = true;
-                    break;
-                case DOUBLE_CLICK: //+9 amount
-                    amount = 9;
-                    both = true;
-                    break;
-                case RIGHT: //-1 amount
-                    amount = -1;
-                    both = true;
-                    break;
-                case SHIFT_LEFT: //+1 upper amount
-                    amount = 1;
-                    both = false;
-                    break;
-                case SHIFT_RIGHT: //-1 upper amount
-                    amount = -1;
-                    both = false;
-                    break;
-                case MIDDLE: //Set amount to 0
-                    amount = 0;
-                    break;
-                default:
-                    return;
+                    case LEFT: //+1 amount
+                        amount = 1;
+                        both = true;
+                        break;
+                    case DOUBLE_CLICK: //+9 amount
+                        amount = 9;
+                        both = true;
+                        break;
+                    case RIGHT: //-1 amount
+                        amount = -1;
+                        both = true;
+                        break;
+                    case SHIFT_LEFT: //+1 upper amount
+                        amount = 1;
+                        both = false;
+                        break;
+                    case SHIFT_RIGHT: //-1 upper amount
+                        amount = -1;
+                        both = false;
+                        break;
+                    case MIDDLE: //Set amount to 0
+                        amount = 0;
+                        break;
+                    default:
+                        return;
                 }
             }
 
@@ -265,68 +266,68 @@ public class InventoryListener implements Listener {
                 List<String> details = new ArrayList();
 
                 switch (slot) {
-                case SIZE - 3: //Toggle Break and Respawn
-                    if (tool.getID() == MODIFY_AMOUNT) {
-                        return;
-                    }
-                    phatLoot.breakAndRespawn = !phatLoot.breakAndRespawn;
-
-                    //Show the break and respawn status
-                    infoStack = new ItemStack(phatLoot.breakAndRespawn ? Material.MOB_SPAWNER : Material.CHEST);
-                    info.setDisplayName("§4Break and Respawn: §6" + phatLoot.breakAndRespawn);
-                    if (phatLoot.breakAndRespawn) {
-                        details.add("§6This chest will break after it is looted");
-                        details.add("§6and respawn once it may be looted again.");
-                    } else {
-                        details.add("§6This chest will always be present");
-                        details.add("§6even after it is looted.");
-                    }
-                    break;
-
-                case SIZE - 2: //Toggle AutoLoot
-                    if (tool.getID() == MODIFY_AMOUNT) {
-                        return;
-                    }
-                    phatLoot.autoLoot = !phatLoot.autoLoot;
-
-                    //Show the autoloot status
-                    infoStack = new ItemStack(phatLoot.autoLoot ? Material.REDSTONE_TORCH_ON : Material.LEVER);
-                    info.setDisplayName("§4AutoLoot: §6" + phatLoot.autoLoot);
-                    break;
-
-                case SIZE - 1: //Toggle Global/Round or Modify Reset Time
-                    if (tool.getID() == MODIFY_AMOUNT) {
-                        if (amount == 0) {
-                            phatLoot.days = 0;
-                            phatLoot.hours = 0;
-                            phatLoot.minutes = 0;
-                            phatLoot.seconds = 0;
-                        } else if (both) {
-                            phatLoot.hours += amount;
-                        } else {
-                            phatLoot.minutes += amount;
+                    case SIZE - 3: //Toggle Break and Respawn
+                        if (tool.getID() == MODIFY_AMOUNT) {
+                            return;
                         }
-                    } else if (event.getClick() == ClickType.LEFT) {
-                        phatLoot.global = !phatLoot.global;
-                    } else {
-                        phatLoot.round = !phatLoot.round;
-                    }
+                        phatLoot.breakAndRespawn = !phatLoot.breakAndRespawn;
 
-                    //Show the Reset Time
-                    infoStack = new ItemStack(Material.WATCH);
-                    info.setDisplayName("§2Reset Time");
-                    details.add("§4Days: §6" + phatLoot.days);
-                    details.add("§4Hours: §6" + phatLoot.hours);
-                    details.add("§4Minutes: §6" + phatLoot.minutes);
-                    details.add("§4Seconds: §6" + phatLoot.seconds);
-                    details.add("§4Reset Type: §6" + (phatLoot.global ? "Global" : "Individual"));
-                    if (phatLoot.round) {
-                        details.add("§6Time is rounded down");
-                    }
-                    break;
+                        //Show the break and respawn status
+                        infoStack = new ItemStack(phatLoot.breakAndRespawn ? Material.MOB_SPAWNER : Material.CHEST);
+                        info.setDisplayName("§4Break and Respawn: §6" + phatLoot.breakAndRespawn);
+                        if (phatLoot.breakAndRespawn) {
+                            details.add("§6This chest will break after it is looted");
+                            details.add("§6and respawn once it may be looted again.");
+                        } else {
+                            details.add("§6This chest will always be present");
+                            details.add("§6even after it is looted.");
+                        }
+                        break;
 
-                default:
-                    return;
+                    case SIZE - 2: //Toggle AutoLoot
+                        if (tool.getID() == MODIFY_AMOUNT) {
+                            return;
+                        }
+                        phatLoot.autoLoot = !phatLoot.autoLoot;
+
+                        //Show the autoloot status
+                        infoStack = new ItemStack(phatLoot.autoLoot ? Material.REDSTONE_TORCH_ON : Material.LEVER);
+                        info.setDisplayName("§4AutoLoot: §6" + phatLoot.autoLoot);
+                        break;
+
+                    case SIZE - 1: //Toggle Global/Round or Modify Reset Time
+                        if (tool.getID() == MODIFY_AMOUNT) {
+                            if (amount == 0) {
+                                phatLoot.days = 0;
+                                phatLoot.hours = 0;
+                                phatLoot.minutes = 0;
+                                phatLoot.seconds = 0;
+                            } else if (both) {
+                                phatLoot.hours += amount;
+                            } else {
+                                phatLoot.minutes += amount;
+                            }
+                        } else if (event.getClick() == ClickType.LEFT) {
+                            phatLoot.global = !phatLoot.global;
+                        } else {
+                            phatLoot.round = !phatLoot.round;
+                        }
+
+                        //Show the Reset Time
+                        infoStack = new ItemStack(Material.WATCH);
+                        info.setDisplayName("§2Reset Time");
+                        details.add("§4Days: §6" + phatLoot.days);
+                        details.add("§4Hours: §6" + phatLoot.hours);
+                        details.add("§4Minutes: §6" + phatLoot.minutes);
+                        details.add("§4Seconds: §6" + phatLoot.seconds);
+                        details.add("§4Reset Type: §6" + (phatLoot.global ? "Global" : "Individual"));
+                        if (phatLoot.round) {
+                            details.add("§6Time is rounded down");
+                        }
+                        break;
+
+                    default:
+                        return;
                 }
 
                 info.setLore(details);
@@ -338,142 +339,142 @@ public class InventoryListener implements Listener {
 
         /** Action determined based on the Tool **/
         switch (tool.getID()) {
-        case NAVIGATE_AND_MOVE:
-            switch (event.getClick()) {
-            case LEFT: //Move Loot or Enter a Collection
-                if (loot instanceof LootCollection) { //Clicked a LootCollection
-                    if (holding.containsKey(playerUUID)) { //Place Loot in Collection
-                        Loot l = holding.remove(playerUUID);
-                        ((LootCollection) loot).addLoot(l);
-                        event.setCursor(null);
-                    } else { //Enter LootCollection
-                        viewCollection(player, ((LootCollection) loot).name);
-                    }
-                    return;
-                }
+            case NAVIGATE_AND_MOVE:
+                switch (event.getClick()) {
+                    case LEFT: //Move Loot or Enter a Collection
+                        if (loot instanceof LootCollection) { //Clicked a LootCollection
+                            if (holding.containsKey(playerUUID)) { //Place Loot in Collection
+                                Loot l = holding.remove(playerUUID);
+                                ((LootCollection) loot).addLoot(l);
+                                event.setCursor(null);
+                            } else { //Enter LootCollection
+                                viewCollection(player, ((LootCollection) loot).name);
+                            }
+                            return;
+                        }
 
-                //Clicked some other Loot
-                if (holding.containsKey(playerUUID)) { //Swap Loot
-                    Loot l = holding.remove(playerUUID);
-                    holding.put(playerUUID, lootList.get(slot));
-                    lootList.set(slot, l);
-                    event.setCurrentItem(event.getCursor()); //Put down Loot
-                    event.setCursor(stack); //Pick up new Loot
-                } else { //Pick up Loot
-                    holding.put(playerUUID, lootList.remove(slot));
-                    event.setCursor(stack);
-                    refreshPage(player, inv, lootList); //Shifts remaining loot down
-                }
-                break;
-            case RIGHT: //Go back a page
-                up(player);
-                break;
-            case SHIFT_LEFT: //Move Loot left or Pick up a Collection
-                if (loot instanceof LootCollection) { //Pick up the Collection
-                    if (holding.containsKey(playerUUID)) { //Swap Loot
-                        Loot l = holding.remove(playerUUID);
-                        holding.put(playerUUID, lootList.get(slot));
-                        lootList.set(slot, l);
-                        event.setCurrentItem(event.getCursor()); //Put down Loot
-                        event.setCursor(stack); //Pick up new Loot
-                    } else { //Pick up Loot
-                        holding.put(playerUUID, lootList.remove(slot));
-                        event.setCursor(stack);
+                        //Clicked some other Loot
+                        if (holding.containsKey(playerUUID)) { //Swap Loot
+                            Loot l = holding.remove(playerUUID);
+                            holding.put(playerUUID, lootList.get(slot));
+                            lootList.set(slot, l);
+                            event.setCurrentItem(event.getCursor()); //Put down Loot
+                            event.setCursor(stack); //Pick up new Loot
+                        } else { //Pick up Loot
+                            holding.put(playerUUID, lootList.remove(slot));
+                            event.setCursor(stack);
+                            refreshPage(player, inv, lootList); //Shifts remaining loot down
+                        }
+                        break;
+                    case RIGHT: //Go back a page
+                        up(player);
+                        break;
+                    case SHIFT_LEFT: //Move Loot left or Pick up a Collection
+                        if (loot instanceof LootCollection) { //Pick up the Collection
+                            if (holding.containsKey(playerUUID)) { //Swap Loot
+                                Loot l = holding.remove(playerUUID);
+                                holding.put(playerUUID, lootList.get(slot));
+                                lootList.set(slot, l);
+                                event.setCurrentItem(event.getCursor()); //Put down Loot
+                                event.setCursor(stack); //Pick up new Loot
+                            } else { //Pick up Loot
+                                holding.put(playerUUID, lootList.remove(slot));
+                                event.setCursor(stack);
+                                refreshPage(player, inv, lootList); //Shifts remaining loot down
+                            }
+                        } else if (slot > 0) { //Move Loot Left
+                            lootList.set(slot, lootList.get(slot - 1));
+                            lootList.set(slot - 1, loot);
+                            refreshPage(player, inv, lootList);
+                        }
+                        break;
+                    case SHIFT_RIGHT: //Move Loot right
+                        if (slot < lootList.size() - 1) {
+                            lootList.set(slot, lootList.get(slot + 1));
+                            lootList.set(slot + 1, loot);
+                            refreshPage(player, inv, lootList);
+                        }
+                        break;
+                    case MIDDLE: //Remove Loot
+                        lootList.remove(slot);
                         refreshPage(player, inv, lootList); //Shifts remaining loot down
-                    }
-                } else if (slot > 0) { //Move Loot Left
-                    lootList.set(slot, lootList.get(slot - 1));
-                    lootList.set(slot - 1, loot);
-                    refreshPage(player, inv, lootList);
                 }
                 break;
-            case SHIFT_RIGHT: //Move Loot right
-                if (slot < lootList.size() - 1) {
-                    lootList.set(slot, lootList.get(slot + 1));
-                    lootList.set(slot + 1, loot);
-                    refreshPage(player, inv, lootList);
-                }
-                break;
-            case MIDDLE: //Remove Loot
-                lootList.remove(slot);
-                refreshPage(player, inv, lootList); //Shifts remaining loot down
-            }
-            break;
 
-        case MODIFY_PROBABILITY_AND_TOGGLE:
-            switch (event.getClick()) {
-            case DOUBLE_CLICK: //+9%
-                loot.setProbability(loot.getProbability() + 8);
-                //Fall through
-            case LEFT: //+1%
-                loot.setProbability(loot.getProbability() + 1);
-                while (loot.getProbability() > 100) {
-                    loot.setProbability(loot.getProbability() - 100);
+            case MODIFY_PROBABILITY_AND_TOGGLE:
+                switch (event.getClick()) {
+                    case DOUBLE_CLICK: //+9%
+                        loot.setProbability(loot.getProbability() + 8);
+                        //Fall through
+                    case LEFT: //+1%
+                        loot.setProbability(loot.getProbability() + 1);
+                        while (loot.getProbability() > 100) {
+                            loot.setProbability(loot.getProbability() - 100);
+                        }
+                        break;
+                    case RIGHT: //-1%
+                        loot.setProbability(loot.getProbability() - 1);
+                        while (loot.getProbability() < 0) {
+                            loot.setProbability(loot.getProbability() + 100);
+                        }
+                        break;
+                    default:
+                        if (loot.onToggle(event.getClick())) {
+                            break;
+                        } else {
+                            return;
+                        }
                 }
+                event.setCurrentItem(loot.getInfoStack());
                 break;
-            case RIGHT: //-1%
-                loot.setProbability(loot.getProbability() - 1);
-                while (loot.getProbability() < 0) {
-                    loot.setProbability(loot.getProbability() + 100);
-                }
-                break;
-            default:
-                if (loot.onToggle(event.getClick())) {
-                    break;
-                } else {
-                    return;
-                }
-            }
-            event.setCurrentItem(loot.getInfoStack());
-            break;
 
-        case MODIFY_AMOUNT:
-            int amount;
-            boolean both;
-            switch (event.getClick()) {
-            case LEFT: //+1 amount
-                amount = 1;
-                both = true;
-                break;
-            case DOUBLE_CLICK: //+9 amount
-                amount = 9;
-                both = true;
-                break;
-            case RIGHT: //-1 amount
-                amount = -1;
-                both = true;
-                break;
-            case SHIFT_LEFT: //+1 upper amount
-                amount = 1;
-                both = false;
-                break;
-            case SHIFT_RIGHT: //-1 upper amount
-                amount = -1;
-                both = false;
-                break;
-            case MIDDLE: //Set amount to 1
-                if (loot.resetAmount()) {
+            case MODIFY_AMOUNT:
+                int amount;
+                boolean both;
+                switch (event.getClick()) {
+                    case LEFT: //+1 amount
+                        amount = 1;
+                        both = true;
+                        break;
+                    case DOUBLE_CLICK: //+9 amount
+                        amount = 9;
+                        both = true;
+                        break;
+                    case RIGHT: //-1 amount
+                        amount = -1;
+                        both = true;
+                        break;
+                    case SHIFT_LEFT: //+1 upper amount
+                        amount = 1;
+                        both = false;
+                        break;
+                    case SHIFT_RIGHT: //-1 upper amount
+                        amount = -1;
+                        both = false;
+                        break;
+                    case MIDDLE: //Set amount to 1
+                        if (loot.resetAmount()) {
+                            event.setCurrentItem(loot.getInfoStack());
+                        }
+                        return;
+                    default:
+                        return;
+                }
+
+                if (loot.modifyAmount(amount, both)) {
                     event.setCurrentItem(loot.getInfoStack());
                 }
-                return;
+                break;
+
             default:
-                return;
-            }
-
-            if (loot.modifyAmount(amount, both)) {
-                event.setCurrentItem(loot.getInfoStack());
-            }
-            break;
-
-        default:
-            if (loot.onToolClick(tool, event.getClick())) {
-                refreshPage(player, inv, lootList);
-            }
-            break;
+                if (loot.onToolClick(tool, event.getClick())) {
+                    refreshPage(player, inv, lootList);
+                }
+                break;
         }
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerCloseChest(InventoryCloseEvent event) {
         HumanEntity human = event.getPlayer();
         if (!(human instanceof Player)) {
@@ -511,7 +512,7 @@ public class InventoryListener implements Listener {
     /**
      * Opens an Inventory GUI for the given PhatLoot to the given Player
      *
-     * @param player The given Player
+     * @param player   The given Player
      * @param phatLoot The given PhatLoot
      */
     public static void viewPhatLoot(Player player, PhatLoot phatLoot) {
@@ -586,7 +587,7 @@ public class InventoryListener implements Listener {
      * Opens an Inventory GUI for the specified LootCollection to the given Player
      *
      * @param player The given Player
-     * @param name The name of the LootCollection to open
+     * @param name   The name of the LootCollection to open
      */
     private static void viewCollection(Player player, String name) {
         //Store the current view in the Player's stack
@@ -643,7 +644,7 @@ public class InventoryListener implements Listener {
      * Switches the Player to viewing the given Inventory
      *
      * @param player The Player to open the Inventory
-     * @param inv The Inventory to open
+     * @param inv    The Inventory to open
      */
     private static void switchView(final Player player, final Inventory inv) {
         UUID playerUUID = player.getUniqueId();
@@ -686,8 +687,8 @@ public class InventoryListener implements Listener {
     /**
      * Refreshes each InfoView within the Inventory
      *
-     * @param player The Player viewing the Inventory
-     * @param inv The Inventory being viewed
+     * @param player   The Player viewing the Inventory
+     * @param inv      The Inventory being viewed
      * @param lootList The list of loot to display
      */
     private static void refreshPage(Player player, Inventory inv, List<Loot> lootList) {

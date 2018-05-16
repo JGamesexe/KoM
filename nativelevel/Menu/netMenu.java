@@ -14,45 +14,32 @@
  */
 package nativelevel.Menu;
 
-import nativelevel.utils.MetaUtils;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import nativelevel.Equipment.WeaponDamage;
 import nativelevel.CFG;
 import nativelevel.Classes.Blacksmithy.RecipeLoader;
 import nativelevel.Classes.Blacksmithy.recipes.Armas.Pedra.PaDePedra;
+import nativelevel.Classes.Mage.SpellLoader;
+import nativelevel.Classes.Mage.spelllist.Firebola;
 import nativelevel.Custom.CustomItem;
-import nativelevel.Custom.Items.Ank;
-import nativelevel.Custom.Items.Armadilha;
-import nativelevel.Custom.Items.BombaFumaca;
-import nativelevel.Custom.Items.Detonador;
-import nativelevel.Custom.Items.FolhaDeMana;
 import nativelevel.Custom.Items.Pistola;
 import nativelevel.Custom.Items.RecipeBook;
-import nativelevel.Custom.Items.SlimePoison;
-import nativelevel.Custom.Items.VenenoNatural;
 import nativelevel.Custom.PotionLoader;
 import nativelevel.Custom.Potions.Cure1;
-import nativelevel.Custom.Potions.Explosion1;
 import nativelevel.Custom.Potions.Mana1;
+import nativelevel.Equipment.WeaponDamage;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
-import nativelevel.Classes.Mage.MageSpell;
-import nativelevel.Classes.Mage.SpellLoader;
-import nativelevel.Classes.Mage.spelllist.Firebola;
 import nativelevel.RecipeBooks.BookTypes;
 import nativelevel.integration.BungeeCordKom;
 import nativelevel.rankings.RankDB;
-import nativelevel.spec.PlayerSpec;
 import nativelevel.sisteminhas.XP;
+import nativelevel.spec.PlayerSpec;
+import nativelevel.utils.MetaUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -62,10 +49,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Wool;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
- *
  * @author NeT32
- *
  */
 public class netMenu implements Listener {
 
@@ -204,7 +193,7 @@ public class netMenu implements Listener {
                         }
                         KoM.database.atualiza(player.getUniqueId().toString(), skills);
                         if (player.hasMetadata("primeiraEscolha")) {
-                            
+
                             player.getInventory().setItemInHand(new ItemStack(Material.COMPASS, 1));
                             player.removeMetadata("primeiraEscolha", KoM._instance);
                             if (Jobs.getJobLevel("Ferreiro", player) == 1) {
@@ -212,13 +201,13 @@ public class netMenu implements Listener {
                                 player.getInventory().addItem(RecipeBook.createBook(BookTypes.Ferraria));
                                 player.getInventory().addItem(RecipeLoader.customItemsClass.get(PaDePedra.class).generateRecipe().getItem());
                             }
-                            
+
                             if (Jobs.getJobLevel("Fazendeiro", player) == 1) {
                                 player.getInventory().addItem(new ItemStack(Material.FISHING_ROD, 1));
                                 player.getInventory().addItem(new ItemStack(Material.SEEDS, 10));
                                 player.getInventory().addItem(WeaponDamage.checkForMods(new ItemStack(Material.IRON_HOE, 1)));
                             }
-                            
+
                             if (Jobs.getJobLevel("Alquimista", player) == 1) {
                                 player.getInventory().addItem(new ItemStack(Material.GLASS_BOTTLE, 20));
                                 player.getInventory().addItem(new ItemStack(Material.CAULDRON_ITEM, 1));
@@ -229,38 +218,38 @@ public class netMenu implements Listener {
                                 player.getInventory().addItem(PotionLoader.customItemsClass.get(Cure1.class).generateRecipe().getItem());
                                 player.getInventory().addItem(PotionLoader.customItemsClass.get(Mana1.class).generateRecipe().getItem());
                             }
-                            
+
                             if (Jobs.getJobLevel("Lenhador", player) == 1) {
                                 player.getInventory().addItem(new ItemStack(Material.WOOD, 20));
                                 player.getInventory().addItem(WeaponDamage.checkForMods(new ItemStack(Material.IRON_AXE, 1)));
                             }
-                            
+
                             if (Jobs.getJobLevel("Paladino", player) == 1) {
                                 //player.getInventory().addItem(CustomItem.getItem(Ank.class).generateItem(1));
                                 player.getInventory().addItem(WeaponDamage.checkForMods(new ItemStack(Material.IRON_SWORD, 1)));
                             }
-                            
+
                             if (Jobs.getJobLevel("Ladino", player) == 1) {
                                 player.getInventory().addItem(new ItemStack(Material.BOW, 1));
                                 player.getInventory().addItem(new ItemStack(Material.ARROW, 32));
                                 player.getInventory().addItem(new ItemStack(Material.CARROT, 3));
                             }
-                            
+
                             if (Jobs.getJobLevel("Mago", player) == 1) {
                                 player.getInventory().addItem(RecipeBook.createBook(BookTypes.Magia));
                                 player.getInventory().addItem(SpellLoader.spellsByClass.get(Firebola.class).generateRecipe().getItem());
                             }
-                            
+
                             if (Jobs.getJobLevel("Engenheiro", player) == 1) {
                                 player.getInventory().addItem(new ItemStack(Material.SULPHUR, 10));
                                 player.getInventory().addItem(new ItemStack(Material.REDSTONE, 20));
                                 player.getInventory().addItem(CustomItem.getItem(Pistola.class).generateItem(1));
                             }
-                            
+
                             if (Jobs.getJobLevel("Minerador", player) == 1) {
                                 player.getInventory().addItem(WeaponDamage.checkForMods(new ItemStack(Material.IRON_PICKAXE, 1)));
                             }
-                            
+
                         }
                         return;
                     }

@@ -5,20 +5,16 @@
  */
 package nativelevel.Classes.Mage.spelllist;
 
-import me.fromgate.playeffect.PlayEffect;
-import me.fromgate.playeffect.VisualEffect;
 import nativelevel.Classes.Mage.Elements;
 import nativelevel.Classes.Mage.MageSpell;
 import nativelevel.Equipment.Atributo;
 import nativelevel.Equipment.EquipManager;
 import nativelevel.MetaShit;
 import nativelevel.spec.PlayerSpec;
-import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.SmallFireball;
 
 /**
- *
  * @author User
  */
 public class Firebola extends MageSpell {
@@ -33,7 +29,7 @@ public class Firebola extends MageSpell {
         SmallFireball fb = null;
         fb = p.launchProjectile(SmallFireball.class);
         fb.getVelocity().multiply(3);
-        double ratio = 1 + (magia/100);
+        double ratio = 1 + (magia / 100);
         if (PlayerSpec.temSpec(p, PlayerSpec.Sacerdote)) {
             ratio *= 0.7;
         }

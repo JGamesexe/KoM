@@ -1,21 +1,21 @@
 package nativelevel.sisteminhas;
 
+import nativelevel.KoM;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import nativelevel.KoM;
 
 /**
- *
  * @author Ziden
  */
 public class SystemLoader {
 
     public static HashSet<String> loaded = new HashSet<String>();
-    
+
     public static void load() {
         File f = new File(KoM.class.getProtectionDomain().getCodeSource().getLocation().getFile().replaceAll("%20", " ")).getAbsoluteFile();
         JarFile jf;
@@ -41,7 +41,7 @@ public class SystemLoader {
                         KoM.log.info("Erro ao carregar Mecanica: " + h.getClass().getName());
                         ex.printStackTrace();
                     }
-                    mecanicas = mecanicas + h.getClass().getName()+ ",";
+                    mecanicas = mecanicas + h.getClass().getName() + ",";
                     if (mecanicas.split(",").length >= 15) {
                         KoM.log.info("Sistemas Carregados: " + mecanicas);
                         mecanicas = "";
@@ -77,12 +77,12 @@ public class SystemLoader {
                 w = (KomSystem) c.newInstance();
                 return w;
             } catch (Exception ex) {
-                KoM.log.info("ERRO AO CARRREGAR SISTEMA "+c.getName());
+                KoM.log.info("ERRO AO CARRREGAR SISTEMA " + c.getName());
                 ex.printStackTrace();
                 return null;
             }
         }
         return null;
     }
-    
+
 }

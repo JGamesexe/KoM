@@ -6,7 +6,6 @@
 package nativelevel.sisteminhas;
 
 import nativelevel.CFG;
-import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
@@ -14,7 +13,6 @@ import nativelevel.Listeners.GeneralListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -36,7 +34,7 @@ public class Deuses {
     }
 
     public static void testa() {
-        if(KoM.reiniciando)
+        if (KoM.reiniciando)
             return;
         boolean noite = day();
         if (noite != day) {

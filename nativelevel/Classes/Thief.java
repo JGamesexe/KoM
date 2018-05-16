@@ -14,60 +14,115 @@
  */
 package nativelevel.Classes;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 import me.asofold.bpl.simplyvanish.SimplyVanish;
-import me.asofold.bpl.simplyvanish.config.Flag;
 import me.asofold.bpl.simplyvanish.config.VanishConfig;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.CFG;
-import nativelevel.Dano;
-import nativelevel.Listeners.GeneralListener;
-import nativelevel.Jobs;
-import nativelevel.Menu.Menu;
-import nativelevel.utils.MetaUtils;
-import nativelevel.MetaShit;
-import nativelevel.KoM;
-import nativelevel.sisteminhas.ClanLand;
-import nativelevel.Lang.L;
-import nativelevel.Attributes.AttributeInfo;
 import nativelevel.Attributes.Mana;
+import nativelevel.*;
 import nativelevel.Custom.CustomItem;
+import nativelevel.Custom.Items.Adaga;
 import nativelevel.Custom.Items.Lock;
+import nativelevel.Lang.L;
+import nativelevel.Listeners.GeneralListener;
+import nativelevel.Menu.Menu;
 import nativelevel.sisteminhas.ChaveCadiado;
+import nativelevel.sisteminhas.ClanLand;
 import nativelevel.sisteminhas.KomSystem;
+import nativelevel.sisteminhas.Tralhas;
+import nativelevel.skills.SkillMaster;
 import nativelevel.spec.PlayerSpec;
+import nativelevel.utils.MetaUtils;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
-import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
 public class Thief extends KomSystem {
+
+    public static final String name = "Ladino";
+
+    public static void onHit(EntityDamageByEntityEvent ev) {
+
+        Player attacker = (Player) ev.getDamager();
+        ItemStack weapon = attacker.getInventory().getItemInMainHand();
+
+        if (!Adaga.isAdaga(weapon)) return;
+
+        if (SkillMaster.temSkill(attacker, name, "Backstab")) {
+            if (taInvisivel(attacker) && Mana.spendMana(attacker, 35) && Tralhas.getAngle(ev.getEntity().getLocation().getDirection(), attacker.getLocation().getDirection()) <= 65) {
+                ev.setDamage(ev.getDamage() + 15);
+                attacker.getWorld().playSound(ev.getEntity().getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1, 0.9f);
+                ((LivingEntity) ev.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 0), true);
+                ((LivingEntity) ev.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 25, 1), true);
+            } else {
+                attacker.getWorld().playSound(ev.getEntity().getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.5f, 1.2f);
+                attacker.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 70, 2), true);
+            }
+        }
+
+        if (weapon.getType().name().contains("GOLD")) ev.setDamage(ev.getDamage() + 0.5);
+
+        ev.setDamage(ev.getDamage() * 1.10);
+
+    }
+
+    public static void noHit(EntityDamageByEntityEvent ev) {
+
+        Player attacker = (Player) ev.getDamager();
+        ItemStack weapon = attacker.getInventory().getItemInMainHand();
+
+        if (Adaga.isAdaga(weapon)) {
+            ev.setCancelled(true);
+            attacker.sendMessage("§cApenas ladinos conseguem conseguem utilizar Adagas");
+        }
+
+    }
+
+    public static void onDamaged(EntityDamageEvent ev) {
+
+        Player damaged = (Player) ev.getEntity();
+
+        if (ev.getCause().equals(EntityDamageEvent.DamageCause.POISON)) {
+            if (!((ev.getDamage() * 1.75) >= damaged.getHealth())) ev.setDamage(ev.getDamage() * 1.75);
+        }
+
+        if (ev.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK) || ev.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)) {
+            if (SkillMaster.temSkill(damaged, Thief.name, "Esquiva Perfeita")) {
+                if (Jobs.rnd.nextInt(201 - damaged.getLevel()) == 1) ev.setCancelled(true);
+            }
+        }
+
+    }
+
+    public static void onDamagedSec(EntityDamageEvent ev) {
+
+        Player damaged = (Player) ev.getEntity();
+
+        if (ev.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK) || ev.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)) {
+            if (SkillMaster.temSkill(damaged, Thief.name, "Esquiva Perfeita")) {
+                if (Jobs.rnd.nextInt(351 - damaged.getLevel()) == 1) ev.setCancelled(true);
+            }
+        }
+
+    }
 
     public static void pegaItemAleatorio(Player p, Block bau) {
         Chest c = (Chest) bau.getState();
@@ -178,7 +233,7 @@ public class Thief extends KomSystem {
             if (!c.getBlockInventory().contains(nota)) {
                 c.getBlockInventory().addItem(nota);
             }
-            p.getItemInHand().setDurability((short) (p.getItemInHand().getDurability() + 80));
+            p.getInventory().getItemInMainHand().setDurability((short) (p.getInventory().getItemInMainHand().getDurability() + 80));
         }
     }
 
@@ -205,8 +260,7 @@ public class Thief extends KomSystem {
 
                 if (step > 6) {
 
-                    int sucesso = Jobs.hasSuccess(dif, "Ladino", p);
-                    if (sucesso == Jobs.success) {
+                    if (Jobs.hasSuccess(dif, "Ladino", p)) {
 
                         MetaShit.setMetaString("aberto", chest, "sim");
 
@@ -234,7 +288,7 @@ public class Thief extends KomSystem {
                         if (!chest.getBlockInventory().contains(nota)) {
                             chest.getBlockInventory().addItem(nota);
                         }
-                         cancel();
+                        cancel();
                     } else {
                         p.sendMessage(Menu.getSimbolo("Ladino") + ChatColor.RED + L.m("Voce nao conseguiu abrir o baú !"));
                     }
@@ -317,8 +371,8 @@ public class Thief extends KomSystem {
                 dif = lockLevel;
             }
 
-            if (p.getItemInHand().getAmount() > 1) {
-                p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+            if (p.getInventory().getItemInMainHand().getAmount() > 1) {
+                p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
             } else {
                 p.setItemInHand(null);
             }
@@ -449,30 +503,20 @@ public class Thief extends KomSystem {
     }
 
     public static void atiraFlecha(Player p, Projectile flecha) {
-        if (!(flecha.getShooter() instanceof Player)) {
-            return;
-        }
+        if (!(flecha.getShooter() instanceof Player)) return;
 
-        if (taInvisivel(p)) {
-            if(Jobs.rnd.nextInt(5)==1) {
-                Thief.revela(p);
-            } else
-                PlayEffect.play(VisualEffect.SMOKE_LARGE, p.getLocation(), "");
-            //Thief.revela(p);
-        }
+        if (taInvisivel(p))
+            if (Jobs.rnd.nextInt(5) == 1) Thief.revela(p);
+            else p.spawnParticle(Particle.SMOKE_LARGE, p.getLocation(), 3);
 
         //AttributeInfo info = KnightsOfMania.database.getAtributos(p);
         //MetaShit.setMetaObject("modDano", flecha, (Attributes.calcArcheryDamage(info.attributes.get(Attr.dexterity))));
-        if (Jobs.getJobLevel("Ladino", p) != 1) {
-            int sucesso = Jobs.hasSuccess(65, "Ladino", (Player) p);
-            if (sucesso == Jobs.fail) {
-                Thief.desviaTiro(flecha, 2);
-            }
-        }
+        if (Jobs.getJobLevel("Ladino", p) != 1)
+            if (!Jobs.hasSuccess(65, "Ladino", p)) Thief.desviaTiro(flecha, 2);
 
-        if (p.getLevel() < 10) {
-            GeneralListener.givePlayerExperience(1, p);
-        }
+
+        if (p.getLevel() < 10) GeneralListener.givePlayerExperience(1, p);
+
         //p.getWorld().spawn(p.getLocation(), ExperienceOrb.class).setExperience(1);
     }
 
@@ -481,7 +525,7 @@ public class Thief extends KomSystem {
             ev.setCancelled(true);
             return;
         }
-        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             ev.getPlayer().sendMessage(ChatColor.AQUA + Menu.getSimbolo("Ladino") + " " + ChatColor.GOLD + L.m("Aqui nao"));
             ev.setCancelled(true);
             return;
@@ -505,7 +549,7 @@ public class Thief extends KomSystem {
 
         if (event.getEntity() instanceof Player) {
             int nivel = Jobs.getJobLevel("Ladino", p);
-            if (p.getLocation().getWorld().getName().equalsIgnoreCase("dungeon") || p.getLocation().getWorld().getEnvironment() != Environment.NORMAL) {
+            if (p.getLocation().getWorld().getName().equalsIgnoreCase("NewDungeon") || p.getLocation().getWorld().getEnvironment() != Environment.NORMAL) {
                 return;
             }
             double distancia = ((Entity) ((Projectile) event.getDamager()).getShooter()).getLocation().distance(event.getEntity().getLocation());

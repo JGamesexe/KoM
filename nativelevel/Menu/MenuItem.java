@@ -5,7 +5,6 @@ import nativelevel.Language.MSG;
 import org.bukkit.Material;
 
 /**
- *
  * @author Nosliw
  */
 public enum MenuItem {
@@ -18,7 +17,7 @@ public enum MenuItem {
     WIZARD(6, MSG.WIZARD, "☯", Material.BOOK),
     THEIF(7, MSG.THIEF, "➹", Material.FEATHER),
     ENGINEER(8, MSG.ENGINEER, "⌘", Material.REDSTONE);
-    
+
     private final int ID;
     private final MSG title;
     private final String symbol;
@@ -38,7 +37,7 @@ public enum MenuItem {
     public MSG getTitle() {
         return title;
     }
-    
+
     public String getTitle(LNG language) {
         return title.get(language);
     }

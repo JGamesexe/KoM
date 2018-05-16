@@ -9,7 +9,7 @@ public class Vendavel {
         this.precoPack = precoPack;
         this.nome = nome;
     }
-    
+
     public String getNomeTecnico() {
         return nome.replace(" ", "_");
     }

@@ -10,7 +10,7 @@ public class Musical extends Aura {
 
     @Override
     public String getNome() {
-        return "Musical";    
+        return "Musical";
     }
 
     @Override
@@ -27,6 +27,6 @@ public class Musical extends Aura {
     public void tick(Player p, boolean newTick) {
         PlayEffect.play(VisualEffect.NOTE, p.getLocation().add(0, 1.8, 0), "");
     }
-    
-   
+
+
 }

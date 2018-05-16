@@ -1,43 +1,35 @@
 package nativelevel.utils;
 
-import java.util.List;
-import java.util.Map;
 import nativelevel.Lang.LangMinecraft;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.FurnaceRecipe;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Recipe;
 import org.bukkit.ChatColor;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.*;
+
+import java.util.List;
 
 public class RecipeReader {
 
     private Inventory inv;
 
     public RecipeReader(Recipe recipe, Player p) {
-        ItemStack [] matrix = null;
+        ItemStack[] matrix = null;
         if ((recipe instanceof ShapelessRecipe)) {
-            matrix = getMatrix((ShapelessRecipe)recipe); 
+            matrix = getMatrix((ShapelessRecipe) recipe);
         } else if ((recipe instanceof ShapedRecipe)) {
-             matrix = getMatrix((ShapedRecipe)recipe);  
+            matrix = getMatrix((ShapedRecipe) recipe);
         }
-       
+
         TableGenerator tabela = new TableGenerator(TableGenerator.Alignment.CENTER, TableGenerator.Alignment.CENTER, TableGenerator.Alignment.CENTER);
 
-        String msg = "Para se criar "+LangMinecraft.get().get(recipe.getResult())+" Precisa-se: ";
-        for(int x = 0 ; x < matrix.length ; x+=3) {
-            tabela.addRow(matrix[x]==null ? "Nada" : LangMinecraft.get().get(matrix[x]),
-                    matrix[x+1]==null ? "Nada" : LangMinecraft.get().get(matrix[x+1]),
-                    matrix[x+2]==null ? "Nada" : LangMinecraft.get().get(matrix[x+2]));
+        String msg = "Para se criar " + LangMinecraft.get().get(recipe.getResult()) + " Precisa-se: ";
+        for (int x = 0; x < matrix.length; x += 3) {
+            tabela.addRow(matrix[x] == null ? "Nada" : LangMinecraft.get().get(matrix[x]),
+                    matrix[x + 1] == null ? "Nada" : LangMinecraft.get().get(matrix[x + 1]),
+                    matrix[x + 2] == null ? "Nada" : LangMinecraft.get().get(matrix[x + 2]));
         }
-        p.sendMessage(ChatColor.YELLOW+msg);
-        for(String s : tabela.generate(TableGenerator.Receiver.CLIENT, true, true))
-            p.sendMessage(ChatColor.GREEN+s);
+        p.sendMessage(ChatColor.YELLOW + msg);
+        for (String s : tabela.generate(TableGenerator.Receiver.CLIENT, true, true))
+            p.sendMessage(ChatColor.GREEN + s);
         /*
         if ((recipe instanceof ShapelessRecipe)) {
             this.inv = Bukkit.createInventory(null, InventoryType.WORKBENCH, title);

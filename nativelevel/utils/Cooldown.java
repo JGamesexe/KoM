@@ -7,14 +7,9 @@ package nativelevel.utils;
 
 import nativelevel.KoM;
 import nativelevel.MetaShit;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
 import org.bukkit.metadata.Metadatable;
 
 /**
- *
  * @author User
  */
 public class Cooldown {

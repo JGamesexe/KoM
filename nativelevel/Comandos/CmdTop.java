@@ -24,15 +24,15 @@ public class CmdTop implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
-      
-        if(args.length == 0) {
-            
-            cs.sendMessage(ChatColor.GREEN+"____ Topzeiros do KoM ____");
-            
-            for(Estatistica s : Estatistica.values()) {
-                cs.sendMessage(ChatColor.GREEN+"| "+ChatColor.YELLOW+"/top "+s.titulo);
+
+        if (args.length == 0) {
+
+            cs.sendMessage(ChatColor.GREEN + "____ Topzeiros do KoM ____");
+
+            for (Estatistica s : Estatistica.values()) {
+                cs.sendMessage(ChatColor.GREEN + "| " + ChatColor.YELLOW + "/top " + s.titulo);
             }
-            
+
         }
         return true;
     }

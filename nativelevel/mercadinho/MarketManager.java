@@ -1,9 +1,5 @@
 package nativelevel.mercadinho;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
 import nativelevel.Lang.L;
 import nativelevel.mercadinho.common.MarketItem;
 import nativelevel.mercadinho.database.MercadoSQL;
@@ -13,7 +9,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
 
 
 public class MarketManager {
@@ -31,7 +31,7 @@ public class MarketManager {
         List<MarketItem> lista = MercadoSQL.CarregaTodosProdutosCatalogo(categoria);
         OpenMainLoja(p, lista);
     }
-    
+
     public static void OpenMainLoja(Player p, List<MarketItem> lista) {
         double aux = lista.size() / 45.0;
         int npaginas = 0;

@@ -22,7 +22,7 @@ import org.bukkit.entity.Player;
 public class LockPick extends CustomItem {
 
     public LockPick() {
-        super(Material.STICK, L.m("Lockpick"),L.m( "Bisbilhota o baú de guildas rivais"), CustomItem.INCOMUM);
+        super(Material.STICK, L.m("Lockpick"), L.m("Bisbilhota o baú de guildas rivais"), CustomItem.INCOMUM);
     }
 
     @Override

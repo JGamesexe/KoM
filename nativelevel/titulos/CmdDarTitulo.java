@@ -5,8 +5,6 @@
  */
 package nativelevel.titulos;
 
-import java.util.HashMap;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -15,17 +13,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- *
  * @author User
- * 
  */
 
 public class CmdDarTitulo implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
-       // Player p = (Player) cs;
-        if(!cs.isOp())
+        // Player p = (Player) cs;
+        if (!cs.isOp())
             return true;
         if (args.length != 3) {
             cs.sendMessage("/dartitulo <nick> <cor> <titulo>");

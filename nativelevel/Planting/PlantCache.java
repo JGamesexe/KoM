@@ -5,17 +5,15 @@
  */
 package nativelevel.Planting;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import nativelevel.Jobs;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 /**
- *
  * @author vntgasl
  */
 public class PlantCache {

@@ -1,17 +1,14 @@
 package nativelevel.ComandosNovos;
 
+import nativelevel.KoM;
+
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import nativelevel.KoM;
-import org.bukkit.Bukkit;
 
 /**
- *
  * @author Carlos André Feldmann Júnior
  */
 public class CommandLoader {
@@ -55,7 +52,7 @@ public class CommandLoader {
             return null;
         }
         name = name.replace(".class", "");
-        if (!name.contains("ComandosNovos.list") && !name.contains("ComandosNovos.komx")) {
+        if (!name.contains("ComandosNovos.commands")) {
             return null;
         }
         Class c;

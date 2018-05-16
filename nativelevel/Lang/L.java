@@ -1,12 +1,9 @@
 package nativelevel.Lang;
 
-import java.io.IOException;
 import nativelevel.KoM;
 import nativelevel.utils.ConfigManager;
-import org.bukkit.configuration.InvalidConfigurationException;
 
 /**
- *
  * @author Gabriel
  */
 public class L {
@@ -31,23 +28,23 @@ public class L {
         return L.ConfLanguage.getConfig().getString(node);
     }
 
-    
+
     public static String m(String msg) {
         return msg;
     }
-    
+
     public static String m(String msg, String p) {
         return msg.replace("%", p);
     }
-    
+
     public static String m(String msg, int p) {
-        return msg.replace("%", p+"");
+        return msg.replace("%", p + "");
     }
-    
+
     public static String m(String msg, long p) {
-        return msg.replace("%", p+"");
+        return msg.replace("%", p + "");
     }
-    
+
     /// OS LANG BUGA AS MAGIA DUSMAGO
     /*
     

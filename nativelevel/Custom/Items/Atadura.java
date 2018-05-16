@@ -14,26 +14,20 @@
  */
 package nativelevel.Custom.Items;
 
-import org.bukkit.DyeColor;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import java.util.UUID;
-import me.fromgate.playeffect.PlayEffect;
-import me.fromgate.playeffect.VisualEffect;
 import nativelevel.Classes.Thief;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.MetaShit;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.UUID;
 
 public class Atadura extends CustomItem {
 
@@ -77,13 +71,13 @@ public class Atadura extends CustomItem {
 
             KoM.efeitoBlocos(p, Material.WOOL);
 
-            if(!p.getLocation().getWorld().getName().equalsIgnoreCase(inicial.getWorld().getName())) {
+            if (!p.getLocation().getWorld().getName().equalsIgnoreCase(inicial.getWorld().getName())) {
                 p.sendMessage(ChatColor.RED + "[ : : ] " + ChatColor.GREEN + "Você se movimentou muito e parou de se curar.");
                 p.removeMetadata("atadura", KoM._instance);
                 Bukkit.getScheduler().cancelTask(taskId);
                 return;
             }
-            
+
             double distancia = p.getLocation().distance(inicial);
             if (distancia > DISTANCIA_ANDAR) {
                 p.sendMessage(ChatColor.RED + "[ : : ] " + ChatColor.GREEN + "Você se movimentou muito e parou de se curar.");
@@ -121,7 +115,9 @@ public class Atadura extends CustomItem {
                 p.sendMessage(ChatColor.YELLOW + "[ : : ] " + ChatColor.GREEN + "Voce está se curando.");
             }
         }
-    };
+    }
+
+    ;
 
     public static void tomaDano(Player p, double dano) {
         AtaduraRun run = seCurando(p);
@@ -198,17 +194,17 @@ public class Atadura extends CustomItem {
             return true;
         }
 
-        int stack = p.getItemInHand().getAmount();
+        int stack = p.getInventory().getItemInMainHand().getAmount();
         stack--;
         if (stack == 0) {
             p.setItemInHand(new ItemStack(Material.AIR, 1));
         } else {
-            p.getItemInHand().setAmount(stack);
+            p.getInventory().getItemInMainHand().setAmount(stack);
         }
 
-        if(Thief.taInvisivel(p))
+        if (Thief.taInvisivel(p))
             Thief.revela(p);
-        
+
         for (Entity e : p.getNearbyEntities(10, 4, 10)) {
             if (e.getType() == EntityType.PLAYER) {
                 ((Player) e).sendMessage(ChatColor.AQUA + "* " + p.getName() + " começou a aplicar ataduras *");

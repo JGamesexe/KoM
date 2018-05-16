@@ -5,20 +5,12 @@
  */
 package nativelevel.Classes.Mage.spelllist;
 
-import me.fromgate.playeffect.PlayEffect;
-import me.fromgate.playeffect.VisualEffect;
-import nativelevel.Classes.Mage.Wizard;
-import nativelevel.Listeners.GeneralListener;
 import nativelevel.Classes.Mage.Elements;
 import nativelevel.Classes.Mage.MageSpell;
-import nativelevel.MetaShit;
-import nativelevel.spec.PlayerSpec;
-import org.bukkit.entity.Fireball;
+import nativelevel.Classes.Mage.Wizard;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.SmallFireball;
 
 /**
- *
  * @author User
  */
 public class Mark extends MageSpell {

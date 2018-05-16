@@ -2,16 +2,10 @@ package nativelevel.Classes.Blacksmithy.recipes;
 
 import nativelevel.Classes.Blacksmithy.CustomCrafting;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author Ziden
- *
  */
 public class IronHelmet extends CustomCrafting {
 
@@ -22,9 +16,9 @@ public class IronHelmet extends CustomCrafting {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            new ItemStack(Material.LEATHER_HELMET, 1),
-            new ItemStack(Material.LEATHER, 1),
-            new ItemStack(Material.IRON_BLOCK),};
+                new ItemStack(Material.LEATHER_HELMET, 1),
+                new ItemStack(Material.LEATHER, 1),
+                new ItemStack(Material.IRON_BLOCK),};
     }
 
     @Override
@@ -47,7 +41,7 @@ public class IronHelmet extends CustomCrafting {
         if (ss.getType() == Material.CHAINMAIL_HELMET) {
             ss.setType(Material.IRON_HELMET);
         }
-        
+
         return ss;
     }
 

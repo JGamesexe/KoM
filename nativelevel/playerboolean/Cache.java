@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 
 /**
- *
  * @author vntgasl
  */
 public class Cache<Type> {

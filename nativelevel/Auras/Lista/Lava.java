@@ -9,7 +9,7 @@ public class Lava extends Aura {
 
     @Override
     public String getNome() {
-        return "Lava";    
+        return "Lava";
     }
 
     @Override
@@ -26,6 +26,6 @@ public class Lava extends Aura {
     public void tick(Player p, boolean newTick) {
         PlayEffect.play("lava", "loc:" + p.getLocation().getWorld().getName() + "," + p.getLocation().getBlockX() + "," + p.getLocation().getBlockY() + "," + p.getLocation().getBlockZ());
     }
-    
-   
+
+
 }

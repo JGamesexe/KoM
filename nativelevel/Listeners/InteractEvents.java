@@ -1,72 +1,46 @@
 package nativelevel.Listeners;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import nativelevel.Attributes.Mana;
+import nativelevel.Attributes.Stamina;
 import nativelevel.Auras.Aura;
 import nativelevel.CFG;
 import nativelevel.Classes.Alchemy.Alchemist;
 import nativelevel.Classes.Blacksmithy.Blacksmith;
-import nativelevel.Classes.Engineer;
-import nativelevel.Classes.Farmer;
-import nativelevel.Classes.Lumberjack;
-import nativelevel.Classes.Minerador;
-import nativelevel.Classes.Thief;
+import nativelevel.Classes.*;
+import nativelevel.Classes.Mage.spelllist.Paralyze;
+import nativelevel.ComandosNovos.commands.list.KomSubs.CmdOE;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.ItemListener;
 import nativelevel.Custom.Items.Ponte;
 import nativelevel.Custom.Items.SuperBomba;
 import nativelevel.Harvesting.HarvestEvents;
 import nativelevel.Jobs;
+import nativelevel.Jobs.TipoClasse;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
-import static nativelevel.Listeners.GeneralListener.taEmCombate;
-import nativelevel.Classes.Mage.spelllist.Paralyze;
 import nativelevel.Menu.Menu;
 import nativelevel.Menu.netMenu;
 import nativelevel.MetaShit;
-import nativelevel.Attributes.Mana;
-import nativelevel.Attributes.Stamina;
 import nativelevel.bencoes.TipoBless;
-import nativelevel.ComandosNovos.list.KomSubs.CmdOE;
-import nativelevel.Jobs.TipoClasse;
 import nativelevel.guis.GUIsHelp;
 import nativelevel.integration.BungeeCordKom;
 import nativelevel.integration.SimpleClanKom;
 import nativelevel.integration.WorldGuardKom;
-import nativelevel.sisteminhas.ClanLand;
-import nativelevel.sisteminhas.Dungeon;
-import nativelevel.sisteminhas.Horses;
-import nativelevel.sisteminhas.Lobo;
-import nativelevel.sisteminhas.XP;
-import nativelevel.sisteminhas.Mobs;
 import nativelevel.lojaagricola.LojaAgricola;
 import nativelevel.mercadinho.MenuMercado;
-import nativelevel.sisteminhas.QuestsIntegracao;
+import nativelevel.sisteminhas.*;
 import nativelevel.spec.PlayerSpec;
 import nativelevel.utils.BookUtil;
 import nativelevel.utils.Cooldown;
-import nativelevel.utils.itemattributes.Slot;
+import nativelevel.utils.JotaGUtils;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
-import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Minecart;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -74,11 +48,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.material.Button;
 import org.bukkit.material.Openable;
 import org.bukkit.potion.Potion;
@@ -87,10 +59,14 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import tw.kid7.BannerMaker.util.InventoryMenuUtil;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import static nativelevel.Listeners.GeneralListener.taEmCombate;
+
 /**
- *
  * @author Ziden
- *
  */
 public class InteractEvents implements Listener {
 
@@ -107,16 +83,16 @@ public class InteractEvents implements Listener {
         if (ev.getRightClicked() != null && ev.getRightClicked().getType() == EntityType.MINECART_HOPPER) {
             ev.setCancelled(true);
         }
-        
-        if(ev.getRightClicked() != null && ev.getRightClicked().getType()==EntityType.ARMOR_STAND) {
-            if(!ev.getPlayer().isOp() && WorldGuardKom.ehSafeZone(ev.getRightClicked().getLocation())) {
-                ev.getPlayer().sendMessage(ChatColor.RED+"Voce nao pode fazer isto aqui");
+
+        if (ev.getRightClicked() != null && ev.getRightClicked().getType() == EntityType.ARMOR_STAND) {
+            if (!ev.getPlayer().isOp() && WorldGuardKom.ehSafeZone(ev.getRightClicked().getLocation())) {
+                ev.getPlayer().sendMessage(ChatColor.RED + "Voce nao pode fazer isto aqui");
                 ev.setCancelled(true);
                 return;
             }
         }
 
-        if (ev.getPlayer().getItemInHand() != null && (ev.getPlayer().getItemInHand().getType() == Material.WATER_BUCKET || ev.getPlayer().getItemInHand().getType() == Material.LAVA_BUCKET)) {
+        if (ev.getPlayer().getInventory().getItemInMainHand() != null && (ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.WATER_BUCKET || ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.LAVA_BUCKET)) {
             ev.setCancelled(true);
             ev.getPlayer().setVelocity(new Vector(0, -0.2, 0));
             return;
@@ -124,14 +100,14 @@ public class InteractEvents implements Listener {
 
         if (ev.getRightClicked().getType() == EntityType.ITEM_FRAME) {
             String tipo = ClanLand.getTypeAt(ev.getPlayer().getLocation());
-            if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon") || tipo.equalsIgnoreCase("SAFE") || tipo.equalsIgnoreCase("WARZ")) {
+            if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon") || tipo.equalsIgnoreCase("SAFE") || tipo.equalsIgnoreCase("WARZ")) {
                 if (!ev.getPlayer().isOp()) {
                     ev.setCancelled(true);
                 }
             }
         }
 
-        if (!ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon") && ev.getRightClicked() != null && (ev.getRightClicked().getType() == EntityType.MINECART_CHEST
+        if (!ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon") && ev.getRightClicked() != null && (ev.getRightClicked().getType() == EntityType.MINECART_CHEST
                 || ev.getRightClicked().getType() == EntityType.MINECART_FURNACE
                 || ev.getRightClicked().getType() == EntityType.MINECART_HOPPER
                 || ev.getRightClicked().getType() == EntityType.MINECART_MOB_SPAWNER
@@ -142,8 +118,8 @@ public class InteractEvents implements Listener {
             }
         }
 
-        if (ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() == Material.SULPHUR) {
-            if (ev.getPlayer().getItemInHand().getEnchantments().size() > 0) {
+        if (ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.SULPHUR) {
+            if (ev.getPlayer().getInventory().getItemInMainHand().getEnchantments().size() > 0) {
                 ev.getPlayer().sendMessage(ChatColor.RED + L.m("A polvora encantada se desfez entre seus dedos..."));
                 ev.getPlayer().setItemInHand(null);
                 ev.setCancelled(true);
@@ -155,23 +131,23 @@ public class InteractEvents implements Listener {
             Villager bixo = (Villager) ev.getRightClicked();
             if (bixo.getCustomName() != null && bixo.getCustomName().equals(NPC_CLEAN_ITEM)) {
                 if (ev.getPlayer().isSneaking() == true) {
-                    if (ev.getPlayer().getItemInHand().getItemMeta().getLore() != null || ev.getPlayer().getItemInHand().getItemMeta().getDisplayName() != null) {
-                        for (String s : ev.getPlayer().getItemInHand().getItemMeta().getLore()) {
+                    if (ev.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore() != null || ev.getPlayer().getInventory().getItemInMainHand().getItemMeta().getDisplayName() != null) {
+                        for (String s : ev.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore()) {
                             if (s.contains("Classe:") || s.contains("!")) {
                                 return;
                             }
                         }
                         ev.setCancelled(true);
-                        ItemMeta meta = ev.getPlayer().getItemInHand().getItemMeta();
+                        ItemMeta meta = ev.getPlayer().getInventory().getItemInMainHand().getItemMeta();
                         meta.setLore(new ArrayList<String>());
                         meta.setDisplayName(null);
-                        ev.getPlayer().getItemInHand().setItemMeta(meta);
+                        ev.getPlayer().getInventory().getItemInMainHand().setItemMeta(meta);
                         ev.getPlayer().sendMessage("§2O Item foi limpado");
                     } else {
                         ev.setCancelled(true);
                         ev.getPlayer().sendMessage("§7O Item já está limpo");
                     }
-                } else if (ev.getPlayer().getItemInHand() == null || ev.getPlayer().getItemInHand().getType() == Material.AIR) {
+                } else if (ev.getPlayer().getInventory().getItemInMainHand() == null || ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR) {
                     ev.setCancelled(true);
                     ev.getPlayer().sendMessage("§7Coloque um item na mão para reseta-lo");
                 } else {
@@ -190,7 +166,7 @@ public class InteractEvents implements Listener {
 
         Engineer.prende(ev);
 
-        if (ev.getRightClicked() instanceof LivingEntity && ev.getPlayer().isOp() && ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() == Material.BONE) {
+        if (ev.getRightClicked() instanceof LivingEntity && ev.getPlayer().isOp() && ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.BONE) {
             if (ev.getPlayer().isSneaking()) {
                 ev.getPlayer().sendMessage("vidaCustom " + ((LivingEntity) ev.getRightClicked()).getMaxHealth());
                 ev.getPlayer().sendMessage("bonusDano " + MetaShit.getMetaObject("bonusDano", ev.getRightClicked()));
@@ -224,16 +200,17 @@ public class InteractEvents implements Listener {
         if (ev.getItem() != null && (ev.getItem().getType() == Material.MONSTER_EGG || ev.getItem().getType() == Material.MONSTER_EGGS)) {
             Farmer.handleEgg(ev);
         }
-        
-        if(ev.getClickedBlock() != null && ev.getItem() != null && ev.getItem().getType()==Material.ARMOR_STAND) {
-            if(!ev.getPlayer().isOp() && WorldGuardKom.ehSafeZone(ev.getClickedBlock().getLocation())) {
-                ev.getPlayer().sendMessage(ChatColor.RED+"Voce nao pode usar isto aqui");
+
+        if (ev.getClickedBlock() != null && ev.getItem() != null && ev.getItem().getType() == Material.ARMOR_STAND) {
+            if (!ev.getPlayer().isOp() && WorldGuardKom.ehSafeZone(ev.getClickedBlock().getLocation())) {
+                ev.getPlayer().sendMessage(ChatColor.RED + "Voce nao pode usar isto aqui");
                 ev.setCancelled(true);
                 return;
             }
         }
 
         Aura.interage(ev);
+
         if (ev.isCancelled()) {
             KoM.debug("Cancelando antes do paladino");
         }
@@ -243,10 +220,10 @@ public class InteractEvents implements Listener {
                 String aqui = ClanLand.getTypeAt(ev.getPlayer().getLocation());
 
                 if (!Cooldown.isCooldown(ev.getPlayer(), "grito")) {
-                    Cooldown.setMetaCooldown(ev.getPlayer(), "grito", 5000);
                     if (aqui == null || !aqui.equalsIgnoreCase("safe")) {
                         if (ev.getItem() != null && ev.getItem().getType().name().contains("SWORD")) {
                             if (Mana.spendMana(ev.getPlayer(), 40)) {
+                                Cooldown.setMetaCooldown(ev.getPlayer(), "grito", 5000);
                                 ev.getPlayer().sendMessage(ChatColor.GREEN + "Voce da um grito para chamar a atenção !");
                                 for (Entity e : ev.getPlayer().getNearbyEntities(5, 5, 5)) {
                                     if (e.getType() == EntityType.PLAYER) {
@@ -273,7 +250,7 @@ public class InteractEvents implements Listener {
                         }
                     }
                 } else {
-                    ev.getPlayer().sendMessage(ChatColor.RED+"Aguarde para poder fazer isto novamente.");
+                    ev.getPlayer().sendMessage(ChatColor.RED + "Aguarde para poder fazer isto novamente.");
                 }
             }
         }
@@ -349,6 +326,9 @@ public class InteractEvents implements Listener {
     @EventHandler
     public void interageDenovo(PlayerInteractEvent ev) {
 
+        if (!ev.hasBlock()) ev.setCancelled(false);
+        //Por algum acaso quando clicko no ar com essa merda ela cancela...
+
         GUIsHelp.interact(ev);
         if (ev.isCancelled()) return;
 
@@ -418,8 +398,8 @@ public class InteractEvents implements Listener {
             KoM.debug("paralizado");
             return;
         }
-        
-        if(Engineer.validaPrisao(ev))
+
+        if (Engineer.validaPrisao(ev))
             return;
 
         // CUSTOM ITEMS
@@ -435,20 +415,32 @@ public class InteractEvents implements Listener {
             return;
         }
 
-        if (ev.getItem() != null && ev.getItem().getType() == Material.SPONGE) {
+        if (ev.getItem() != null && ev.getItem().getType() == Material.MOB_SPAWNER) {
+            if (ev.getClickedBlock().getY() < 6) {
+                ev.getPlayer().sendMessage("§cBota esse bloco mais alto por favor...");
+                ev.setCancelled(true);
+                return;
+            }
+        }
+
+        if (!ev.getPlayer().isOp() && ev.getItem() != null && ev.getItem().getType() == Material.SPONGE) {
             ev.setCancelled(true);
             KoM.debug("cancelado sponge");
             return;
         }
 
-       
-
-        KoM.debug("Entrando bloco hidraulico");
+        if (ev.getPlayer().isOp() && (ev.getAction().equals(Action.RIGHT_CLICK_BLOCK) || ev.getAction().equals(Action.RIGHT_CLICK_AIR)) && ev.getItem() != null && ev.getItem().getType() == Material.EMPTY_MAP) {
+            if (ev.getItem().getItemMeta() != null) {
+                ev.setCancelled(true);
+                JotaGUtils.changeChunkTypeWithItem(ev.getPlayer(), ev.getPlayer().getLocation(), ev.getItem());
+            }
+        }
 
         if (ev.getItem() != null && ev.getItem().getType() == Material.GOLD_BLOCK && ev.getAction() == Action.RIGHT_CLICK_BLOCK && Jobs.getJobLevel("Engenheiro", ev.getPlayer()) == 1) {
             String ci = CustomItem.getCustomItem(ev.getItem());
             if (ci != null && ci.equalsIgnoreCase("Bloco Hidraulico")) {
-                if (ClanLand.getTypeAt(ev.getClickedBlock().getLocation()).equalsIgnoreCase("SAFE") || ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon") || ev.getPlayer().getWorld().getName().equalsIgnoreCase("vila") || ev.getPlayer().getWorld().getName().equalsIgnoreCase("barco") || ev.getPlayer().getWorld().getName().equalsIgnoreCase("arena")) {
+                KoM.debug("Entrando bloco hidraulico");
+                if (ClanLand.getTypeAt(ev.getClickedBlock().getLocation()).equalsIgnoreCase("SAFE") || ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon") || ev.getPlayer().getWorld().getName().equalsIgnoreCase("vila") || ev.getPlayer().getWorld().getName().equalsIgnoreCase("barco") || ev.getPlayer().getWorld().getName().equalsIgnoreCase("arena")) {
                     ev.getPlayer().sendMessage(ChatColor.RED + "Isso nao funciona aqui");
                 } else {
                     if (!KoM.gastaItem(ev.getPlayer(), ev.getPlayer().getInventory(), Material.GOLD_INGOT, (byte) 0)) {
@@ -471,10 +463,10 @@ public class InteractEvents implements Listener {
                         Bukkit.getScheduler().scheduleSyncRepeatingTask(KoM._instance, r, 20 * 60, 20 * 60);
                     }
                 }
+                KoM.debug("cancelado bloco H");
+                ev.setCancelled(true);
+                return;
             }
-            KoM.debug("cancelado bloco H");
-            ev.setCancelled(true);
-            return;
         }
 
         KoM.debug("Antes da dungeon");
@@ -495,7 +487,7 @@ public class InteractEvents implements Listener {
 
             ItemStack item = ev.getItem();
             if (item != null) {
-                if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon")) {
+                if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                     if (item.getType() == Material.BUCKET) {
                         ev.setCancelled(true);
                         return;
@@ -607,13 +599,13 @@ public class InteractEvents implements Listener {
         }
 
         KoM.debug("pre salto");
-        if (!ev.getPlayer().hasPotionEffect(PotionEffectType.WATER_BREATHING) && !ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon") && ev.getAction() == Action.RIGHT_CLICK_AIR) {
+        if (!ev.getPlayer().hasPotionEffect(PotionEffectType.WATER_BREATHING) && !ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon") && ev.getAction() == Action.RIGHT_CLICK_AIR) {
             if (Jobs.getJobLevel("Lenhador", ev.getPlayer()) == 1) {
                 Lumberjack.salta(ev);
                 ev.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 60, 1));
             }
         } else if (ev.getClickedBlock() != null && ev.getClickedBlock().getType() == Material.DISPENSER) {
-            if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon") && !ev.getPlayer().isOp()) {
+            if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon") && !ev.getPlayer().isOp()) {
                 ev.setCancelled(true);
             }
         } else if (ev.getClickedBlock() != null && ev.getClickedBlock().getType() == Material.STONE_BUTTON) {
@@ -625,7 +617,7 @@ public class InteractEvents implements Listener {
             // qnd clica no botao na circle stone ele gera uma toxa atraz dps tira.
             if (attached.getType().getId() == 98 && attached.getData() == 3) {
 
-                if (!ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon") && !ev.getPlayer().getWorld().getName().equalsIgnoreCase("vila")) {
+                if (!ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon") && !ev.getPlayer().getWorld().getName().equalsIgnoreCase("vila")) {
                     ev.getClickedBlock().setType(Material.AIR);
                     ev.setCancelled(true);
                     ev.getPlayer().sendMessage(ChatColor.RED + L.m("O bug foi arrumado,% espertinho ! Jabu ta de olho !", ev.getPlayer().getName()));
@@ -668,7 +660,7 @@ public class InteractEvents implements Listener {
                 ev.setCancelled(true);
                 return;
             }
-            if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon")) {
+            if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             }
         } else if (ev.getClickedBlock() != null && ev.getClickedBlock().getType() == Material.IRON_DOOR_BLOCK) {
             if (KoM.debugMode && ev.getPlayer().isOp()) {
@@ -701,9 +693,9 @@ public class InteractEvents implements Listener {
                                 if (KoM.debugMode && ev.getPlayer().isOp()) {
                                     ev.getPlayer().sendMessage(L.m("achei uma possivel chave"));
                                 }
-                                
+
                                 ItemStack chave = ev.getItem();
-                                if(chave==null)
+                                if (chave == null)
                                     continue;
 
                                 ItemMeta minha = chave.getItemMeta();
@@ -725,9 +717,9 @@ public class InteractEvents implements Listener {
                                                 if (minha.getLore() == null || minha.getLore().size() != porta.getLore().size()) {
                                                     podeAbrir = false;
                                                 } else // se a primeira linha da lore eh igual 
-                                                if (minha.getLore().get(0).trim().equalsIgnoreCase(porta.getLore().get(0).trim())) {
-                                                    podeAbrir = true;
-                                                }
+                                                    if (minha.getLore().get(0).trim().equalsIgnoreCase(porta.getLore().get(0).trim())) {
+                                                        podeAbrir = true;
+                                                    }
                                             } else {
                                                 // se tem o mermo nome e nao tem lore, abre 
                                                 podeAbrir = true;
@@ -842,21 +834,7 @@ public class InteractEvents implements Listener {
             ev.setCancelled(true);
         }
 
-        if (ev.getPlayer().isOp()) {
-            if (ev.getClickedBlock() != null && ev.getClickedBlock().getState() instanceof CreatureSpawner) {
-                if (ev.getItem() != null && (ev.getItem().getType() == Material.MONSTER_EGG || ev.getItem().getType() == Material.MONSTER_EGGS)) {
-                    SpawnEggMeta meta = (SpawnEggMeta) ev.getItem().getItemMeta();
-                    CreatureSpawner spawner = (CreatureSpawner) ev.getClickedBlock().getState();
-                    spawner.setSpawnedType(meta.getSpawnedType());
-
-                    ev.getPlayer().sendMessage("Setou pra spawnar " + meta.getSpawnedType().toString());
-                    ev.setCancelled(true);
-                    return;
-                }
-            }
-        }
-
-        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             Dungeon.interact(ev);
         }
 
@@ -1002,7 +980,7 @@ public class InteractEvents implements Listener {
             return;
         }
         Location bp = ev.getBlockClicked().getLocation();
-        if (bp.getWorld().getName().equalsIgnoreCase("dungeon")) {
+        if (bp.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             ev.setCancelled(true);
             return;
         }

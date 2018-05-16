@@ -6,10 +6,10 @@
 package nativelevel.Classes.Alchemy;
 
 import nativelevel.Custom.CustomItem;
-import nativelevel.Custom.Items.PotionExtract;
-import nativelevel.Lang.L;
 import nativelevel.Custom.CustomPotion;
+import nativelevel.Custom.Items.PotionExtract;
 import nativelevel.KoM;
+import nativelevel.Lang.L;
 import nativelevel.sisteminhas.KomSystem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -23,7 +23,6 @@ import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author User
  */
 public class BrewingStandEvents extends KomSystem {
@@ -76,9 +75,9 @@ public class BrewingStandEvents extends KomSystem {
             ev.getContents().setIngredient(null);
         }
 
-        KoM.debug("FUEL LEVEL: "+ev.getFuelLevel());
-        
-        if (ev.getFuelLevel()==0 && fuel != null && fuel.getType() != Material.AIR) {
+        KoM.debug("FUEL LEVEL: " + ev.getFuelLevel());
+
+        if (ev.getFuelLevel() == 0 && fuel != null && fuel.getType() != Material.AIR) {
             if (fuel.getAmount() > 1) {
                 fuel.setAmount(fuel.getAmount() - 1);
                 ev.getContents().setFuel(fuel);

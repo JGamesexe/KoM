@@ -19,9 +19,9 @@ public class PrePlayerLootEvent extends PreLootEvent {
     /**
      * Creates a new event with the given data
      *
-     * @param looter The Player who is looting
-     * @param phatLoot The PhatLoot that the Player looted
-     * @param chest The PhatLootChest being looted or null if no chest was involved
+     * @param looter       The Player who is looting
+     * @param phatLoot     The PhatLoot that the Player looted
+     * @param chest        The PhatLootChest being looted or null if no chest was involved
      * @param lootingBonus The bonus amount of looting probability
      */
     public PrePlayerLootEvent(Player looter, PhatLoot phatLoot, PhatLootChest chest, double lootingBonus) {

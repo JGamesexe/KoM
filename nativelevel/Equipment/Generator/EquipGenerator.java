@@ -1,13 +1,6 @@
 package nativelevel.Equipment.Generator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import nativelevel.Equipment.Atributo;
-import nativelevel.Equipment.EquipMeta;
-import nativelevel.Equipment.EquipmentEvents;
-import nativelevel.Equipment.ItemAttributes;
-import nativelevel.Equipment.WeaponDamage;
+import nativelevel.Equipment.*;
 import nativelevel.Equipment.WeaponType.MatArma;
 import nativelevel.Equipment.WeaponType.MatArmadura;
 import nativelevel.Equipment.WeaponType.TipoArma;
@@ -21,10 +14,12 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 /**
- *
  * @author Ziden
- *
  */
 public class EquipGenerator {
 
@@ -72,7 +67,7 @@ public class EquipGenerator {
         if (ehArma) {
             if (Jobs.rnd.nextInt(15) == 1) {
                 item = new ItemStack(Material.BOW, 1);
-            } else if(Jobs.rnd.nextInt(15) == 1) {
+            } else if (Jobs.rnd.nextInt(15) == 1) {
                 return geraOffHand(r, nivel);
             } else {
                 MatArma material;
@@ -211,15 +206,15 @@ public class EquipGenerator {
 
         if (doisMaiores[0] != null) {
 
-            
+
             double max = doisMaiores[0].max;
 
             double valor = meta.getAttribute(doisMaiores[0]);
-            
+
             double pct = (100 * valor) / max;
-            
-            KoM.debug("PCT1 = "+pct);
-            
+
+            KoM.debug("PCT1 = " + pct);
+
             String prefixo = Nomes.getSufixo(doisMaiores[0], pct);
 
             nomeItem = nomeItem + " " + prefixo;
@@ -229,11 +224,11 @@ public class EquipGenerator {
             double max = doisMaiores[1].max;
 
             double valor = meta.getAttribute(doisMaiores[1]);
-            
+
             double pct = (100 * valor) / max;
 
-            KoM.debug("PCT2 = "+pct);
-            
+            KoM.debug("PCT2 = " + pct);
+
             String sufixo = Nomes.getPrefixo(doisMaiores[1], pct);
             if (!masculino) {
                 sufixo = Nomes.f(sufixo);

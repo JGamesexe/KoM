@@ -1,6 +1,5 @@
 package nativelevel.RecipeBooks;
 
-import java.util.List;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.RecipeBook;
 import nativelevel.Custom.Items.RecipeForBook;
@@ -17,10 +16,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
+import java.util.List;
+
 /**
- *
  * @author User
- *
  */
 public class RecipeBooksEvents extends KomSystem {
 

@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import nativelevel.Classes.Mage.Wizard;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 public class Ferreiro {
 
-      public static void load() {
+    public static void load() {
         List<Skill> skills = new ArrayList<Skill>();
 
         Skill s1 = new Skill("Forjar Equipamento", 3, false);
@@ -41,11 +38,11 @@ public class Ferreiro {
         Skill s7 = new Skill("Forjar Barras", 5, false);
         s7.setLore(new String[]{"§9Aumenta chances de sucesso ao forjar barras.", "§9Quanto maior seu nivel, maior a chance"});
         skills.add(s7);
-        
+
         Skill s8 = new Skill("Reparar Items", 25, false);
         s8.setLore(new String[]{"§9Aumenta chances de sucesso ao reparar items.", "§9Quanto maior seu nivel, maior a chance"});
         skills.add(s8);
-        
+
         Skill s9 = new Skill("Pele Queimada", 3, false);
         s9.setLore(new String[]{"§9Não recebe dano por ataques de fogo."});
         skills.add(s9);
@@ -63,12 +60,12 @@ public class Ferreiro {
         Collections.sort(skills, new Comparator<Skill>() {
             @Override
             public int compare(Skill p1, Skill p2) {
-                return p1.getNivel() - p2.getNivel(); 
+                return p1.getNivel() - p2.getNivel();
             }
         });
 
         SkillMaster.skills.put("ferreiro", skills);
-        
+
     }
 
 }

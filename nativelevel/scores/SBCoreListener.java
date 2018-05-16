@@ -2,12 +2,10 @@ package nativelevel.scores;
 
 import nativelevel.KoM;
 import nativelevel.karma.Criminoso;
-import nativelevel.mercadinho.Utils;
 import nativelevel.sisteminhas.ClanLand;
 import nativelevel.sisteminhas.KomSystem;
 import nativelevel.titulos.TituloDB;
 import nativelevel.titulos.Titulos;
-import static nativelevel.titulos.Titulos.trabalhaTitulo;
 import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerInfo;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
@@ -16,17 +14,11 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.scoreboard.DisplaySlot;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 /**
- *
  * @author NeT32
- *
  */
 public class SBCoreListener extends KomSystem {
 
@@ -132,11 +124,11 @@ public class SBCoreListener extends KomSystem {
             icone = "☠";
             if (karma < -20000) {
                 icone = "§4" + icone;
-            } else if (karma < - 10000) {
+            } else if (karma < -10000) {
                 icone = "§c" + icone;
-            } else if (karma < - 2000) {
+            } else if (karma < -2000) {
                 icone = ChatColor.GOLD + icone;
-            } else if (karma < - 100) {
+            } else if (karma < -100) {
                 icone = ChatColor.YELLOW + icone;
             }
         } else if (karma > 0) {
@@ -182,7 +174,7 @@ public class SBCoreListener extends KomSystem {
             return ChatColor.GREEN + "" + ChatColor.BOLD + "AJD ";
         }
         if (p.hasPermission("kom.cor.mapper")) {
-            return  "§e§lBUILDER ";
+            return "§e§lBUILDER ";
         }
 
         if (p.hasPermission("kom.cor.yt")) {

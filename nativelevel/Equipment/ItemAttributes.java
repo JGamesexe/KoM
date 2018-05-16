@@ -5,19 +5,17 @@
  */
 package nativelevel.Equipment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import nativelevel.Equipment.EquipMeta;
 import nativelevel.KoM;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
- *
  * @author vntgasl
- *
  */
 public class ItemAttributes {
 
@@ -37,7 +35,7 @@ public class ItemAttributes {
                 }
                 lore.remove(loreIn);
                 String pct = attribute.pct ? "%" : "";
-                lore.add(0, "§9+ " + hasAttribute + pct+ " " + attribute.name().replace("_", " "));
+                lore.add(0, "§9+ " + hasAttribute + pct + " " + attribute.name().replace("_", " "));
                 meta.setLore(lore);
                 ss.setItemMeta(meta);
                 return;
@@ -68,12 +66,12 @@ public class ItemAttributes {
                     }
                 }
                 try {
-                Atributo attr = Atributo.valueOf(attrName);
-                double value = Integer.valueOf(loreIn.split("\\+")[1].split(" ")[0].replace("%", ""));
+                    Atributo attr = Atributo.valueOf(attrName);
+                    double value = Integer.valueOf(loreIn.split("\\+")[1].split(" ")[0].replace("%", ""));
 
-                attrs.put(attr, value);
-                } catch(Exception e){
-                    
+                    attrs.put(attr, value);
+                } catch (Exception e) {
+
                 }
             }
         }
@@ -108,7 +106,7 @@ public class ItemAttributes {
             if (loreIn == null) {
                 continue;
             }
-            KoM.debug("Ja tinha lore: "+lore);
+            KoM.debug("Ja tinha lore: " + lore);
             if (loreIn.startsWith("§9+") && loreIn.endsWith(attribute.name().replace("_", " "))) {
                 int hasAttribute = Integer.valueOf(ChatColor.stripColor(loreIn.split(" ")[0].replace("%", "")));
                 hasAttribute += qtd;

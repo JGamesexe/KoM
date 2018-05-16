@@ -5,34 +5,24 @@
  */
 package nativelevel.Custom.Potions;
 
-import me.fromgate.playeffect.PlayEffect;
-import me.fromgate.playeffect.VisualEffect;
+import nativelevel.Attributes.Mana;
 import nativelevel.Custom.CustomItem;
-import nativelevel.Lang.L;
 import nativelevel.Custom.CustomPotion;
 import nativelevel.Custom.Items.FolhaDeMana;
 import nativelevel.KoM;
-import nativelevel.Attributes.Mana;
+import nativelevel.Lang.L;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.Effect;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 /**
- *
  * @author User
- * 
  */
 
 public class Mana1 extends CustomPotion {
@@ -45,7 +35,7 @@ public class Mana1 extends CustomPotion {
     public void interage(PlayerInteractEvent ev) {
 
     }
-    
+
     public Color cor() {
         return Color.BLUE;
     }
@@ -58,9 +48,9 @@ public class Mana1 extends CustomPotion {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            CustomItem.getItem(FolhaDeMana.class).generateItem(),
-            new ItemStack(Material.GLASS, 1),
-            new ItemStack(Material.WHEAT, 1)};
+                CustomItem.getItem(FolhaDeMana.class).generateItem(),
+                new ItemStack(Material.GLASS, 1),
+                new ItemStack(Material.WHEAT, 1)};
     }
 
     @Override
@@ -83,7 +73,7 @@ public class Mana1 extends CustomPotion {
         Mana.changeMana(ev.getPlayer(), 20);
         KoM.efeitoBlocos(ev.getPlayer(), Material.LAPIS_BLOCK);
         //PlayEffect.play(VisualEffect.SPELL_MOB, ev.getPlayer().getLocation(), "num:2");
-        ev.getPlayer().sendMessage(ChatColor.GREEN+"Voce recuperou um pouco de seu mana");
+        ev.getPlayer().sendMessage(ChatColor.GREEN + "Voce recuperou um pouco de seu mana");
     }
 
 }

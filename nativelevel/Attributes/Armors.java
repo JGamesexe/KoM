@@ -1,14 +1,12 @@
 package nativelevel.Attributes;
 
-import nativelevel.Equipment.WeaponType;
-import nativelevel.Equipment.WeaponType.TipoArmadura;
 import nativelevel.Classes.Blacksmithy.Blacksmith;
+import nativelevel.Equipment.WeaponType.TipoArmadura;
 import nativelevel.KoM;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author Ziden
  */
 public class Armors {
@@ -18,13 +16,13 @@ public class Armors {
         Material armorType = Blacksmith.getArmorType(ss.getType());
 
         try {
-            
-            KoM.debug("TENTANDO TIRAR ARMORTIYPE DE "+armorType.name());
-            
+
+            KoM.debug("TENTANDO TIRAR ARMORTIYPE DE " + armorType.name());
+
             TipoArmadura tipo = TipoArmadura.valueOf(ss.getType().name().split("_")[1]);
 
-            KoM.debug("armor type "+tipo.name());
-            
+            KoM.debug("armor type " + tipo.name());
+
             if (armorType != null) {
                 if (armorType == Material.LEATHER) {
                     if (tipo == TipoArmadura.BOOTS) {
@@ -93,7 +91,7 @@ public class Armors {
                     }
                 }
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             //e.printStackTrace();
         }
         return baseArmor;

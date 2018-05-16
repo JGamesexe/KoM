@@ -14,21 +14,17 @@
  */
 package nativelevel.Custom.Items;
 
-import java.util.HashSet;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
-import nativelevel.KoM;
 import nativelevel.Lang.L;
-import nativelevel.Attributes.Mana;
 import nativelevel.gemas.Gema;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Effect;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashSet;
 
 public class Encaixe extends CustomItem {
 
@@ -53,7 +49,7 @@ public class Encaixe extends CustomItem {
             return;
         }
         if (ci.equalsIgnoreCase("Encaixe")) {
-            if(ev.getCurrentItem()==null || ev.getCurrentItem().getType()==Material.AIR)
+            if (ev.getCurrentItem() == null || ev.getCurrentItem().getType() == Material.AIR)
                 return;
             if (!podeTerEncaixe(ev.getCurrentItem())) {
                 ((Player) ev.getWhoClicked()).sendMessage(ChatColor.RED + "Apenas equipamentos podem ter encaixes.");
@@ -69,8 +65,7 @@ public class Encaixe extends CustomItem {
                 return;
             }
             ev.setCancelled(true);
-            int SUCESSO = Jobs.hasSuccess(50, "Ferreiro", ((Player) ev.getWhoClicked()));
-            if (SUCESSO == Jobs.success) {
+            if (Jobs.hasSuccess(50, "Ferreiro", ((Player) ev.getWhoClicked()))) {
                 Gema.addSocket(ev.getCurrentItem(), Gema.values()[Jobs.rnd.nextInt(Gema.values().length)]);
                 ev.setCursor(new ItemStack(Material.COAL));
                 ((Player) ev.getWhoClicked()).sendMessage(ChatColor.RED + "Voce adicionou um encaixe ao item.");

@@ -1,25 +1,20 @@
 package nativelevel.Classes.Mage;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import nativelevel.CustomEvents.SpellHitEvent;
 import nativelevel.KoM;
-import static nativelevel.Classes.Mage.SpellParticleEffects.ParticleType.BLUE_REDSTONE;
 import nativelevel.MetaShit;
 import nativelevel.sisteminhas.KomSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.ProjectileHitEvent;
 
+import java.util.HashMap;
+
+import static nativelevel.Classes.Mage.SpellParticleEffects.ParticleType.BLUE_REDSTONE;
+
 /**
- *
  * @author Ziden
  */
 public class SpellParticleEffects extends KomSystem {
@@ -69,9 +64,9 @@ public class SpellParticleEffects extends KomSystem {
             }
         }
     }
-    
+
     public static void colorida(Location l, int r, int g, int b) {
-        l.getWorld().spigot().playEffect(l, Effect.COLOURED_DUST, 0, (byte) 0, (r/255)+0.01f, g/255f, b/255f, 1, 0, 30);
+        l.getWorld().spigot().playEffect(l, Effect.COLOURED_DUST, 0, (byte) 0, (r / 255) + 0.01f, g / 255f, b / 255f, 1, 0, 30);
 
     }
 

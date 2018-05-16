@@ -1,22 +1,19 @@
 package nativelevel.biblioteca;
 
-import java.util.ArrayList;
-import java.util.List;
-import nativelevel.Custom.CustomItem;
-import nativelevel.Custom.ItemLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author Ziden
- *
  */
 public class Bibliotecario {
 
-    
+
     // TERMINAR DEPOIS...aff
     public static void pesquisa(String texto) {
 
@@ -24,7 +21,7 @@ public class Bibliotecario {
 
         Material m = null;
         ItemStack icone = null;
-        
+
         try {
 
             m = Material.valueOf(texto);

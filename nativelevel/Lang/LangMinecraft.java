@@ -1,5 +1,12 @@
 package nativelevel.Lang;
 
+import nativelevel.Custom.CustomItem;
+import nativelevel.KoM;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -11,13 +18,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nativelevel.Custom.CustomItem;
-import nativelevel.KoM;
-
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 
 public class LangMinecraft {
 
@@ -27,8 +27,9 @@ public class LangMinecraft {
     private Map<Integer, String[]> potionLangMap;
     private Map<Enchantment, String> enchantmentMap;
     private static LangMinecraft i;
+
     public static LangMinecraft get() {
-        if(i==null) {
+        if (i == null) {
             new LangMinecraft().init();
         }
         return i;
@@ -101,38 +102,38 @@ public class LangMinecraft {
 
     public String get(ItemStack ss) {
         CustomItem ci = CustomItem.getItem(ss);
-        if(ci != null) {
+        if (ci != null) {
             return ci.getName();
         }
-        
+
         // GAMBETAS //
-        
-        if(ss.getType()==Material.SHIELD)
+
+        if (ss.getType() == Material.SHIELD)
             return "Escudo";
-        else if(ss.getType()==Material.COOKED_MUTTON) {
+        else if (ss.getType() == Material.COOKED_MUTTON) {
             return "Ovelha Cozida";
-        } else if(ss.getType()==Material.MUTTON) {
+        } else if (ss.getType() == Material.MUTTON) {
             return "Carne de Ovelha";
-        } else if(ss.getType()==Material.RABBIT_FOOT)
+        } else if (ss.getType() == Material.RABBIT_FOOT)
             return "Pé de Coelho";
-        else if(ss.getType()==Material.RABBIT_STEW) {
+        else if (ss.getType() == Material.RABBIT_STEW) {
             return "Sopa de Coelho";
-        } else if(ss.getType()==Material.RABBIT_HIDE)
+        } else if (ss.getType() == Material.RABBIT_HIDE)
             return "Couro de Coelho";
-        else if(ss.getType()==Material.STONE) {
+        else if (ss.getType() == Material.STONE) {
             byte b = ss.getData().getData();
-            if(b==1)
+            if (b == 1)
                 return "Granito";
-            else if(b==2)
+            else if (b == 2)
                 return "Granito Polido";
-            else if(b==3)
+            else if (b == 3)
                 return "Diorito";
-            else if(b==4)
+            else if (b == 4)
                 return "Diorito Polido";
-            else if(b==5)
+            else if (b == 5)
                 return "Andesito";
-            else if(b==6)
-                return "Andesito Polido"; 
+            else if (b == 6)
+                return "Andesito Polido";
         }
         return this.getLocalized(getItemName(ss));
     }
@@ -151,18 +152,18 @@ public class LangMinecraft {
                 return getLocalized(materialLangMap.get(new MaterialData(mat))) + " " + getLocalized(monsterLangMap.get(damage));
             }
         }
-        
+
         if (item.getType().getMaxDurability() > 64) {
             // Tools
             damage = 0;
         }
-        
-        if(item.getData().getData()!=0 && damage == 0){
+
+        if (item.getData().getData() != 0 && damage == 0) {
             damage = item.getData().getData();
         }
-        
+
         MaterialData data = new MaterialData(mat, damage);
-        
+
         if (!materialLangMap.containsKey(data)) {
             return mat.name();
         }
@@ -822,12 +823,12 @@ public class LangMinecraft {
         materialLangMap.put(new MaterialData(m("CARPET"), 4), "tile.woolCarpet.yellow.name");
         materialLangMap.put(new MaterialData(m("WORKBENCH")), "tile.workbench.name");
         materialLangMap.put(new MaterialData(m("COBBLESTONE")), "tile.stonebrick.name");
-        
+
         materialLangMap.put(new MaterialData(m("COOKED_MUTON")), "item.muttonCooked.name");
         materialLangMap.put(new MaterialData(m("RAW_MUTON")), "item.muttonRaw.name");
-        
+
         materialLangMap.put(new MaterialData(m("RAW_MUTON")), "item.muttonRaw.name");
-        
+
     }
 
     public Material m(String name) {

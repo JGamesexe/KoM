@@ -18,7 +18,7 @@ public class MobEquipEvent extends PhatLootsEvent {
     /**
      * Creates a new event with the given data
      *
-     * @param mob The mob whose equipment was modified
+     * @param mob    The mob whose equipment was modified
      * @param potion The PotionMeta that is to be applied to the mob
      */
     public MobEquipEvent(LivingEntity mob, PotionMeta potion) {

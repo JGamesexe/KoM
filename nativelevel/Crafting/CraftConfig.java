@@ -5,20 +5,17 @@
  */
 package nativelevel.Crafting;
 
-import java.util.HashSet;
 import nativelevel.Custom.CustomItem;
-import static nativelevel.Harvesting.HarvestConfig.ConfigFile;
-import nativelevel.Harvesting.Harvestable;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.config.ConfigManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.HashSet;
+
 /**
- *
  * @author User
- *
  */
 public class CraftConfig {
 

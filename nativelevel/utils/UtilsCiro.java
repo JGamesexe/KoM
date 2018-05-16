@@ -1,13 +1,13 @@
 package nativelevel.utils;
 
 //<editor-fold defaultstate="collapsed" desc="imports">
+
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 //</editor-fold>
 
 /**
- *
  * @author ciro
  */
 public class UtilsCiro {
@@ -20,7 +20,7 @@ public class UtilsCiro {
         }
         return false;
     }
-    
+
     public static boolean isInt(double s) {
         if ((s == Math.floor(s)) && !Double.isInfinite(s)) {
             return true;

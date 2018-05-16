@@ -3,12 +3,13 @@ package nativelevel.phatloots.listeners;
 import nativelevel.phatloots.PhatLoot;
 import nativelevel.phatloots.PhatLoots;
 import nativelevel.phatloots.regions.RegionHook;
+import org.bukkit.Location;
+import org.bukkit.entity.*;
+import org.bukkit.entity.Horse.Variant;
+import org.bukkit.event.Listener;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.Location;
-import org.bukkit.entity.Horse.Variant;
-import org.bukkit.entity.*;
-import org.bukkit.event.Listener;
 
 /**
  * Listens for Mob events that trigger loots
@@ -25,7 +26,7 @@ public abstract class MobListener implements Listener {
     /**
      * Returns a cleaned up string representation of the given Entity's type
      *
-     * @param entity The given Entity
+//     * @param entity The given Entity
      * @return The name of the type of the Entity
      */
     abstract String getLootType();
@@ -33,17 +34,17 @@ public abstract class MobListener implements Listener {
     /**
      * Returns the PhatLoot for the given Entity if one exists.
      * A PhatLoot for a mob is searched for in the following order
-     *     With a custom name
-     *     Of a specific Type
-     *         In a specific Region
-     *         In a specific World
-     *     Of any type
-     *         In a specific Region
-     *         In a specific World
-     *     Of a specific Type
-     *         Anywhere
-     *     Of any type
-     *         Anywhere
+     * With a custom name
+     * Of a specific Type
+     * In a specific Region
+     * In a specific World
+     * Of any type
+     * In a specific Region
+     * In a specific World
+     * Of a specific Type
+     * Anywhere
+     * Of any type
+     * Anywhere
      *
      * @param entity The given Entity
      * @return The PhatLoot or null if there are none for the Entity
@@ -52,8 +53,8 @@ public abstract class MobListener implements Listener {
         //First check for a PhatLoot matching the mob's custom name
         if (namedMobs) {
             String name = entity instanceof HumanEntity
-                          ? ((HumanEntity) entity).getName() //NPC or Player
-                          : entity.getCustomName(); //Mob
+                    ? ((HumanEntity) entity).getName() //NPC or Player
+                    : entity.getCustomName(); //Mob
             if (name != null) {
                 name = name.replace(" ", "_");
                 name = name.replace("§", "&");
@@ -73,54 +74,54 @@ public abstract class MobListener implements Listener {
         String specificType = null;
         if (mobTypes) {
             switch (entity.getType()) {
-            case PIG_ZOMBIE:
-            case ZOMBIE: //'BabyVillager' | 'Baby' | 'Villager' | 'Normal'
-                Zombie zombie = (Zombie) entity;
-                if (zombie.isBaby()) {
-                    specificType = zombie.isVillager() ? "BabyVillager" : "Baby";
-                } else if (zombie.isVillager()) {
-                    specificType = "Villager";
-                } else {
-                    specificType = "Normal";
-                }
-                break;
-            case SKELETON: //'Wither' | 'Normal'
-                specificType = toCamelCase(((Skeleton) entity).getSkeletonType());
-                break;
-            case VILLAGER: //Profession
-                specificType = toCamelCase(((Villager) entity).getProfession());
-                break;
-            case CREEPER: //'Powered' | 'Normal'
-                Creeper creeper = (Creeper) entity;
-                specificType = creeper.isPowered() ? "Powered" : "Normal";
-                break;
-            case HORSE: //Color + Style (type is also determined by variant
-                Horse horse = (Horse) entity;
-                type = toCamelCase(horse.getVariant());
-                if (horse.getVariant() == Variant.HORSE) {
-                    specificType = toCamelCase(horse.getColor());
-                    switch (horse.getStyle()) {
-                    case WHITE_DOTS:
-                        specificType += "Spotted";
-                        break;
-                    case BLACK_DOTS:
-                        specificType += "Dark";
-                        break;
-                    case WHITE:
-                        specificType += "Light";
-                        break;
-                    case WHITEFIELD:
-                        specificType += "Milky";
-                        break;
+                case PIG_ZOMBIE:
+                case ZOMBIE: //'BabyVillager' | 'Baby' | 'Villager' | 'Normal'
+                    Zombie zombie = (Zombie) entity;
+                    if (zombie.isBaby()) {
+                        specificType = zombie.isVillager() ? "BabyVillager" : "Baby";
+                    } else if (zombie.isVillager()) {
+                        specificType = "Villager";
+                    } else {
+                        specificType = "Normal";
                     }
-                }
-                break;
-            case SHEEP: //Color
-                Sheep sheep = (Sheep) entity;
-                specificType = toCamelCase(sheep.getColor());
-                break;
-            default:
-                break;
+                    break;
+                case SKELETON: //'Wither' | 'Normal'
+                    specificType = toCamelCase(((Skeleton) entity).getSkeletonType());
+                    break;
+                case VILLAGER: //Profession
+                    specificType = toCamelCase(((Villager) entity).getProfession());
+                    break;
+                case CREEPER: //'Powered' | 'Normal'
+                    Creeper creeper = (Creeper) entity;
+                    specificType = creeper.isPowered() ? "Powered" : "Normal";
+                    break;
+                case HORSE: //Color + Style (type is also determined by variant
+                    Horse horse = (Horse) entity;
+                    type = toCamelCase(horse.getVariant());
+                    if (horse.getVariant() == Variant.HORSE) {
+                        specificType = toCamelCase(horse.getColor());
+                        switch (horse.getStyle()) {
+                            case WHITE_DOTS:
+                                specificType += "Spotted";
+                                break;
+                            case BLACK_DOTS:
+                                specificType += "Dark";
+                                break;
+                            case WHITE:
+                                specificType += "Light";
+                                break;
+                            case WHITEFIELD:
+                                specificType += "Milky";
+                                break;
+                        }
+                    }
+                    break;
+                case SHEEP: //Color
+                    Sheep sheep = (Sheep) entity;
+                    specificType = toCamelCase(sheep.getColor());
+                    break;
+                default:
+                    break;
             }
         }
         //Check if the entity is a baby
@@ -191,7 +192,7 @@ public abstract class MobListener implements Listener {
         String s = type.name();
         String[] parts = s.split("_");
         String camelCaseString = "";
-        for (String part : parts){
+        for (String part : parts) {
             camelCaseString = camelCaseString + toProperCase(part);
         }
         return camelCaseString;

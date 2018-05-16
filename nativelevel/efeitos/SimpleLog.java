@@ -17,9 +17,14 @@ package nativelevel.efeitos;
 /**
  * Utilities log
  */
-import java.io.*;
-import java.text.*;
-import java.util.*;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class SimpleLog {
 

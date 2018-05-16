@@ -1,3 +1,4 @@
 package genericos.komzin.libzinha.utils;
 
-public class JanelaBoard {}
+public class JanelaBoard {
+}

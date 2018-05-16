@@ -16,7 +16,6 @@ package nativelevel.Custom.Items;
 
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.util.Iterator;
 import nativelevel.Custom.CustomItem;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
@@ -24,10 +23,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.Iterator;
+
 public class ValeCasa extends CustomItem {
 
     public ValeCasa() {
-        super(Material.PAPER,L.m( "Escritura de Terreno"), L.m("Vale uma casa eterna em Rhodes"), CustomItem.LENDARIO);
+        super(Material.PAPER, L.m("Escritura de Terreno"), L.m("Vale uma casa eterna em Rhodes"), CustomItem.LENDARIO);
     }
 
     @Override
@@ -47,16 +48,16 @@ public class ValeCasa extends CustomItem {
         Iterator<ProtectedRegion> i = set.iterator();
         while (x < 2 && i.hasNext()) {
             ProtectedRegion regiao = i.next();
-            if(KoM.debugMode)
-                KoM.log.info("verificando regiao "+regiao.getId());
-            
+            if (KoM.debugMode)
+                KoM.log.info("verificando regiao " + regiao.getId());
+
             if (regiao.getId().contains("casa")) {
                 if (regiao.getOwners().size() == 0) {
                     p.sendMessage(ChatColor.GREEN + L.m("Esta é sua nova casa !"));
                     regiao.getOwners().addPlayer(p.getName());
                     kato = true;
-                    if (p.getItemInHand().getAmount() > 1) {
-                        p.getItemInHand().setAmount(p.getItemInHand().getAmount() - 1);
+                    if (p.getInventory().getItemInMainHand().getAmount() > 1) {
+                        p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
                     } else {
                         p.setItemInHand(null);
                         //p.getInventory().removeItem(new ItemStack(Material.LAPIS_BLOCK, 1));

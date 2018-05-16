@@ -5,17 +5,13 @@
  */
 package nativelevel.Custom.Potions;
 
-import nativelevel.Lang.L;
 import nativelevel.Custom.CustomPotion;
 import nativelevel.KoM;
+import nativelevel.Lang.L;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.Effect;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -25,7 +21,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 /**
- *
  * @author User
  */
 public class Cure1 extends CustomPotion {
@@ -43,7 +38,7 @@ public class Cure1 extends CustomPotion {
     public void splashEvent(PotionSplashEvent ev, Player p) {
 
     }
-    
+
     public Color cor() {
         return Color.fromRGB(244, 168, 6);
     }
@@ -51,9 +46,9 @@ public class Cure1 extends CustomPotion {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            new ItemStack(Material.LEAVES, 1),
-            new ItemStack(Material.WHEAT, 1),
-            new ItemStack(Material.SAND, 1)};
+                new ItemStack(Material.LEAVES, 1),
+                new ItemStack(Material.WHEAT, 1),
+                new ItemStack(Material.SAND, 1)};
     }
 
     @Override
@@ -83,14 +78,14 @@ public class Cure1 extends CustomPotion {
                     } else {
                         ev.setCancelled(true);
                         ev.getPlayer().sendMessage(ChatColor.RED + L.m("Este veneno é muito forte para ser curado com esta poção !"));
-                        
+
                     }
                 }
             }
         } else {
             ev.setCancelled(true);
             ev.getPlayer().sendMessage(ChatColor.RED + L.m("Você não está envenenado para beber isto !"));
-            
+
         }
     }
 

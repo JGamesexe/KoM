@@ -5,22 +5,14 @@
  */
 package nativelevel.Custom.Potions;
 
-import genericos.komzin.libzinha.listeners.GeralListener;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.Lang.L;
 import nativelevel.Custom.CustomPotion;
+import nativelevel.Lang.L;
 import nativelevel.Listeners.GeneralListener;
 import org.bukkit.Color;
-import org.bukkit.Effect;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.ThrownPotion;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -30,16 +22,14 @@ import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
 /**
- *
  * @author User
- *
  */
 public class Explosion3 extends CustomPotion {
 
     private int damage = 10;
 
     public Color cor() {
-           return Color.GRAY;
+        return Color.GRAY;
     }
 
     private DamageCause damageType = DamageCause.ENTITY_EXPLOSION;
@@ -51,7 +41,7 @@ public class Explosion3 extends CustomPotion {
     @Override
     public void interage(PlayerInteractEvent ev) {
         ThrownPotion thrownPotion = ev.getPlayer().launchProjectile(ThrownPotion.class);
-        thrownPotion.setItem(new ItemStack(ev.getPlayer().getItemInHand()));
+        thrownPotion.setItem(new ItemStack(ev.getPlayer().getInventory().getItemInMainHand()));
         thrownPotion.setShooter(ev.getPlayer());
         this.consome(ev.getPlayer());
     }
@@ -80,9 +70,9 @@ public class Explosion3 extends CustomPotion {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            new ItemStack(Material.COAL_BLOCK, 1),
-            new ItemStack(Material.LOG_2, 1, (short) 0, (byte) 1),
-            new ItemStack(Material.DIAMOND, 1)};
+                new ItemStack(Material.COAL_BLOCK, 1),
+                new ItemStack(Material.LOG_2, 1, (short) 0, (byte) 1),
+                new ItemStack(Material.DIAMOND, 1)};
     }
 
     @Override

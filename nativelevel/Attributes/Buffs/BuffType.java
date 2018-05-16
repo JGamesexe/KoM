@@ -6,11 +6,10 @@
 package nativelevel.Attributes.Buffs;
 
 /**
- *
  * @author User
  */
 public enum BuffType {
-    
+
     BUFF, DEBUFF, MALDICAO
-    
+
 }

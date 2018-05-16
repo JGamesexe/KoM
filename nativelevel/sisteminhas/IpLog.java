@@ -5,36 +5,29 @@
 package nativelevel.sisteminhas;
 
 /**
- *
  * @author usuario
  */
-import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+
+import nativelevel.KoM;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.FileConfigurationOptions;
-import org.bukkit.configuration.file.YamlConfiguration;
-import nativelevel.KoM;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 public class IpLog implements CommandExecutor, Listener {
 
@@ -128,7 +121,7 @@ public class IpLog implements CommandExecutor, Listener {
             if (!Players.getStringList(playername.toLowerCase()).isEmpty()) {
                 for (String b : Players.getStringList(playername.toLowerCase())) {
                     b = b.replaceAll("\\.", "_");
-                    for (Iterator localIterator2 = Ips.getStringList(b).iterator(); localIterator2.hasNext();) {
+                    for (Iterator localIterator2 = Ips.getStringList(b).iterator(); localIterator2.hasNext(); ) {
                         c = (String) localIterator2.next();
                         if (!alts.contains(c)) {
                             alts.add(c);

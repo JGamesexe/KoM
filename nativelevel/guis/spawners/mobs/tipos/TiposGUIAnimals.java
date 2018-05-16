@@ -1,15 +1,13 @@
 package nativelevel.guis.spawners.mobs.tipos;
 
-import nativelevel.KoM;
 import nativelevel.guis.spawners.SpawnerGUIMain;
 import nativelevel.utils.EntityHelp;
 import nativelevel.utils.GUI;
-import me.dpohvar.powernbt.api.NBTCompound;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 
@@ -38,30 +36,23 @@ public class TiposGUIAnimals extends GUI {
     }
 
     @Override
-    public void interage(Player player, int slot, InventoryAction inventoryAction) {
-        super.interage(player, slot, inventoryAction);
+    public void interage(InventoryClickEvent event) {
+        super.interage(event);
 
-        if (inventory.getItem(slot) == null || inventory.getItem(slot).getType().equals(Material.STAINED_GLASS_PANE)) return;
+        Player player = (Player) event.getWhoClicked();
+        int slot = event.getSlot();
+
+        if (inventory.getItem(slot) == null || inventory.getItem(slot).getType().equals(Material.STAINED_GLASS_PANE))
+            return;
 
         spawner.setSpawnedType(((SpawnEggMeta) inventory.getItem(slot).getItemMeta()).getSpawnedType());
         spawner.update(true);
 
-        NBTCompound spawnerData = KoM.nbtManager.read(spawner.getBlock());
-        NBTCompound spawnData = spawnerData.getCompound("SpawnData");
-
-        spawnData.put("Attributes", SpawnerGUIMain.removeAttr(spawnData.getList("Attributes"), "attack"));
-
-        spawnerData.put("SpawnData", spawnData);
-        KoM.nbtManager.write(spawner.getBlock(), spawnerData);
-        KoM.nbtManager.write(spawner.getBlock(), spawnData);
+        SpawnerGUIMain.removeAttr(spawner, "attack");
+        SpawnerGUIMain.tiraBebe(spawner);
 
         GUI.open(player, new SpawnerGUIMain(spawner));
 
     }
 
-
-    //    public void interage(ItemStack itemStack){
-//        switch (itemStack.getItemMeta().getDisplayName());
-//
-//    }
 }

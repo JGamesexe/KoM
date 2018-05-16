@@ -1,11 +1,8 @@
-
 package nativelevel.precocabeca;
 
-import java.util.HashMap;
-import java.util.UUID;
 import nativelevel.KoM;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class Recompensas {
 
@@ -22,16 +19,16 @@ public class Recompensas {
         if (isProcurado(uid)) {
             jata = getRecompensa(uid);
             double recompensa = jata + qt;
-            KoM.database.setPrecoCabeca(uid.toString(), (int)recompensa);
+            KoM.database.setPrecoCabeca(uid.toString(), (int) recompensa);
         } else {
-            KoM.database.setPrecoCabeca(uid.toString(), (int)qt);
+            KoM.database.setPrecoCabeca(uid.toString(), (int) qt);
 
         }
     }
 
     public void removeRecompensa(UUID uid) {
         if (isProcurado(uid)) {
-             KoM.database.setPrecoCabeca(uid.toString(), 0);
+            KoM.database.setPrecoCabeca(uid.toString(), 0);
         }
     }
 

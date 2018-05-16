@@ -1,24 +1,24 @@
 package genericos.komzin.libzinha.reboot;
 
-import genericos.komzin.libzinha.utils.Utils;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nativelevel.KoM;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ThreadReinicioRapido
         extends Thread {
 
     public static void broadcastMessage(String s) {
         try {
-            for(Player p : Bukkit.getOnlinePlayers())
+            for (Player p : Bukkit.getOnlinePlayers())
                 p.sendMessage(s);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
     public void run() {
         broadcastMessage("§7§l[§6§lK§e§lo§6§lM§7§l] §d O inverno está chegando ! Jabu irá congelar o mundo em 2 minutos !");
         try {
@@ -57,7 +57,7 @@ public class ThreadReinicioRapido
         }
         broadcastMessage("§7§l[§6§lK§e§lo§6§lM§7§l] §d Seu corpo está quase totalmente congelado. Jabu está congelando o mundo em 10 segundos");
         try {
-            
+
             sleep(5000L);
         } catch (InterruptedException ex) {
             Logger.getLogger(ThreadReinicioRapido.class.getName()).log(Level.SEVERE, null, ex);
@@ -74,7 +74,7 @@ public class ThreadReinicioRapido
         }
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(KoM._instance, new KikaNegada(), (20), (20));
-        
+
         Runnable r = new Runnable() {
             public void run() {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "save-all");

@@ -3,16 +3,10 @@ package nativelevel.Classes.Blacksmithy.recipes;
 import nativelevel.Classes.Blacksmithy.CustomCrafting;
 import nativelevel.KoM;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author Ziden
- *
  */
 public class IronChestplate extends CustomCrafting {
 
@@ -23,9 +17,9 @@ public class IronChestplate extends CustomCrafting {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            new ItemStack(Material.LEATHER_CHESTPLATE, 1),
-            new ItemStack(Material.LEATHER, 1),
-            new ItemStack(Material.IRON_BLOCK),};
+                new ItemStack(Material.LEATHER_CHESTPLATE, 1),
+                new ItemStack(Material.LEATHER, 1),
+                new ItemStack(Material.IRON_BLOCK),};
     }
 
     @Override
@@ -49,7 +43,7 @@ public class IronChestplate extends CustomCrafting {
         if (ss.getType() == Material.CHAINMAIL_CHESTPLATE) {
             ss.setType(Material.IRON_CHESTPLATE);
         }
-        
+
         return ss;
 
     }
@@ -61,7 +55,7 @@ public class IronChestplate extends CustomCrafting {
             KoM.debug("Mudei");
             ss.setType(Material.CHAINMAIL_CHESTPLATE);
         }
-        
+
         return ss;
 
     }

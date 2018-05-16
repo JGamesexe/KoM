@@ -5,21 +5,15 @@
  */
 package nativelevel.sisteminhas;
 
-import nativelevel.phatloots.PhatLootsAPI;
-import java.util.ArrayList;
-import java.util.List;
 import nativelevel.CFG;
 import nativelevel.Jobs;
 import nativelevel.Lang.L;
+import nativelevel.phatloots.PhatLootsAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.Blaze;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Spider;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -28,8 +22,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author vntgasl
  */
 
@@ -37,7 +33,7 @@ public class Tesouros implements Listener {
 
     @EventHandler
     public void interage(PlayerInteractEvent ev) {
-        if (ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() == Material.WRITTEN_BOOK) {
+        if (ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.WRITTEN_BOOK) {
             usaLivro(ev.getPlayer());
         }
     }
@@ -90,7 +86,7 @@ public class Tesouros implements Listener {
     }
 
     public void usaLivro(Player p) {
-        ItemStack livro = p.getItemInHand();
+        ItemStack livro = p.getInventory().getItemInMainHand();
         if (livro != null && livro.getType() == Material.WRITTEN_BOOK) {
             BookMeta meta = (BookMeta) livro.getItemMeta();
             if (meta.hasAuthor()) {

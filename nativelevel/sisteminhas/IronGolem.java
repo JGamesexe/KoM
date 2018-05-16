@@ -17,7 +17,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 /**
- *
  * @author User
  */
 public class IronGolem {
@@ -29,7 +28,7 @@ public class IronGolem {
             }
         }
     }
-    
+
 
     public static void spawn(Player p) {
         org.bukkit.entity.IronGolem golem = p.getWorld().spawn(p.getLocation(), org.bukkit.entity.IronGolem.class);

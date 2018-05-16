@@ -14,19 +14,15 @@
  */
 package nativelevel.Custom.Items;
 
-import java.util.ArrayList;
-import java.util.List;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Custom.CustomItem;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.config.Config;
+import nativelevel.sisteminhas.ClanLand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class DoubleXP extends CustomItem {
 
@@ -43,10 +39,10 @@ public class DoubleXP extends CustomItem {
             return true;
         } else {
             ativo = true;
-            if (player.getItemInHand().getAmount() == 1) {
+            if (player.getInventory().getItemInMainHand().getAmount() == 1) {
                 player.setItemInHand(null);
             } else {
-                player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
+                player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
             }
             int ganhou = Config.getDoacoes();
             int ganhout = ganhou;

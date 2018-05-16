@@ -14,25 +14,6 @@
  */
 package nativelevel.Custom.Buildings;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import nativelevel.MetaShit;
-import nativelevel.KoM;
-import nativelevel.sisteminhas.ClanLand;
-import net.sacredlabyrinth.phaed.simpleclans.Clan;
-import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.Sign;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 public class AutoDispenser {
 
     /*

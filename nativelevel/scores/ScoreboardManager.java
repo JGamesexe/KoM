@@ -1,23 +1,16 @@
 package nativelevel.scores;
 
-import java.util.HashMap;
-import java.util.UUID;
 import nativelevel.KoM;
-import nativelevel.scores.FakeScoreboard;
-import nativelevel.scores.FakeTeam;
 import net.minecraft.server.v1_12_R1.PacketPlayOutPlayerInfo;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
-
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
+import org.bukkit.scoreboard.*;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class ScoreboardManager {
 
@@ -118,7 +111,7 @@ public class ScoreboardManager {
     }
 
     public static void addToTeam(final Player observer, final String player, String teamName, String teamPrefix, String teamSuffix,
-            boolean seeFriendlyInvis) {
+                                 boolean seeFriendlyInvis) {
         Scoreboard board = observer.getScoreboard();
         boolean addToTeam = false;
         Team team = board.getTeam(teamName);
@@ -324,6 +317,7 @@ public class ScoreboardManager {
     public static void removeFromTeam(Player player) {
         removeFromTeam(player.getName());
     }
+
     public static HashMap<UUID, HashMap<Integer, String>> ScoreCache = new HashMap<UUID, HashMap<Integer, String>>();
 
     private static HashMap<Integer, String> getScoreCache(Player p) {

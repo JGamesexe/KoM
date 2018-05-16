@@ -16,45 +16,31 @@ package nativelevel;
 
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.Listeners.GeneralListener;
-import nativelevel.Classes.Alchemy.Alchemist;
-import nativelevel.Classes.Engineer;
-import nativelevel.Classes.Farmer;
+import nativelevel.Attributes.Mana;
+import nativelevel.Attributes.Stamina;
 import nativelevel.Classes.Blacksmithy.Blacksmith;
-import nativelevel.Classes.Thief;
+import nativelevel.Classes.Farmer;
 import nativelevel.Classes.Lumberjack;
-import nativelevel.Classes.Mage.Wizard;
-import nativelevel.Classes.Minerador;
 import nativelevel.Classes.Paladin;
+import nativelevel.Classes.Thief;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.CajadoElemental;
 import nativelevel.Lang.L;
-import nativelevel.Attributes.AttributeInfo;
-import nativelevel.Attributes.Mana;
-import nativelevel.Attributes.Stamina;
+import nativelevel.Listeners.GeneralListener;
 import nativelevel.integration.SimpleClanKom;
 import nativelevel.karma.Criminoso;
 import nativelevel.sisteminhas.ClanLand;
 import nativelevel.spec.PlayerSpec;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.EntityEffect;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -70,7 +56,7 @@ public class ExecutaSkill {
                 Thief.revela(p);
             }
 
-            if (p.isBlocking()) { //if (p.getItemInHand().getType() == Material.SHIELD || p.getInventory().getItemInOffHand().getType() == Material.SHIELD) {
+            if (p.isBlocking()) { //if (p.getInventory().getItemInMainHand().getType() == Material.SHIELD || p.getInventory().getItemInOffHand().getType() == Material.SHIELD) {
 
                 if (Jobs.getJobLevel(Jobs.Classe.Paladino, p) != Jobs.TipoClasse.PRIMARIA || !Mana.spendMana(p, 15)) {
 
@@ -80,9 +66,9 @@ public class ExecutaSkill {
 
                     if (firstEmpty != -1) {
 
-                        if (p.getItemInHand().getType() == Material.SHIELD) {
+                        if (p.getInventory().getItemInMainHand().getType() == Material.SHIELD) {
 
-                            p.getInventory().addItem(p.getItemInHand().clone());
+                            p.getInventory().addItem(p.getInventory().getItemInMainHand().clone());
                             p.setItemInHand(new ItemStack(Material.AIR, 1));
 
                         } else if (p.getInventory().getItemInOffHand().getType() == Material.SHIELD) {
@@ -93,12 +79,12 @@ public class ExecutaSkill {
 
                     } else {
 
-                        if (p.getItemInHand().getType() == Material.SHIELD) {
+                        if (p.getInventory().getItemInMainHand().getType() == Material.SHIELD) {
 
-                            p.getInventory().addItem(p.getItemInHand().clone());
-                            p.getWorld().dropItem(p.getLocation(), p.getItemInHand());
+                            p.getInventory().addItem(p.getInventory().getItemInMainHand().clone());
+                            p.getWorld().dropItem(p.getLocation(), p.getInventory().getItemInMainHand());
 
-                        } else if (p.getItemInHand().getType() == Material.SHIELD) {
+                        } else if (p.getInventory().getItemInMainHand().getType() == Material.SHIELD) {
 
                             p.getWorld().dropItem(p.getLocation(), p.getInventory().getItemInOffHand());
                             p.getInventory().addItem(p.getInventory().getItemInOffHand().clone());
@@ -128,10 +114,10 @@ public class ExecutaSkill {
                 Blacksmith.evitaFogo(ev, (Player) ev.getEntity());
             }
             String cajadoElemental = null;
-            if (p.getItemInHand() != null) {
-                String ci = CustomItem.getCustomItem(p.getItemInHand());
+            if (p.getInventory().getItemInMainHand() != null) {
+                String ci = CustomItem.getCustomItem(p.getInventory().getItemInMainHand());
                 if (ci != null && ci.equalsIgnoreCase("Cajado Elemental") && Jobs.getJobLevel("Mago", p) == 1) {
-                    cajadoElemental = CajadoElemental.getElemento(p.getItemInHand());
+                    cajadoElemental = CajadoElemental.getElemento(p.getInventory().getItemInMainHand());
                     if (cajadoElemental == null) {
                         cajadoElemental = "Nulo";
                     }
@@ -162,7 +148,7 @@ public class ExecutaSkill {
             if (ev.getCause() == DamageCause.POISON || ev.getCause() == DamageCause.WITHER) {
                 if (cajadoElemental != null) {
                     if (cajadoElemental.equalsIgnoreCase("Nulo")) {
-                        CajadoElemental.botaElemento(p.getItemInHand(), "Veneno");
+                        CajadoElemental.botaElemento(p.getInventory().getItemInMainHand(), "Veneno");
                         p.sendMessage(ChatColor.GREEN + "Seu cajado absorveu o elemento Veneno");
                     } else if (cajadoElemental.equalsIgnoreCase("Veneno")) {
                         ev.setDamage(ev.getDamage() * 0.8);
@@ -219,7 +205,7 @@ public class ExecutaSkill {
                 }
                 if (cajadoElemental != null) {
                     if (cajadoElemental.equalsIgnoreCase("Nulo")) {
-                        CajadoElemental.botaElemento(p.getItemInHand(), "Fogo");
+                        CajadoElemental.botaElemento(p.getInventory().getItemInMainHand(), "Fogo");
                         p.sendMessage(ChatColor.GREEN + "Seu cajado absorveu o elemento Fogo");
                     } else if (cajadoElemental.equalsIgnoreCase("Fogo")) {
                         ev.setDamage(ev.getDamage() * 0.8);
@@ -233,7 +219,7 @@ public class ExecutaSkill {
 
                 if (cajadoElemental != null) {
                     if (cajadoElemental.equalsIgnoreCase("Nulo")) {
-                        CajadoElemental.botaElemento(p.getItemInHand(), "Raio");
+                        CajadoElemental.botaElemento(p.getInventory().getItemInMainHand(), "Raio");
                         p.sendMessage(ChatColor.GREEN + "Seu cajado absorveu o elemento Raio");
                     } else if (cajadoElemental.equalsIgnoreCase("Raio")) {
                         ev.setDamage(ev.getDamage() * 0.8);
@@ -247,7 +233,7 @@ public class ExecutaSkill {
 
                 if (cajadoElemental != null) {
                     if (cajadoElemental.equalsIgnoreCase("Nulo")) {
-                        CajadoElemental.botaElemento(p.getItemInHand(), "Agua");
+                        CajadoElemental.botaElemento(p.getInventory().getItemInMainHand(), "Agua");
                         p.sendMessage(ChatColor.GREEN + "Seu cajado absorveu o elemento Agua");
                     } else if (cajadoElemental.equalsIgnoreCase("Agua")) {
                         ev.setDamage(ev.getDamage() * 0.8);
@@ -269,7 +255,6 @@ public class ExecutaSkill {
         if (event.getDamager() instanceof Player) {
             Player attacker = (Player) event.getDamager();
 
-            Paladin.swordHit(event, attacker);
             if (event.isCancelled()) {
                 return;
             }
@@ -277,7 +262,7 @@ public class ExecutaSkill {
             double ratioNivel = 1 + (attacker.getLevel() / 100d) / 2d;
             event.setDamage(event.getDamage() * ratioNivel);
 
-            if (!CustomItem.podeUsar(attacker, attacker.getItemInHand())) {
+            if (!CustomItem.podeUsar(attacker, attacker.getInventory().getItemInMainHand())) {
                 event.setCancelled(true);
                 return;
             }
@@ -309,7 +294,7 @@ public class ExecutaSkill {
                 MetaShit.setMetaObject("tempoHit", attacker, System.currentTimeMillis());
             }
 
-            if (event.getEntity() instanceof Creature && attacker.getItemInHand() != null && attacker.getItemInHand().getType() == Material.EGG) {
+            if (event.getEntity() instanceof Creature && attacker.getInventory().getItemInMainHand() != null && attacker.getInventory().getItemInMainHand().getType() == Material.EGG) {
                 if (Farmer.transformaEmOvO(attacker, event.getEntity())) {
                     event.setCancelled(true);
                 }
@@ -325,7 +310,7 @@ public class ExecutaSkill {
                     return;
                 }
 
-                String customItem = CustomItem.getCustomItem(attacker.getItemInHand());
+                String customItem = CustomItem.getCustomItem(attacker.getInventory().getItemInMainHand());
                 if (customItem != null) {
                     CustomItem.hitWithCustomItem(customItem, event, attacker, defender);
                 }
@@ -363,7 +348,7 @@ public class ExecutaSkill {
                     if (PlayerSpec.temSpec(attacker, PlayerSpec.Guardiao)) {
                         event.setDamage(event.getDamage() * 0.85);
                     } else if (PlayerSpec.temSpec(attacker, PlayerSpec.Crusador)) {
-                        if (customItem == null && attacker.getItemInHand() != null && attacker.getItemInHand().getType().name().contains("SWORD")) {
+                        if (customItem == null && attacker.getInventory().getItemInMainHand() != null && attacker.getInventory().getItemInMainHand().getType().name().contains("SWORD")) {
                             event.setDamage(event.getDamage() * 1.3);
                         }
                     }
@@ -393,7 +378,7 @@ public class ExecutaSkill {
                  defender.setNoDamageTicks(20);
                  event.setCancelled(true);
 
-                 if (attacker.getItemInHand().getType() == Material.WOOD_AXE || attacker.getItemInHand().getType() == Material.GOLD_AXE || attacker.getItemInHand().getType() == Material.IRON_AXE || attacker.getItemInHand().getType() == Material.STONE_AXE || attacker.getItemInHand().getType() == Material.DIAMOND_AXE) {
+                 if (attacker.getInventory().getItemInMainHand().getType() == Material.WOOD_AXE || attacker.getInventory().getItemInMainHand().getType() == Material.GOLD_AXE || attacker.getInventory().getItemInMainHand().getType() == Material.IRON_AXE || attacker.getInventory().getItemInMainHand().getType() == Material.STONE_AXE || attacker.getInventory().getItemInMainHand().getType() == Material.DIAMOND_AXE) {
                  // verificando maxadada epica
                  if (attacker.hasMetadata("epichax")) {
                  int task = (int) MetaShit.getMetaObject("epichax", attacker);
@@ -416,14 +401,14 @@ public class ExecutaSkill {
                 }
 
                 // blacksmith blaze rod set on fire
-                if (attacker.getItemInHand() != null && attacker.getItemInHand().getType() == Material.BLAZE_ROD && attacker.getLevel() >= 35 && Jobs.getJobLevel("Ferreiro", attacker) == 1) {
+                if (attacker.getInventory().getItemInMainHand() != null && attacker.getInventory().getItemInMainHand().getType() == Material.BLAZE_ROD && attacker.getLevel() >= 35 && Jobs.getJobLevel("Ferreiro", attacker) == 1) {
                     attacker.sendMessage(ChatColor.GREEN + L.m("Voce usou a blaze rod para tocar fogo no inimigo !"));
                     defender.setFireTicks(20 * 40);
                     defender.getWorld().playEffect(defender.getLocation(), Effect.EXPLOSION_HUGE, 2);
-                    if (attacker.getItemInHand().getAmount() == 1) {
+                    if (attacker.getInventory().getItemInMainHand().getAmount() == 1) {
                         attacker.setItemInHand(null);
                     } else {
-                        attacker.getItemInHand().setAmount(attacker.getItemInHand().getAmount() - 1);
+                        attacker.getInventory().getItemInMainHand().setAmount(attacker.getInventory().getItemInMainHand().getAmount() - 1);
                     }
                 }
 
@@ -434,7 +419,7 @@ public class ExecutaSkill {
                 }
 
                 // 0 damage no soco
-                if (attacker.getItemInHand() == null || attacker.getItemInHand().getType() == Material.AIR) {
+                if (attacker.getInventory().getItemInMainHand() == null || attacker.getInventory().getItemInMainHand().getType() == Material.AIR) {
                     event.setDamage(0D);
                     event.setCancelled(true);
                     return;
@@ -448,9 +433,9 @@ public class ExecutaSkill {
                         event.setDamage(event.getDamage() * 0.8);
                     }
                 }
-                if (attacker.getItemInHand().getType().name().contains("SPADE")) {
+                if (attacker.getInventory().getItemInMainHand().getType().name().contains("SPADE")) {
                     if (Jobs.getJobLevel("Ferreiro", attacker) == 1 && attacker.getLevel() >= 4) {
-                        if (attacker.getItemInHand().getType() == Material.GOLD_SPADE) {
+                        if (attacker.getInventory().getItemInMainHand().getType() == Material.GOLD_SPADE) {
                             event.setDamage(event.getDamage() * 1.65);
                         } else {
                             event.setDamage(event.getDamage() * 1.4);
@@ -460,7 +445,7 @@ public class ExecutaSkill {
                         }
                     }
                 } // se ta batendo com MAXADOS
-                else if (attacker.getItemInHand().getType() == Material.WOOD_AXE || attacker.getItemInHand().getType() == Material.GOLD_AXE || attacker.getItemInHand().getType() == Material.IRON_AXE || attacker.getItemInHand().getType() == Material.STONE_AXE || attacker.getItemInHand().getType() == Material.DIAMOND_AXE) {
+                else if (attacker.getInventory().getItemInMainHand().getType() == Material.WOOD_AXE || attacker.getInventory().getItemInMainHand().getType() == Material.GOLD_AXE || attacker.getInventory().getItemInMainHand().getType() == Material.IRON_AXE || attacker.getInventory().getItemInMainHand().getType() == Material.STONE_AXE || attacker.getInventory().getItemInMainHand().getType() == Material.DIAMOND_AXE) {
                     // verificando maxadada epica
                     if (attacker.hasMetadata("epichax")) {
                         int task = (int) MetaShit.getMetaObject("epichax", attacker);
@@ -475,19 +460,19 @@ public class ExecutaSkill {
                     }
                     //event.setDamage(event.getDamage()*1.1);
                 } // se ta batendo com hoes
-                else if (attacker.getItemInHand().getType() == Material.WOOD_HOE || attacker.getItemInHand().getType() == Material.GOLD_HOE || attacker.getItemInHand().getType() == Material.IRON_HOE || attacker.getItemInHand().getType() == Material.STONE_HOE || attacker.getItemInHand().getType() == Material.DIAMOND_HOE) {
-                    if (!attacker.getItemInHand().getEnchantments().containsKey(Enchantment.DURABILITY)) {
-                        attacker.getItemInHand().setDurability((short) (attacker.getItemInHand().getDurability() + 1));
+                else if (attacker.getInventory().getItemInMainHand().getType() == Material.WOOD_HOE || attacker.getInventory().getItemInMainHand().getType() == Material.GOLD_HOE || attacker.getInventory().getItemInMainHand().getType() == Material.IRON_HOE || attacker.getInventory().getItemInMainHand().getType() == Material.STONE_HOE || attacker.getInventory().getItemInMainHand().getType() == Material.DIAMOND_HOE) {
+                    if (!attacker.getInventory().getItemInMainHand().getEnchantments().containsKey(Enchantment.DURABILITY)) {
+                        attacker.getInventory().getItemInMainHand().setDurability((short) (attacker.getInventory().getItemInMainHand().getDurability() + 1));
                     }
 
-                    if (attacker.getItemInHand().getDurability() == attacker.getItemInHand().getType().getMaxDurability()) {
+                    if (attacker.getInventory().getItemInMainHand().getDurability() == attacker.getInventory().getItemInMainHand().getType().getMaxDurability()) {
                         attacker.setItemInHand(null);
                         event.setCancelled(true);
                         return;
                     }
 
                     if (Jobs.getJobLevel("Fazendeiro", attacker) == 1) {
-                        if (attacker.getItemInHand().getType().name().contains("HOE")) {
+                        if (attacker.getInventory().getItemInMainHand().getType().name().contains("HOE")) {
                             event.setDamage((event.getDamage() * 1.2));
                             if (PlayerSpec.temSpec(attacker, PlayerSpec.Ceifador)) {
                                 event.setDamage(event.getDamage() * 2);
@@ -500,7 +485,7 @@ public class ExecutaSkill {
                     if (Jobs.getJobLevel("Alquimista", attacker) == 1) {
 
                         /*
-                         if (attacker.getItemInHand().getType() == Material.GOLD_HOE) {
+                         if (attacker.getInventory().getItemInMainHand().getType() == Material.GOLD_HOE) {
                          if (PlayerSpec.temSpec(attacker, PlayerSpec.Cientista)) {
                          defender.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 20 * 20, 1));
                          } else {
@@ -526,7 +511,7 @@ public class ExecutaSkill {
 
                 }
 
-                if (attacker.getItemInHand().getType() == Material.WOOD_PICKAXE || attacker.getItemInHand().getType() == Material.IRON_PICKAXE || attacker.getItemInHand().getType() == Material.STONE_PICKAXE || attacker.getItemInHand().getType() == Material.DIAMOND_PICKAXE) {
+                if (attacker.getInventory().getItemInMainHand().getType() == Material.WOOD_PICKAXE || attacker.getInventory().getItemInMainHand().getType() == Material.IRON_PICKAXE || attacker.getInventory().getItemInMainHand().getType() == Material.STONE_PICKAXE || attacker.getInventory().getItemInMainHand().getType() == Material.DIAMOND_PICKAXE) {
                     GeneralListener.miner.tentaDerrubarArma(event);
                 }
 
@@ -543,8 +528,8 @@ public class ExecutaSkill {
             Thief.revela(attacker);
             //////////// Bonus da força  /////////
 
-            if (attacker.getItemInHand() != null) {
-                String ci = CustomItem.getCustomItem(attacker.getItemInHand());
+            if (attacker.getInventory().getItemInMainHand() != null) {
+                String ci = CustomItem.getCustomItem(attacker.getInventory().getItemInMainHand());
                 if (ci != null && ci.equalsIgnoreCase("Cajado Elemental")) {
                     // nada 
                 } else {
@@ -559,8 +544,8 @@ public class ExecutaSkill {
                 }
             }
 
-            if (attacker.getItemInHand() != null && (attacker.getItemInHand().getType() == Material.IRON_DOOR || attacker.getItemInHand().getType() == Material.EGG)) {
-                if (attacker.getItemInHand().getType() == Material.IRON_DOOR && Jobs.getJobLevel("Paladino", attacker) == 1) {
+            if (attacker.getInventory().getItemInMainHand() != null && (attacker.getInventory().getItemInMainHand().getType() == Material.IRON_DOOR || attacker.getInventory().getItemInMainHand().getType() == Material.EGG)) {
+                if (attacker.getInventory().getItemInMainHand().getType() == Material.IRON_DOOR && Jobs.getJobLevel("Paladino", attacker) == 1) {
                     int stam = 65;
                     if (PlayerSpec.temSpec(attacker, PlayerSpec.Guardiao)) {
                         stam = 30;

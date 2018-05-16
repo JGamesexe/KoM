@@ -1,16 +1,5 @@
 package nativelevel.mercadinho.database;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 import nativelevel.KoM;
 import nativelevel.Lang.LangMinecraft;
 import nativelevel.mercadinho.common.MarketItem;
@@ -20,13 +9,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.*;
+import java.util.*;
+import java.util.Date;
+
 /**
- *
  * @author Gabriel
- *
  */
 public class MercadoSQL {
 
@@ -484,14 +474,14 @@ public class MercadoSQL {
 
     public static List<MarketItem> CarreProdutosPorNome(String nome) {
         List<MarketItem> ListaProdutos = new ArrayList();
-          Statement statement = null;
+        Statement statement = null;
         ResultSet rs = null;
         try {
             MercadoSQL.ConnectMySQL();
-             statement = connection.createStatement();
+            statement = connection.createStatement();
             String sql = "SELECT * FROM PRODUTOS where (name LIKE '%" + nome + "%' OR customname LIKE '%" + nome + "%' or pt_BR LIKE '%" + nome + "%') and " + vencido + " " + orderby + ";";
 
-             rs = statement.executeQuery(sql);
+            rs = statement.executeQuery(sql);
             while (rs.next()) {
                 ItemStack item = Utils.deserializeItemStacks(Utils.BlobToBytes(rs.getBlob("itemstack")));
                 MarketItem mi = new MarketItem(UUID.fromString(rs.getString("owner")), item, rs.getDouble("preco"), rs.getString("nickowner"), rs.getInt("id"), rs.getInt("cash") == 1 ? true : false);

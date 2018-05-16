@@ -5,26 +5,22 @@
  */
 package nativelevel.Classes.Alchemy;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import nativelevel.Custom.CustomItem;
+import nativelevel.Custom.CustomPotion;
 import nativelevel.Custom.Items.PotionExtract;
 import nativelevel.Custom.Items.RecipeBook;
+import nativelevel.Custom.PotionLoader;
 import nativelevel.Jobs;
 import nativelevel.Jobs.Sucesso;
+import nativelevel.Jobs.TipoClasse;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.MetaShit;
-import nativelevel.Custom.CustomPotion;
-import nativelevel.Custom.PotionLoader;
-import nativelevel.Jobs.TipoClasse;
-import nativelevel.sisteminhas.KomSystem;
 import nativelevel.RecipeBooks.BookTypes;
 import nativelevel.bencoes.TipoBless;
 import nativelevel.rankings.Estatistica;
 import nativelevel.rankings.RankDB;
+import nativelevel.sisteminhas.KomSystem;
 import nativelevel.sisteminhas.XP;
 import nativelevel.utils.Cooldown;
 import nativelevel.utils.GeneralUtils;
@@ -49,10 +45,13 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
 /**
- *
  * @author User
- *
  */
 public class AlchemyCauldron extends KomSystem {
 
@@ -60,16 +59,16 @@ public class AlchemyCauldron extends KomSystem {
     public static HashMap<String, List<Item>> quemFlutua = new HashMap<String, List<Item>>();
 
     public HashSet<Material> reagentes = new HashSet<Material>();
-    
+
     @Override
     public void onEnable() {
-        for(CustomPotion pot : PotionLoader.customItems.values()) {
-            for(ItemStack ss : pot.getRecipe()) {
+        for (CustomPotion pot : PotionLoader.customItems.values()) {
+            for (ItemStack ss : pot.getRecipe()) {
                 reagentes.add(ss.getType());
             }
         }
     }
-    
+
     @EventHandler
     public void itemSome(ItemDespawnEvent ev) {
         if (flutuando.contains(ev.getEntity())) {
@@ -98,7 +97,7 @@ public class AlchemyCauldron extends KomSystem {
             ev.setCancelled(true);
         }
     }
-    
+
     public static void displayItem(Block cauld, ItemStack inHand) {
         ItemStack paraDropar = new ItemStack(inHand.getType(), 1, inHand.getDurability(), inHand.getData().getData());
         ItemMeta meta = paraDropar.getItemMeta();
@@ -217,8 +216,7 @@ public class AlchemyCauldron extends KomSystem {
                 ev.getPlayer().sendMessage("§e§l[Dica] §aVocê pode usar um funil para retirar ingredientes do caldeirão.");
                 MetaShit.setMetaObject("funilz", ev.getPlayer(), true);
             }
-            
-            
+
 
             int waterLevel = ev.getClickedBlock().getData();
             List<ItemStack> ingredientsIn = new ArrayList<ItemStack>();
@@ -249,9 +247,9 @@ public class AlchemyCauldron extends KomSystem {
                     cauld.setData((byte) 0);
                     return;
                 }
-                
-                if(!reagentes.contains(inHand.getType())) {
-                    ev.getPlayer().sendMessage(ChatColor.RED+"Voce não pode colocar isso no caldeirão.");
+
+                if (!reagentes.contains(inHand.getType())) {
+                    ev.getPlayer().sendMessage(ChatColor.RED + "Voce não pode colocar isso no caldeirão.");
                     return;
                 }
 
@@ -382,10 +380,10 @@ public class AlchemyCauldron extends KomSystem {
                         } else {
                             int xp = XP.getExpPorAcao(minSkill) * 3;
                             xp *= expRatio;
-                            
-                            if(tipoClasse==TipoClasse.SEGUNDARIA)
+
+                            if (tipoClasse == TipoClasse.SEGUNDARIA)
                                 xp = xp / 3;
-                            
+
                             XP.changeExp(ev.getPlayer(), xp, 1);
                             RankDB.addPontoCache(ev.getPlayer(), Estatistica.ALQUIMISTA, 1);
 

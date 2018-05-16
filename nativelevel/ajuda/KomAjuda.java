@@ -1,23 +1,15 @@
 package nativelevel.ajuda;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import nativelevel.KoM;
 import nativelevel.ajuda.database.DBDefault;
 import nativelevel.ajuda.database.MetodosRemover;
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class KomAjuda {
 
@@ -26,7 +18,7 @@ public class KomAjuda {
 
     public static String f(String message) {
         String messageFormated = message.replace("&", "§");
-        return "§a[Ajd] "+messageFormated;
+        return "§a[Ajd] " + messageFormated;
     }
 
     public void onEnable() {
@@ -36,7 +28,7 @@ public class KomAjuda {
                 KomAjuda.this.db.iniciarBanco();
             }
         }
-        .runTaskLater(KoM._instance, 100L);
+                .runTaskLater(KoM._instance, 100L);
 
         Cmds comando = new Cmds(this);
         KoM._instance.getCommand("ajudantes").setExecutor(comando);
@@ -44,7 +36,7 @@ public class KomAjuda {
         KoM._instance.getCommand("responder").setExecutor(comando);
         KoM._instance.getCommand("perguntas").setExecutor(comando);
         KoM._instance.getServer().getPluginManager().registerEvents(new Listeners(), KoM._instance);
-      
+
     }
 
     public void onDisable() {

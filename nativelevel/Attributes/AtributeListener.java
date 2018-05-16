@@ -1,50 +1,33 @@
 package nativelevel.Attributes;
 
-import io.lumine.xikage.mythicmobs.MythicMobs;
-import io.lumine.xikage.mythicmobs.mobs.ActiveMob;
-import java.util.Arrays;
-import java.util.List;
-import nativelevel.Dano;
-import nativelevel.Jobs;
-import nativelevel.KoM;
-import nativelevel.MetaShit;
-import nativelevel.Equipment.EquipManager;
-import nativelevel.Equipment.EquipMeta;
-import nativelevel.Equipment.Atributo;
 import nativelevel.Classes.Mage.SpellParticleEffects;
 import nativelevel.Classes.Mage.spelllist.Paralyze;
+import nativelevel.Dano;
+import nativelevel.Equipment.Atributo;
+import nativelevel.Equipment.EquipManager;
+import nativelevel.Equipment.EquipMeta;
+import nativelevel.Jobs;
+import nativelevel.KoM;
 import nativelevel.sisteminhas.KomSystem;
 import nativelevel.utils.Cooldown;
 import nativelevel.utils.LocUtils;
-import net.minecraft.server.v1_12_R1.ItemShield;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
-import org.bukkit.EntityEffect;
-import org.bukkit.Particle;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.SmallFireball;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
- *
  * @author User
- *
  */
 /*
 
@@ -77,13 +60,13 @@ public class AtributeListener extends KomSystem {
      Stun
     
      */
-    public void stun(Player batendo, final LivingEntity tomando, EquipMeta metaBatendo) {
-        
+    public static void stun(Player batendo, final LivingEntity tomando, EquipMeta metaBatendo) {
+
         double chanceStun = metaBatendo.getAttribute(Atributo.Chance_Stun);
         if (Jobs.rnd.nextInt(100) < chanceStun) {
             if (!Cooldown.isCooldown(batendo, "stunou")) {
                 double tempoStun = metaBatendo.getAttribute(Atributo.Tempo_Stun);
-                if(tempoStun > 60) {
+                if (tempoStun > 60) {
                     tempoStun = 60;
                 }
                 Cooldown.setMetaCooldown(batendo, "stunou", (int) tempoStun * 100);
@@ -100,7 +83,7 @@ public class AtributeListener extends KomSystem {
                         }
                     }
                 };
-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, de, (int) tempoStun);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, de, (int) tempoStun);
             }
         }
     }
@@ -110,7 +93,7 @@ public class AtributeListener extends KomSystem {
      Critico
     
      */
-    public void critico(Player batendo, EntityDamageByEntityEvent ev, EquipMeta meta) {
+    public static void critico(Player batendo, EntityDamageByEntityEvent ev, EquipMeta meta) {
         double chanceAcertoCritico = meta.getAttribute(Atributo.Chance_Critico);
         if (chanceAcertoCritico > 0) {
             KoM.debug("Chance Critico " + chanceAcertoCritico);
@@ -158,10 +141,12 @@ public class AtributeListener extends KomSystem {
     /*
      Calculando dano físico e acerto crítico
      */
-    @EventHandler(priority = EventPriority.HIGH)
-    public void entityDamage(EntityDamageByEntityEvent ev) {
 
-        KoM.debug(" entityDamage do atributo " + ev.getDamage() + " ev " + ev.getEntity().getName());
+    public static void entityDamage(EntityDamageByEntityEvent ev) {
+
+        if (ev.isCancelled()) return;
+
+        KoM.debug("entityDamage do atributo " + ev.getDamage() + " ev " + ev.getEntity().getName());
 
         // player hits a player
         if (ev.getDamager().getType() == EntityType.PLAYER) {
@@ -200,19 +185,19 @@ public class AtributeListener extends KomSystem {
     }
 
     /////// ARMOR WILL PROTECT DAMAGE //////
-    public static List<DamageCause> armorProtects = Arrays.asList(new DamageCause[]{
-        DamageCause.CONTACT,
-        DamageCause.FALLING_BLOCK,
-        DamageCause.ENTITY_ATTACK,
-        DamageCause.ENTITY_EXPLOSION,
-        DamageCause.PROJECTILE,
-        DamageCause.THORNS
-    });
+    public static List<DamageCause> armorProtects = Arrays.asList(DamageCause.CONTACT,
+            DamageCause.FALLING_BLOCK,
+            DamageCause.ENTITY_ATTACK,
+            DamageCause.ENTITY_EXPLOSION,
+            DamageCause.PROJECTILE,
+            DamageCause.THORNS);
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void takeDamage(EntityDamageEvent ev) {
+    public static void takeDamage(EntityDamageEvent ev) {
 
-        KoM.debug("Chegando dano " + ev.getDamage() + " em " + ev.getEntity().getName() + " na loc " + LocUtils.loc2str(ev.getEntity().getLocation()));
+        if (ev.getEntity().getType().equals(EntityType.ARMOR_STAND)) return;
+        if (ev.getEntity().hasMetadata("NPC")) return;
+
+        KoM.debug("Chegando dano " + ev.getDamage() + "(" + ev.getCause() + ") em " + ev.getEntity().getName() + " na loc " + LocUtils.loc2str(ev.getEntity().getLocation()));
 
         if (ev.getEntity() instanceof LivingEntity) {
             LivingEntity e = (LivingEntity) ev.getEntity();
@@ -229,6 +214,7 @@ public class AtributeListener extends KomSystem {
                 Player tomou = (Player) ev.getEntity();
                 EquipMeta equipTomou = EquipManager.getPlayerEquipmentMeta(tomou);
                 double armor = equipTomou.getAttribute(Atributo.Armadura);
+
                 /*
                  if (ev.getCause() == DamageCause.FIRE || ev.getCause() == DamageCause.LAVA || ev.getCause() == DamageCause.FIRE_TICK) {
                  double mult = equipTomou.getAttribute(Atributo.Resistencia_Fogo);
@@ -244,6 +230,7 @@ public class AtributeListener extends KomSystem {
                  }
                  }
                  */
+
                 if (ev.getCause() == DamageCause.ENTITY_ATTACK || ev.getCause() == DamageCause.ENTITY_SWEEP_ATTACK) {
                     double esquiva = equipTomou.getAttribute(Atributo.Chance_Esquiva);
                     if (Jobs.rnd.nextInt(100) < esquiva) {
@@ -289,15 +276,9 @@ public class AtributeListener extends KomSystem {
 
                     armor *= 2;
 
-                    KoM.debug("Armor: " + armor);
+                    double formulaArmor = 50 / (armor + 50d);
 
-                    double formulaArmor = 50 / ((double) armor + 50d);
-
-                    KoM.debug("FORMULA: " + formulaArmor);
-
-                    KoM.debug("Dano: " + ev.getDamage());
-
-                    double reduzido = ev.getDamage() - (ev.getDamage() * formulaArmor);
+                    KoM.debug("Dano: " + ev.getDamage() + " | Armor: " + armor + " | FORMULA: " + formulaArmor);
 
                     ev.setDamage(ev.getDamage() * formulaArmor);
 

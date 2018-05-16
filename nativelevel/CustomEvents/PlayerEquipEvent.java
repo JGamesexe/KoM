@@ -26,7 +26,7 @@ public class PlayerEquipEvent extends Event {
      * Constructor
      *
      * @param player player equipping an item
-     * @param item item that was equipped
+     * @param item   item that was equipped
      */
     public PlayerEquipEvent(Player player, ItemStack item) {
         this.player = player;

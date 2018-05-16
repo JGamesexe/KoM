@@ -6,11 +6,10 @@
 package nativelevel.RecipeBooks;
 
 /**
- *
  * @author User
  */
 public interface HaveRecipe {
-    
+
     public RecipePage generateRecipe();
-    
+
 }

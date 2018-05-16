@@ -18,8 +18,8 @@ public class MobDropLootEvent extends LootEvent {
     /**
      * Creates a new event with the given data
      *
-     * @param mob The mob that was killed
-     * @param killer The Player who killed the mob or null if the mob died of natural causes
+     * @param mob        The mob that was killed
+     * @param killer     The Player who killed the mob or null if the mob died of natural causes
      * @param lootBundle The bundle of loot dropped by the mob
      */
     public MobDropLootEvent(LivingEntity mob, Player killer, LootBundle lootBundle) {

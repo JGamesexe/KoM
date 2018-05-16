@@ -5,10 +5,6 @@
  */
 package nativelevel.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import nativelevel.scores.ScoreboardManager;
 import net.minecraft.server.v1_12_R1.ChatMessageType;
 import net.minecraft.server.v1_12_R1.IChatBaseComponent;
 import net.minecraft.server.v1_12_R1.IChatBaseComponent.ChatSerializer;
@@ -21,10 +17,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.scoreboard.Team;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- *
  * @author ciro
  */
 public class GeneralUtils {
@@ -115,7 +113,7 @@ public class GeneralUtils {
         }
         return true;
     }
-    
+
     public static boolean isEqualSemData(ItemStack ss, ItemStack ss2) {
         if (ss.getType() != ss2.getType()) {
             return false;
@@ -147,7 +145,7 @@ public class GeneralUtils {
         }
         return true;
     }
-    
+
     public static ItemStack createItem(ItemStack it, String displayName, short durability, String loretext) {
         ItemStack item = it;
         ItemMeta metaItem = item.getItemMeta();

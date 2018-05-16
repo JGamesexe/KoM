@@ -6,10 +6,8 @@
 
 package nativelevel.precocabeca;
 
-import java.util.UUID;
-import nativelevel.KoM;
-import nativelevel.sisteminhas.ClanLand;
 import nativelevel.Lang.L;
+import nativelevel.sisteminhas.ClanLand;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,10 +17,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 /**
- *
  * @author USER
- * 
  */
 
 public class CmdRecompensa implements CommandExecutor {
@@ -64,41 +62,41 @@ public class CmdRecompensa implements CommandExecutor {
                                     p.sendMessage(ChatColor.GOLD + L.m("Você não tem esse valor!"));
                                 }
                             } else {
-                                p.sendMessage(ChatColor.GOLD +L.m( "O valor minimo de recompensa é 30!"));
+                                p.sendMessage(ChatColor.GOLD + L.m("O valor minimo de recompensa é 30!"));
                             }
 
                         } else {
-                            p.sendMessage(ChatColor.GOLD +L.m( "Este jogador não existe!"));
+                            p.sendMessage(ChatColor.GOLD + L.m("Este jogador não existe!"));
                         }
                     } catch (NumberFormatException er) {
-                        sender.sendMessage(ChatColor.GOLD +L.m( "Use /recompensa Jogador Quantidade ou /recompensa listar"));
+                        sender.sendMessage(ChatColor.GOLD + L.m("Use /recompensa JogadorDAO Quantidade ou /recompensa listar"));
                     }
 
                 } else if (args.length == 1) {
                     //if (sender.isOp()) {
-                        if(args[0].equalsIgnoreCase("listar")) {
-                            //KnightsOfMania.database.verCabecasMaisCaras((Player)sender);
-                            return true;
-                        }
-                        Player on = Bukkit.getPlayerExact(args[0]);
-                        UUID uuid;
-                        if (on != null) {
-                            uuid = on.getUniqueId();
-
-                        } else {
-                            OfflinePlayer off = Bukkit.getOfflinePlayer(args[0]);
-                            uuid = off.getUniqueId();
-                        }
-
-                        if (uuid != null) {
-                            double qt = Principal.recom.getRecompensa(uuid);
-                            sender.sendMessage(ChatColor.LIGHT_PURPLE +L.m( "Este jogador tem uma cabeça no valor de " + qt + " esmeraldas !"));
-                        } else {
-                            sender.sendMessage(ChatColor.LIGHT_PURPLE + L.m("Nenhum registro deste jogador!"));
-                        }
-                    } else {
-                        sender.sendMessage(ChatColor.GOLD +L.m( "Use /recompensa Jogador Quantidade ou /recompensa listar!"));
+                    if (args[0].equalsIgnoreCase("listar")) {
+                        //KnightsOfMania.database.verCabecasMaisCaras((Player)sender);
+                        return true;
                     }
+                    Player on = Bukkit.getPlayerExact(args[0]);
+                    UUID uuid;
+                    if (on != null) {
+                        uuid = on.getUniqueId();
+
+                    } else {
+                        OfflinePlayer off = Bukkit.getOfflinePlayer(args[0]);
+                        uuid = off.getUniqueId();
+                    }
+
+                    if (uuid != null) {
+                        double qt = Principal.recom.getRecompensa(uuid);
+                        sender.sendMessage(ChatColor.LIGHT_PURPLE + L.m("Este jogador tem uma cabeça no valor de " + qt + " esmeraldas !"));
+                    } else {
+                        sender.sendMessage(ChatColor.LIGHT_PURPLE + L.m("Nenhum registro deste jogador!"));
+                    }
+                } else {
+                    sender.sendMessage(ChatColor.GOLD + L.m("Use /recompensa JogadorDAO Quantidade ou /recompensa listar!"));
+                }
 
             }
 

@@ -9,7 +9,6 @@ package nativelevel.scores;
 import java.util.ArrayList;
 
 /**
- *
  * @author Gabriel
  */
 

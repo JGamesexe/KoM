@@ -18,7 +18,7 @@ public abstract class Loot implements Comparable, ConfigurationSerializable {
     /**
      * Adds the loot to the item list
      *
-     * @param lootBundle The loot that has been rolled for
+     * @param lootBundle   The loot that has been rolled for
      * @param lootingBonus The increased chance of getting rarer loots
      */
     public abstract void getLoot(LootBundle lootBundle, double lootingBonus);
@@ -42,7 +42,7 @@ public abstract class Loot implements Comparable, ConfigurationSerializable {
      * Modifies the amount associated with the Loot
      *
      * @param amount The amount to modify by (may be negative)
-     * @param both true if both lower and upper ranges should be modified, false for only the upper range
+     * @param both   true if both lower and upper ranges should be modified, false for only the upper range
      * @return true if the Loot InfoStack should be refreshed
      */
     public abstract boolean modifyAmount(int amount, boolean both);
@@ -57,7 +57,7 @@ public abstract class Loot implements Comparable, ConfigurationSerializable {
     /**
      * Manages clicking on Loot with a custom Tool
      *
-     * @param tool The Tool that was used to click
+     * @param tool  The Tool that was used to click
      * @param click The type of Click (Only LEFT, RIGHT, MIDDLE, SHIFT_LEFT, SHIFT_RIGHT, and DOUBLE_CLICK are used)
      * @return true if the Loot InfoStack should be refreshed
      */
@@ -111,7 +111,7 @@ public abstract class Loot implements Comparable, ConfigurationSerializable {
     @Override
     public int compareTo(Object object) {
         return object instanceof Loot
-               ? Double.compare(probability, ((Loot) object).probability)
-               : -1;
+                ? Double.compare(probability, ((Loot) object).probability)
+                : -1;
     }
 }

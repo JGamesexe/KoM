@@ -1,27 +1,27 @@
-    /*
+/*
 
- ╭╮╭━╮╱╱╭━╮╭━╮
- ┃┃┃╭╯╱╱┃┃╰╯┃┃
- ┃╰╯╯╭━━┫╭╮╭╮┃
- ┃╭╮┃┃╭╮┃┃┃┃┃┃
- ┃┃┃╰┫╰╯┃┃┃┃┃┃
- ╰╯╰━┻━━┻╯╰╯╰╯
+╭╮╭━╮╱╱╭━╮╭━╮
+┃┃┃╭╯╱╱┃┃╰╯┃┃
+┃╰╯╯╭━━┫╭╮╭╮┃
+┃╭╮┃┃╭╮┃┃┃┃┃┃
+┃┃┃╰┫╰╯┃┃┃┃┃┃
+╰╯╰━┻━━┻╯╰╯╰╯
 
- Desenvolvedor: ZidenVentania
- Colaboradores: NeT32, Gabripj, Feldmann
- Patrocionio: InstaMC
+Desenvolvedor: ZidenVentania
+Colaboradores: NeT32, Gabripj, Feldmann
+Patrocionio: InstaMC
 
- */
+*/
 package nativelevel;
+
+import nativelevel.Menu.Menu;
+import nativelevel.spec.PlayerSpec;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import nativelevel.Menu.Menu;
-import nativelevel.Attributes.AttributeInfo;
-import nativelevel.spec.PlayerSpec;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 public class Jobs {
 
@@ -77,7 +77,7 @@ public class Jobs {
         }
         return primarias;
     }
-    
+
     public static List<String> getSecundarias(Player p) {
         List<String> primarias = new ArrayList<String>();
         int[] skills;
@@ -125,9 +125,9 @@ public class Jobs {
 
     private static double SORTE_PRIMARIA = 25;
 
-    private static double SORTE_SECUNDARIA = 9;
+    private static double SORTE_SECUNDARIA = -15;
 
-    private static double SORTE_NADA = -50;
+    private static double SORTE_NADA = -25;
 
     public static void main(String[] args) {
 
@@ -185,9 +185,8 @@ public class Jobs {
         if (level < difficulty) {
             double diferenca = (difficulty - level); // menor conforme eu upo
             double chance = 25 - (diferenca * 2); // precisa diferença 25 pra ter 100% 
-            if (chance < 0) {
-                chance = 0;
-            }
+            if (chance < 0) chance = 0;
+
             return chance;
         } else if (level >= difficulty) {
             double diferenca = (level - difficulty); // menor conforme eu upo
@@ -205,43 +204,31 @@ public class Jobs {
 
     public static double getFinalChangeToSucess(double dif, double level, TipoClasse jobLevel) {
         double chance = getChancesToSuccess(dif, level);
-        if (jobLevel == TipoClasse.PRIMARIA) // skill primaria
-        {
+        if (jobLevel == TipoClasse.PRIMARIA) { // skill primaria
             chance += (SORTE_PRIMARIA * (0.5 + (level / 200d)));
             KoM.debug("Chance primaria: +" + SORTE_PRIMARIA + "%");
-        } else if (jobLevel == TipoClasse.SEGUNDARIA) // skill secundaria
-        {
-            chance += SORTE_SECUNDARIA;
+        } else if (jobLevel == TipoClasse.SEGUNDARIA) { // skill secundaria
+            chance += (SORTE_SECUNDARIA * ((100 - level) / 100d));
             KoM.debug("Chance secundaria: +" + SORTE_SECUNDARIA + "%");
         } else {
-            chance += (SORTE_NADA * (level / 100d));
+            chance += (SORTE_NADA * ((100 - level) / 100d));
             KoM.debug("Chance sem classe: +" + SORTE_NADA + "%");
-            if (chance > 26) {
-                chance = 26;
-            }
+            if (chance > 26) chance = 26;
+
         }
         if (dif == 1) {
             if (level < 25) {
-                if (jobLevel == TipoClasse.PRIMARIA) {
-                    chance = 75;
-                } else if (jobLevel == TipoClasse.SEGUNDARIA) {
-                    chance = 40;
-                } else {
-                    chance = 30;
-                }
+                if (jobLevel == TipoClasse.PRIMARIA) chance = 75;
+                else if (jobLevel == TipoClasse.SEGUNDARIA) chance = 40;
+                else chance = 30;
             } else {
-                if (jobLevel == TipoClasse.PRIMARIA) {
-                    chance = 100;
-                } else if (jobLevel == TipoClasse.SEGUNDARIA) {
-                    chance = 75;
-                } else {
-                    chance = 30;
-                }
+                if (jobLevel == TipoClasse.PRIMARIA) chance = 100;
+                else if (jobLevel == TipoClasse.SEGUNDARIA) chance = 75;
+                else chance = 30;
             }
         }
-        if (level + 35 < dif) {
-            chance = 0;
-        }
+        if (level + 35 < dif) chance = 0;
+
         return chance;
     }
 
@@ -307,13 +294,11 @@ public class Jobs {
     }
 
     // metodo antigo
-    public static int hasSuccess(int difficulty, String job, Player p) {
+    public static boolean hasSuccess(int difficulty, String job, Player p) {
         Sucesso sucesso = hasSuccess(difficulty, Classe.valueOf(job), p, 0);
-        if (sucesso.acertou) {
-            return Jobs.success;
-        } else {
-            return Jobs.fail;
-        }
+
+        return sucesso.acertou;
+
     }
 
 }

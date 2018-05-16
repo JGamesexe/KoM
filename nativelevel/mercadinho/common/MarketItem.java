@@ -5,18 +5,18 @@
  */
 package nativelevel.mercadinho.common;
 
-import java.util.UUID;
-import org.bukkit.ChatColor;
-import org.bukkit.inventory.ItemStack;
-import java.util.List;
 import nativelevel.Lang.L;
 import nativelevel.gemas.Raridade;
 import nativelevel.mercadinho.ItemUtils;
 import nativelevel.utils.CategoriaUtils;
 import nativelevel.utils.CategoriaUtils.CategoriaItem;
+import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
- *
  * @author Gabriel
  */
 public class MarketItem {
@@ -61,8 +61,8 @@ public class MarketItem {
         ItemUtils.AddLore(it, "§eShopID: §3" + this.ID);
         return it;
     }
-    
-    public static String CASH_STR = ChatColor.YELLOW + Raridade.Lendario.getIcone() + " CASH " + Raridade.Lendario.getIcone(); 
+
+    public static String CASH_STR = ChatColor.YELLOW + Raridade.Lendario.getIcone() + " CASH " + Raridade.Lendario.getIcone();
 
     public static String itemvencido = L.m("§c§lITEM VENCIDO! Para retirar ele clique!!");
 
@@ -85,7 +85,7 @@ public class MarketItem {
                         listalore.remove(inf);
                     } else if (ChatColor.stripColor(inf).toLowerCase().contains(L.m("- moedas -"))) {
                         listalore.remove(inf);
-                    }  else if (ChatColor.stripColor(inf).toLowerCase().contains(" cash ")) {
+                    } else if (ChatColor.stripColor(inf).toLowerCase().contains(" cash ")) {
                         listalore.remove(inf);
                     }
                 }

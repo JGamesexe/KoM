@@ -1,13 +1,14 @@
 package nativelevel.phatloots;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.logging.Level;
 
 public class ChestAnimations {
     private static final String VERSION = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
@@ -29,7 +30,7 @@ public class ChestAnimations {
     public static void closeChest(Player player, Block block) {
         playChestAction(player, block, false);
     }
-    
+
     public static void playChestActionNoReflection(Player player, Block block, boolean open) {
         //Location location = block.getLocation();
         //BlockPosition blockPosition = new BlockPosition(location.getX(), location.getY(), location.getZ());

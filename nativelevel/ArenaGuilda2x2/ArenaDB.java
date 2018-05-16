@@ -1,22 +1,8 @@
 package nativelevel.ArenaGuilda2x2;
 
-import nativelevel.utils.TitleAPI;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-import java.util.WeakHashMap;
-import java.util.logging.Level;
-import nativelevel.ArenaGuilda2x2.Arena2x2;
-import static nativelevel.ArenaGuilda2x2.Elo.matou;
-import static nativelevel.ArenaGuilda2x2.Elo.morreu;
 import nativelevel.KoM;
 import nativelevel.utils.LocUtils;
+import nativelevel.utils.TitleAPI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,6 +12,19 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
+
+import static nativelevel.ArenaGuilda2x2.Elo.matou;
+import static nativelevel.ArenaGuilda2x2.Elo.morreu;
 
 public class ArenaDB {
 
@@ -172,24 +171,24 @@ public class ArenaDB {
             ex.printStackTrace();
         }
     }
-    
+
     public void setSpawn1(String arena, Location spawn) {
-      try {
-                String loc = LocUtils.loc2str(spawn);
-                est = KoM.database.pegaConexao().createStatement();
-                est.executeUpdate("update Arena_Lista set spawn1 = '"+loc+"' where nome = '"+arena+"'");
+        try {
+            String loc = LocUtils.loc2str(spawn);
+            est = KoM.database.pegaConexao().createStatement();
+            est.executeUpdate("update Arena_Lista set spawn1 = '" + loc + "' where nome = '" + arena + "'");
             //  KnightsOfMania.database.pegaConexao().commit();
         } catch (SQLException ex) {
             Arena2x2.log.info("ZUOU ARENA:" + ex.getMessage());
             ex.printStackTrace();
         }
     }
-    
+
     public void setSpawn2(String arena, Location spawn) {
-      try {
-                String loc = LocUtils.loc2str(spawn);
-                est = KoM.database.pegaConexao().createStatement();
-                est.executeUpdate("update Arena_Lista set spawn2 = '"+loc+"' where nome = '"+arena+"'");
+        try {
+            String loc = LocUtils.loc2str(spawn);
+            est = KoM.database.pegaConexao().createStatement();
+            est.executeUpdate("update Arena_Lista set spawn2 = '" + loc + "' where nome = '" + arena + "'");
             //  KnightsOfMania.database.pegaConexao().commit();
         } catch (SQLException ex) {
             Arena2x2.log.info("ZUOU ARENA:" + ex.getMessage());
@@ -235,8 +234,8 @@ public class ArenaDB {
             ex.printStackTrace();
         }
     }
-    
-     public void resetaGuilda(String tag) {
+
+    public void resetaGuilda(String tag) {
         try {
 
             est = KoM.database.pegaConexao().createStatement();
@@ -321,17 +320,17 @@ public class ArenaDB {
             ex.printStackTrace();
         }
     }
-    
+
     public void cancelaJogo(String arena) {
-        
+
     }
-    
+
     public List<String> arenasEmJogo() {
         List<String> arenas = new ArrayList<String>();
         try {
             est = KoM.database.pegaConexao().createStatement();
             ResultSet rs = est.executeQuery("select nome from Arena_Lista L inner join Arena_Jogos J on J.arenaId = L.arenaId");
-            while(rs.next()) {
+            while (rs.next()) {
                 arenas.add(rs.getString("nome"));
             }
         } catch (SQLException ex) {
@@ -513,18 +512,18 @@ public class ArenaDB {
             time2.setX(time2.getX() + 0.5);
             time2.setY(time2.getY() + 1);
             time2.setZ(time2.getZ() + 0.5);
-            
+
             String sspawn1 = rsa.getString("spawn1");
             String sspawn2 = rsa.getString("spawn2");
-            
-            if(sspawn1 != null) {
+
+            if (sspawn1 != null) {
                 time1 = LocUtils.str2loc(sspawn1);
             }
-            if(sspawn2 != null) {
+            if (sspawn2 != null) {
                 time2 = LocUtils.str2loc(sspawn2);
             }
-            
-            
+
+
             for (Entity e : Bukkit.getWorld("arena").getEntities()) {
                 if (e.getType() != EntityType.PLAYER) {
                     if (e.getLocation().distance(localArena) <= 20) {
@@ -576,7 +575,7 @@ public class ArenaDB {
             // criando o jogo de fato
             est = KoM.database.pegaConexao().createStatement();
             est.executeUpdate("insert into Arena_Jogos (tag1, tag2, ranked, arenaId) values ('" + tags.get(0) + "','" + tags.get(1) + "'," + (ranked ? 1 : 0) + "," + idArena + ")");
-                    //  KnightsOfMania.database.pegaConexao().commit();
+            //  KnightsOfMania.database.pegaConexao().commit();
 
             // setando q os jogadores tão no jogo
             est = KoM.database.pegaConexao().createStatement();
@@ -702,8 +701,8 @@ public class ArenaDB {
             est = KoM.database.pegaConexao().createStatement();
             est.executeUpdate("insert into Arena_Matcher (tag,ranked) values ('" + tag + "'," + (ranked ? 1 : 0) + ");");
             String msg = ChatColor.AQUA + tag + "" + ChatColor.AQUA + " entrou na lista da " + ChatColor.GREEN + "/arena";
-            if(ranked)
-                msg+=ChatColor.AQUA +" Ranked ! ";
+            if (ranked)
+                msg += ChatColor.AQUA + " Ranked ! ";
             //if (!ranked) {
             //    msg = ChatColor.AQUA + "A guilda " + tag + "" + ChatColor.AQUA + " entrou na lista de espera da " + ChatColor.GREEN + "/arena";
             //} else {

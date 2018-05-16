@@ -1,14 +1,13 @@
 package nativelevel.Equipment.Generator;
 
-import java.util.HashSet;
-import java.util.Set;
 import nativelevel.Equipment.Atributo;
 import nativelevel.KoM;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
- *
  * @author Ziden
- *
  */
 public class Nomes {
 
@@ -45,16 +44,16 @@ public class Nomes {
 
         prefixo.add(new Mod(new String[]{"Atrasador", "Distanciador", "Dormidor"}, Atributo.Tempo_Stun));
         sufixo.add(new Mod(new String[]{"do Sono", "do Tempo", "do Tempo Perdido"}, Atributo.Tempo_Stun));
-        
+
         prefixo.add(new Mod(new String[]{"Espiritual", "Espiritualista", "Astral"}, Atributo.Mana));
         sufixo.add(new Mod(new String[]{"dos Astros", "dos Espiritos", "das Almas"}, Atributo.Mana));
-        
+
         prefixo.add(new Mod(new String[]{"Persistente", "Persistente", "Barbaro"}, Atributo.Stamina));
         sufixo.add(new Mod(new String[]{"da Persistencia", "da Continuidade", "da Barbarie"}, Atributo.Stamina));
-        
+
         prefixo.add(new Mod(new String[]{"Regenerador", "Espiritual", "Meditador"}, Atributo.Regen_Mana));
         sufixo.add(new Mod(new String[]{"da Meditação", "da Meditação", "da Meditação"}, Atributo.Regen_Mana));
-        
+
         prefixo.add(new Mod(new String[]{"Continuador", "Continuador", "Perseverador"}, Atributo.Regen_Stamina));
         sufixo.add(new Mod(new String[]{"da Força de Vontade", "da Força de Vontade", "da Força de Vontade"}, Atributo.Regen_Stamina));
 
@@ -69,7 +68,7 @@ public class Nomes {
                 return m;
             }
         }
-        KoM.log.info("NAO ACHEI ATRIBUTO PRA MOD "+a.name());
+        KoM.log.info("NAO ACHEI ATRIBUTO PRA MOD " + a.name());
         return null;
     }
 

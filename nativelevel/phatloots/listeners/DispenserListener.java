@@ -23,14 +23,17 @@ public class DispenserListener implements Listener {
      *
      * @param event The BlockPhysicsEvent that occurred
      */
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPowered(BlockPhysicsEvent event) {
         //Check if the Block is a Dispenser/Dropper
         Block block = event.getBlock();
         switch (block.getType()) {
-        case DISPENSER: break;
-        case DROPPER: break;
-        default: return;
+            case DISPENSER:
+                break;
+            case DROPPER:
+                break;
+            default:
+                return;
         }
 
         //We don't care if a block loses power
@@ -54,12 +57,12 @@ public class DispenserListener implements Listener {
         for (PhatLoot phatLoot : PhatLoots.getPhatLoots(block, player)) {
             if (PhatLootsUtil.canLoot(player, phatLoot)) {
                 long falta = phatLoot.getTimeRemaining(plChest);
-                if(falta > 0) {
+                if (falta > 0) {
                     String tempo = phatLoot.timeToString(falta);
-                    for(Player p : Bukkit.getOnlinePlayers()) {
-                        if(p.getWorld().getName().equalsIgnoreCase(block.getWorld().getName())) {
-                            if(p.getLocation().distance(block.getLocation()) <= 20) {
-                                p.sendMessage(ChatColor.AQUA+"Cooldown: "+tempo);
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        if (p.getWorld().getName().equalsIgnoreCase(block.getWorld().getName())) {
+                            if (p.getLocation().distance(block.getLocation()) <= 20) {
+                                p.sendMessage(ChatColor.AQUA + "Cooldown: " + tempo);
                             }
                         }
                     }

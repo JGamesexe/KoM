@@ -1,7 +1,5 @@
 package nativelevel.sisteminhas;
 
-import java.util.ArrayList;
-import java.util.List;
 import nativelevel.Classes.Thief;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.Lock;
@@ -10,22 +8,18 @@ import nativelevel.Custom.Items.LockPick;
 import nativelevel.CustomEvents.FinishCraftEvent;
 import nativelevel.Jobs;
 import nativelevel.Jobs.TipoClasse;
-import nativelevel.KoM;
 import nativelevel.Lang.L;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 /**
- *
  * @author Ziden
  */
 public class ChaveCadiado extends KomSystem {
@@ -96,11 +90,11 @@ public class ChaveCadiado extends KomSystem {
                             int lockLevel = lock.getLockLevel(ss);
                             int lockId = lock.getId(ss);
                             // does the player have the key in hand ?
-                            if (ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
-                                CustomItem key = CustomItem.getItem(ev.getPlayer().getItemInHand());
+                            if (ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.TRIPWIRE_HOOK) {
+                                CustomItem key = CustomItem.getItem(ev.getPlayer().getInventory().getItemInMainHand());
                                 // hes with a key in hand ?
                                 if (key != null && key instanceof LockKey) {
-                                    int keyId = LockKey.getId(ev.getPlayer().getItemInHand());
+                                    int keyId = LockKey.getId(ev.getPlayer().getInventory().getItemInMainHand());
                                     // is it the right key ?
                                     if (keyId != lockId) {
                                         ev.setCancelled(true);
@@ -116,8 +110,8 @@ public class ChaveCadiado extends KomSystem {
                                 }
                                 // he has no key, checking if he has a lockpick
                             } else {
-                                if (ev.getPlayer().getItemInHand() != null) {
-                                    CustomItem ci = CustomItem.getItem(ev.getPlayer().getItemInHand());
+                                if (ev.getPlayer().getInventory().getItemInMainHand() != null) {
+                                    CustomItem ci = CustomItem.getItem(ev.getPlayer().getInventory().getItemInMainHand());
                                     if (ci != null && ci instanceof LockPick) {
                                         Thief.bisbilhota(ev.getPlayer(), c.getBlock());
                                         break;
@@ -152,11 +146,11 @@ public class ChaveCadiado extends KomSystem {
                                 int lockLevel = lock.getLockLevel(ss);
                                 int lockId = lock.getId(ss);
                                 // does the player have the key in hand ?
-                                if (ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() == Material.TRIPWIRE_HOOK) {
-                                    CustomItem key = CustomItem.getItem(ev.getPlayer().getItemInHand());
+                                if (ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.TRIPWIRE_HOOK) {
+                                    CustomItem key = CustomItem.getItem(ev.getPlayer().getInventory().getItemInMainHand());
                                     // hes with a key in hand ?
                                     if (key != null && key instanceof LockKey) {
-                                        int keyId = LockKey.getId(ev.getPlayer().getItemInHand());
+                                        int keyId = LockKey.getId(ev.getPlayer().getInventory().getItemInMainHand());
                                         // is it the right key ?
                                         if (keyId != lockId) {
                                             ev.setCancelled(true);

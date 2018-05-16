@@ -15,30 +15,13 @@
 package nativelevel.DataBase;
 
 import com.google.common.base.Charsets;
-import java.sql.Blob;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
-import java.util.WeakHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.sql.rowset.serial.SerialBlob;
+import nativelevel.Attributes.AttributeInfo;
 import nativelevel.Auras.Aura;
 import nativelevel.CFG;
-import nativelevel.KoM;
-import nativelevel.MetaShit;
-import nativelevel.Attributes.AttributeInfo;
 import nativelevel.Custom.Items.BussolaMagica.LocalBussola;
+import nativelevel.KoM;
 import nativelevel.Listeners.GeneralListener;
+import nativelevel.MetaShit;
 import nativelevel.blococomando.BlocoComando;
 import nativelevel.sisteminhas.XP;
 import nativelevel.utils.InventarioSerial;
@@ -49,6 +32,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import javax.sql.rowset.serial.SerialBlob;
+import java.sql.*;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SQL {
 
@@ -98,7 +87,7 @@ public class SQL {
             dbName = KoM.config.getConfig().getString("database.name");
             KoM.log.info("Attempting to Connect to Database: " + dbName);
             connStr = "jdbc:mysql://localhost:3306/kom?autoReconnect=true";
-            if(KoM.serverTestes)
+            if (KoM.serverTestes)
                 connStr = "jdbc:mysql://localhost:3306/komtestes?autoReconnect=true";
             try {
                 Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -180,6 +169,14 @@ public class SQL {
                     + "nick varchar(100), "
                     + "balance int, "
                     + "lastLogin bigint)");
+            st.close();
+
+            st = conn.createStatement();
+            st.executeUpdate("CREATE TABLE IF NOT EXISTS Jogador (uuid VARCHAR(36) PRIMARY KEY, nick VARCHAR(20), nicksOlds TEXT(2200), tempoOnline BIGINT(20), ultimaVezVisto BIGINT(20))");
+            st.close();
+
+            st = conn.createStatement();
+            st.executeUpdate("CREATE TABLE IF NOT EXISTS IPlog (id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, uuid VARCHAR(36), ip VARCHAR(45), quando BIGINT(20), CONSTRAINT uq UNIQUE(uuid, ip))");
             st.close();
 
             conn.commit();
@@ -415,7 +412,7 @@ public class SQL {
     public void setLoot(UUID u, ItemStack[] items) {
         try {
 
-            PreparedStatement pst = connection.prepareStatement("insert into LOOTS (items, uuid) values (?,'"+u.toString()+"')");
+            PreparedStatement pst = connection.prepareStatement("insert into LOOTS (items, uuid) values (?,'" + u.toString() + "')");
             pst.setBlob(1, new SerialBlob(InventarioSerial.serializeItemStacks(items)));
             pst.execute();
             connection.commit();
@@ -743,6 +740,38 @@ public class SQL {
             }
         }
         return dore;
+    }
+
+    public UUID pegaUUID(String nome) {
+        ResultSet rs = null;
+        UUID uuid = null;
+
+        try {
+            Connection conn;
+            conn = pegaConexao();
+            est = conn.createStatement();
+            rs = est.executeQuery("SELECT jogador FROM CLASSES WHERE nome=('" + nome + "')");
+            if (rs.next()) uuid = UUID.fromString(rs.getString("jogador"));
+            else KoM.log.info("Nao econtrei " + nome + " na database...");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            KoM.log.info("!!! Nao consegui pegar UUID por nome... DEU PAU !!!");
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            try {
+                est.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        return uuid;
     }
 
     public void changeMaxLevel(Player p, int qto) {

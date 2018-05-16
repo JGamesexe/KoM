@@ -1,23 +1,15 @@
 package nativelevel.DataBase.API;
 
+import nativelevel.mercadinho.utils.Utils;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import nativelevel.KoM;
-import nativelevel.mercadinho.common.MarketItem;
-import nativelevel.mercadinho.database.MercadoSQL;
-import static nativelevel.mercadinho.database.MercadoSQL.connection;
-import static nativelevel.mercadinho.database.MercadoSQL.orderby;
-import nativelevel.mercadinho.utils.Utils;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author Ziden
  */
 public class DatabaseAPI {
@@ -51,7 +43,7 @@ public class DatabaseAPI {
         }
     }
     */
-    
+
     public static Dados getDado(Connection connection, String query) {
 
         Statement statement = null;
@@ -81,7 +73,7 @@ public class DatabaseAPI {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-               // KnightsOfMania._instance.getServer().shutdown();
+                // KnightsOfMania._instance.getServer().shutdown();
             }
         }
         return null;
@@ -116,7 +108,7 @@ public class DatabaseAPI {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-               // KnightsOfMania._instance.getServer().shutdown();
+                // KnightsOfMania._instance.getServer().shutdown();
             }
         }
         return dados;

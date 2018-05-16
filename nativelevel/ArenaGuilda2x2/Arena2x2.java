@@ -5,20 +5,17 @@
  */
 package nativelevel.ArenaGuilda2x2;
 
-import java.util.logging.Logger;
 import nativelevel.KoM;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
+
+import java.util.logging.Logger;
 
 /**
- *
  * @author vntgasl
- *
  */
 public class Arena2x2 {
 
@@ -37,7 +34,7 @@ public class Arena2x2 {
         Bukkit.getServer().getPluginManager().registerEvents(new Eventos(), instancia);
 
         if (!KoM.serverTestes) {
-            
+
             sql.inicializa();
             match.start();
             sql.limpaTudo();

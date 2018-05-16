@@ -5,31 +5,25 @@
  */
 package nativelevel.Auras;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
 import nativelevel.Auras.Lista.*;
 import nativelevel.KoM;
-import nativelevel.MetaShit;
 import nativelevel.gemas.Raridade;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.ChatColor;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.Bukkit;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.*;
 
 /**
- *
  * @author Gabriel
- *
  */
 public abstract class Aura {
 
@@ -53,7 +47,7 @@ public abstract class Aura {
         auras.add(new Fumaca());
         auras.add(new Amor());
     }
-    
+
     public static void onEnable() {
         Runnable r = new Runnable() {
             public void run() {
@@ -90,7 +84,7 @@ public abstract class Aura {
         if (ev.getClickedInventory() != null && ((ev.getClickedInventory().getTitle() != null && ev.getClickedInventory().getTitle().equalsIgnoreCase("Minhas Auras")) || (ev.getClickedInventory().getName() != null && ev.getClickedInventory().getName().equalsIgnoreCase("Minhas Auras")))) {
             ev.setCancelled(true);
             Player p = (Player) ev.getWhoClicked();
-            if(ev.getCurrentItem()==null || ev.getCurrentItem().getType()==Material.AIR)
+            if (ev.getCurrentItem() == null || ev.getCurrentItem().getType() == Material.AIR)
                 return;
             String clicado = ChatColor.stripColor(ev.getCurrentItem().getItemMeta().getDisplayName());
             p.closeInventory();
@@ -102,13 +96,13 @@ public abstract class Aura {
                     p.sendMessage(ChatColor.RED + "Nenhuma aura ativa");
                 }
             } else {
-                
-                if(!p.hasPermission("kom.vip")) {
-                    p.sendMessage(ChatColor.RED+"Apenas VIPs podem usar Auras !");
+
+                if (!p.hasPermission("kom.vip")) {
+                    p.sendMessage(ChatColor.RED + "Apenas VIPs podem usar Auras !");
                     return;
                 }
-                
-                
+
+
                 Aura a = Aura.getAura(clicado);
                 if (a != null) {
                     ativas.put(p.getUniqueId(), a);
@@ -136,8 +130,8 @@ public abstract class Aura {
     }
 
     public static void interage(PlayerInteractEvent ev) {
-        if (ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() == Material.CHEST) {
-            Aura aura = getAura(ev.getPlayer().getItemInHand());
+        if (ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.CHEST) {
+            Aura aura = getAura(ev.getPlayer().getInventory().getItemInMainHand());
             if (aura != null) {
                 ev.setCancelled(true);
                 HashSet<Aura> auras = KoM.database.getAuras(ev.getPlayer().getUniqueId());

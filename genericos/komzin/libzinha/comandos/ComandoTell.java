@@ -15,11 +15,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- *
  * @author Gabriel
  */
 public class ComandoTell implements CommandExecutor {
-    
+
     public ComandoTell() {
     }
     //§6Chega de encantamento ruim!
@@ -27,8 +26,7 @@ public class ComandoTell implements CommandExecutor {
     //§dpara remover os encantamentos.
     //§ddo seu item.
 
-    
-    
+
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
         Player p = (Player) cs;
@@ -47,7 +45,7 @@ public class ComandoTell implements CommandExecutor {
             }
             return true;
         }
-        
+
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("on")) {
                 p.sendMessage(ChatColor.GREEN + "Tell ligado !");
@@ -59,9 +57,9 @@ public class ComandoTell implements CommandExecutor {
                 return true;
             }
         }
-        
+
         String player = args[0];
-        
+
         Player target = Bukkit.getPlayer(player);
         if (target == null) {
             p.sendMessage(ChatColor.RED + "Nick nao encontrado.");
@@ -76,26 +74,26 @@ public class ComandoTell implements CommandExecutor {
             p.sendMessage(ChatColor.RED + "Este jogador esta ocupado.");
             return false;
         }
-        
+
         if (args.length == 1) {
             p.sendMessage(ChatColor.YELLOW + "Iniciando conversa privada com " + ChatColor.WHITE + target.getName() + ChatColor.YELLOW + ".");
             info.talkingTo = target.getName();
         } else {
             StringBuffer str = new StringBuffer();
             StringBuffer strFrom = new StringBuffer();
-            
+
             strFrom.append(ChatColor.DARK_AQUA + "Para " + target.getName() + ": " + ChatColor.AQUA);
             str.append(ChatColor.DARK_AQUA + "De " + p.getName() + ": " + ChatColor.AQUA);
             for (int x = 1; x < args.length; x++) {
                 str.append(args[x] + " ");
                 strFrom.append(args[x] + " ");
             }
-          
+
             target.sendMessage(str.toString());
             p.sendMessage(strFrom.toString());
             InfoTarget.lastPlayerMessage = p.getName();
         }
         return true;
     }
-    
+
 }

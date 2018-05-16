@@ -5,12 +5,10 @@
  */
 package nativelevel.Custom.Items;
 
-import java.util.List;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
 import nativelevel.Jobs.Sucesso;
 import nativelevel.Lang.L;
-import nativelevel.gemas.Raridade;
 import nativelevel.sisteminhas.XP;
 import nativelevel.utils.GeneralUtils;
 import org.bukkit.ChatColor;
@@ -19,12 +17,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
+
+import java.util.List;
 
 /**
- *
  * @author User
- *
  */
 public class LockKey extends CustomItem {
 
@@ -83,7 +80,7 @@ public class LockKey extends CustomItem {
                 } else {
                     XP.changeExp(ev.getPlayer(), XP.getExpPorAcao(10));
                 }
-                ev.getPlayer().getItemInHand().setAmount(ev.getPlayer().getItemInHand().getAmount() + 1);
+                ev.getPlayer().getInventory().getItemInMainHand().setAmount(ev.getPlayer().getInventory().getItemInMainHand().getAmount() + 1);
                 ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Voce copiou a chave !"));
             }
         } else if (ev.getClickedBlock() == null || ev.getClickedBlock().getType() != Material.CHEST) {

@@ -1,10 +1,5 @@
 package nativelevel.sisteminhas;
 
-import java.util.Arrays;
-import java.util.List;
-import nativelevel.Classes.Farmer;
-import static nativelevel.Classes.Farmer.pegaCor;
-import static nativelevel.Classes.Farmer.pegaTipo;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
@@ -12,36 +7,29 @@ import nativelevel.Listeners.BlockListener;
 import nativelevel.Listeners.GeneralListener;
 import nativelevel.Menu.Menu;
 import nativelevel.MetaShit;
-import nativelevel.lojaagricola.LojaAgricola;
 import nativelevel.utils.Cooldown;
 import net.minecraft.server.v1_12_R1.AttributeInstance;
 import net.minecraft.server.v1_12_R1.EntityInsentient;
 import net.minecraft.server.v1_12_R1.GenericAttributes;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Effect;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftLivingEntity;
-import org.bukkit.entity.AnimalTamer;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.HorseJumpEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.Arrays;
+
+import static nativelevel.Classes.Farmer.pegaCor;
+import static nativelevel.Classes.Farmer.pegaTipo;
 
 public class Horses extends KomSystem {
 
@@ -66,7 +54,7 @@ public class Horses extends KomSystem {
     }
 
     public static void takeOutFromEgg(PlayerInteractEvent ev) {
-        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("dungeon") || ev.getPlayer().getVehicle() != null || Cooldown.isCooldown(ev.getPlayer(), "cavalo")) {
+        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon") || ev.getPlayer().getVehicle() != null || Cooldown.isCooldown(ev.getPlayer(), "cavalo")) {
             ev.setCancelled(true);
             return;
         }
@@ -87,7 +75,7 @@ public class Horses extends KomSystem {
             return;
         }
 
-        ItemMeta meta = ev.getPlayer().getItemInHand().getItemMeta();
+        ItemMeta meta = ev.getPlayer().getInventory().getItemInMainHand().getItemMeta();
         final Horse w = (Horse) ev.getPlayer().getWorld().spawnEntity(ev.getPlayer().getLocation(), EntityType.HORSE);
         if (w == null || !w.isValid()) {
             ev.setCancelled(true);
@@ -95,8 +83,8 @@ public class Horses extends KomSystem {
             return;
         }
 
-        if (ev.getPlayer().getItemInHand().getAmount() > 1) {
-            ev.getPlayer().getItemInHand().setAmount(ev.getPlayer().getItemInHand().getAmount() - 1);
+        if (ev.getPlayer().getInventory().getItemInMainHand().getAmount() > 1) {
+            ev.getPlayer().getInventory().getItemInMainHand().setAmount(ev.getPlayer().getInventory().getItemInMainHand().getAmount() - 1);
         } else {
             ev.getPlayer().setItemInHand(null);
         }
@@ -211,7 +199,7 @@ public class Horses extends KomSystem {
             if (h.getOwner() != null && h.getOwner().getName() != null && !h.getOwner().getName().equalsIgnoreCase(ev.getPlayer().getName())) {
                 ev.setCancelled(true);
                 ev.getPlayer().sendMessage(ChatColor.RED + L.m("Você não pode mecher em um cavalo que não e seu !"));
-            } else if (ev.getPlayer().getItemInHand() != null && ev.getPlayer().getItemInHand().getType() == Material.BONE) {
+            } else if (ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.BONE) {
                 h.damage(9999999D);
             }
         }
@@ -235,12 +223,12 @@ public class Horses extends KomSystem {
         ItemMeta meta = ovo.getItemMeta();
         meta.setDisplayName(ChatColor.GREEN + "Montaria (Nao Dropa Qnd Morre)");
         meta.setLore(Arrays.asList(new String[]{
-            ChatColor.GREEN + "Nome" + ChatColor.YELLOW + ": " + ((h.getCustomName() == null || h.getCustomName().length() == 0) ? "Pocotó" : h.getCustomName()),
-            ChatColor.GREEN + "Cor" + ChatColor.YELLOW + ": " + h.getColor().name(),
-            ChatColor.GREEN + "Tipo" + ChatColor.YELLOW + ": " + h.getStyle().name(),
-            ChatColor.GREEN + "Raça" + ChatColor.YELLOW + ": " + h.getVariant().name(),
-            ChatColor.GREEN + "Velocidade" + ChatColor.YELLOW + ": " + String.format("%.2f", velocidade),
-            ChatColor.GREEN + "Salto" + ChatColor.YELLOW + ": " + String.format("%.2f", pulo),}));
+                ChatColor.GREEN + "Nome" + ChatColor.YELLOW + ": " + ((h.getCustomName() == null || h.getCustomName().length() == 0) ? "Pocotó" : h.getCustomName()),
+                ChatColor.GREEN + "Cor" + ChatColor.YELLOW + ": " + h.getColor().name(),
+                ChatColor.GREEN + "Tipo" + ChatColor.YELLOW + ": " + h.getStyle().name(),
+                ChatColor.GREEN + "Raça" + ChatColor.YELLOW + ": " + h.getVariant().name(),
+                ChatColor.GREEN + "Velocidade" + ChatColor.YELLOW + ": " + String.format("%.2f", velocidade),
+                ChatColor.GREEN + "Salto" + ChatColor.YELLOW + ": " + String.format("%.2f", pulo),}));
         ovo.setItemMeta(meta);
         return ovo;
     }
@@ -272,7 +260,7 @@ public class Horses extends KomSystem {
                 ((Player) ev.getExited()).getInventory().addItem(new ItemStack(Material.MINECART, 1));
             }
         } else if (ev.getExited().getType() == EntityType.PLAYER && ev.getVehicle().hasMetadata("mount")) {
-            
+
             if (ev.getVehicle() instanceof LivingEntity) {
                 LivingEntity le = (LivingEntity) ev.getVehicle();
                 if (le.hasPotionEffect(PotionEffectType.SLOW)) {

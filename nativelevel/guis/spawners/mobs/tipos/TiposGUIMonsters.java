@@ -9,7 +9,7 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -37,7 +37,8 @@ public class TiposGUIMonsters extends GUI {
         for (int x = 0; x < monstros.size(); x++) {
             inventory.setItem(x, monstros.get(x));
 
-            if(((SpawnEggMeta) monstros.get(x).getItemMeta()).getSpawnedType().equals(EntityType.WITHER_SKELETON)){
+            if (((SpawnEggMeta) monstros.get(x).getItemMeta()).getSpawnedType().equals(EntityType.WITHER_SKELETON) ||
+                    ((SpawnEggMeta) monstros.get(x).getItemMeta()).getSpawnedType().equals(EntityType.CAVE_SPIDER)) {
 
                 ArrayList<String> itemLore = new ArrayList<>();
                 itemLore.add("");
@@ -49,20 +50,26 @@ public class TiposGUIMonsters extends GUI {
                 itemMetaBatata.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                 itemMetaBatata.setLore(itemLore);
                 itemBatata.setItemMeta(itemMetaBatata);
-                inventory.setItem(x ,itemBatata);
+                inventory.setItem(x, itemBatata);
 
             }
         }
     }
 
     @Override
-    public void interage(Player player, int slot, InventoryAction inventoryAction) {
-        super.interage(player, slot, inventoryAction);
+    public void interage(InventoryClickEvent event) {
+        super.interage(event);
 
-        if (inventory.getItem(slot) == null || inventory.getItem(slot).getType().equals(Material.STAINED_GLASS_PANE)) return;
+        Player player = (Player) event.getWhoClicked();
+        int slot = event.getSlot();
+
+        if (inventory.getItem(slot) == null || inventory.getItem(slot).getType().equals(Material.STAINED_GLASS_PANE))
+            return;
 
         spawner.setSpawnedType(((SpawnEggMeta) inventory.getItem(slot).getItemMeta()).getSpawnedType());
         spawner.update(true);
+
+        SpawnerGUIMain.tiraBebe(spawner);
 
         GUI.open(player, new SpawnerGUIMain(spawner));
 

@@ -13,9 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author User
- * 
  */
 public class FinishCraftEvent extends Event {
 
@@ -28,7 +26,7 @@ public class FinishCraftEvent extends Event {
     private ItemStack result;
     private ItemStack cursor;
     private Craftable craftable;
-    
+
     public FinishCraftEvent(Player p, Inventory inv, ItemStack result, ItemStack cursor, Craftable craftable) {
         this.player = p;
         this.craftingInventory = inv;
@@ -36,7 +34,7 @@ public class FinishCraftEvent extends Event {
         this.cursor = cursor;
         this.craftable = craftable;
     }
-    
+
     private boolean isDefaultCraft = true;
 
     public boolean isIsDefaultCraft() {
@@ -51,12 +49,11 @@ public class FinishCraftEvent extends Event {
         this.craftable = craftable;
     }
 
-    
+
     public void setIsDefaultCraft(boolean isDefaultCraft) {
         this.isDefaultCraft = isDefaultCraft;
     }
-    
-    
+
 
     public Player getPlayer() {
         return player;
@@ -89,9 +86,8 @@ public class FinishCraftEvent extends Event {
     public void setCursor(ItemStack cursor) {
         this.cursor = cursor;
     }
-    
-    
-    
+
+
     public static HandlerList getHandlerList() {
         return handlers;
     }

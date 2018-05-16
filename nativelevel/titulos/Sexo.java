@@ -14,7 +14,7 @@ public enum Sexo {
     }
 
     public String feminiza(String palavra) {
-        if(palavra==null || palavra.length()<3)
+        if (palavra == null || palavra.length() < 3)
             return palavra;
         if (this == MULHER) {
             if (palavra.equalsIgnoreCase("Patrão")) {
@@ -23,7 +23,7 @@ public enum Sexo {
             if (palavra.equalsIgnoreCase("Papai Noel")) {
                 return "Mamãe Noel";
             }
-             if (palavra.equalsIgnoreCase("Rei do Gado")) {
+            if (palavra.equalsIgnoreCase("Rei do Gado")) {
                 return "Rainha do Gado";
             }
             String u = palavra.charAt(palavra.length() - 1) + "";

@@ -1,8 +1,6 @@
 package nativelevel.Auras.Lista;
 
-import me.fromgate.playeffect.PlayEffect;
 import nativelevel.Auras.Aura;
-import nativelevel.Jobs;
 import nativelevel.utils.Particles;
 import nativelevel.utils.UtilParticles;
 import org.bukkit.Location;

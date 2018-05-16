@@ -1,6 +1,13 @@
 package nativelevel.titulos;
 
-import java.sql.DatabaseMetaData;
+import nativelevel.KoM;
+import nativelevel.playerboolean.Stage;
+import nativelevel.playerboolean.StageDB;
+import nativelevel.rankings.Estatistica;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,16 +18,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import nativelevel.KoM;
-import nativelevel.playerboolean.Stage;
-import nativelevel.playerboolean.StageDB;
-import nativelevel.rankings.Estatistica;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 /**
- *
  * @author vntgasl
  */
 public class TituloDB {
@@ -240,7 +239,7 @@ public class TituloDB {
         addTitulo(p, titulo, cor, true);
     }
 
-//       titulo     list cor
+    //       titulo     list cor
     public static HashMap<String, List<ChatColor>> getTitulos(UUID p) {
 
         KoM.debug("GET TITULOS " + p);

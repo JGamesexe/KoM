@@ -1,20 +1,13 @@
 package nativelevel.Classes.Blacksmithy.recipes.Armas.Ouro;
 
-import nativelevel.Classes.Blacksmithy.recipes.Armas.Ferro.*;
-import nativelevel.Equipment.WeaponDamage;
 import nativelevel.Classes.Blacksmithy.CustomCrafting;
+import nativelevel.Equipment.WeaponDamage;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PotionSplashEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
- *
  * @author Ziden
- *
  */
 public class EspadasDeOuro extends CustomCrafting {
 
@@ -25,9 +18,9 @@ public class EspadasDeOuro extends CustomCrafting {
     @Override
     public ItemStack[] getRecipe() {
         return new ItemStack[]{
-            new ItemStack(Material.GOLD_INGOT, 1),
-            new ItemStack(Material.COAL_BLOCK, 1),
-            new ItemStack(Material.OBSIDIAN),};
+                new ItemStack(Material.GOLD_INGOT, 1),
+                new ItemStack(Material.COAL_BLOCK, 1),
+                new ItemStack(Material.OBSIDIAN),};
     }
 
     @Override
@@ -56,7 +49,7 @@ public class EspadasDeOuro extends CustomCrafting {
 
     @Override
     public ItemStack aplicaNoCraftNormal(ItemStack ss) {
-        if(ss.getType()!=Material.GOLD_SWORD) 
+        if (ss.getType() != Material.GOLD_SWORD)
             return ss;
         double dano = WeaponDamage.getDamage(ss);
         dano -= 1;

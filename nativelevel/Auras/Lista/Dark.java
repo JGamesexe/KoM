@@ -9,7 +9,7 @@ public class Dark extends Aura {
 
     @Override
     public String getNome() {
-        return "Sombria";    
+        return "Sombria";
     }
 
     @Override
@@ -24,8 +24,8 @@ public class Dark extends Aura {
 
     @Override
     public void tick(Player p, boolean newTick) {
-        PlayEffect.play("mobspell","draw:circle radius:1 loc:" + p.getLocation().getWorld().getName() + "," + p.getLocation().getBlockX() + "," + p.getLocation().getBlockY() + "," + p.getLocation().getBlockZ());
+        PlayEffect.play("mobspell", "draw:circle radius:1 loc:" + p.getLocation().getWorld().getName() + "," + p.getLocation().getBlockX() + "," + p.getLocation().getBlockY() + "," + p.getLocation().getBlockZ());
     }
-    
-   // VO COPIAR UNS EFEITOS MERMO =X
+
+    // VO COPIAR UNS EFEITOS MERMO =X
 }

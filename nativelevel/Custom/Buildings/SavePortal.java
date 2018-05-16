@@ -14,13 +14,13 @@
  */
 package nativelevel.Custom.Buildings;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author usuario
  */
 class SavePortal {

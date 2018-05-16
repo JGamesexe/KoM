@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
  * @author Codisimus
  */
 public class FishingListener implements Listener {
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerFish(PlayerFishEvent event) {
         //Check if there is a PhatLoot for Fishing
         PhatLoot phatLoot = PhatLoots.getPhatLoot("Fishing");

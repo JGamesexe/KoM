@@ -20,9 +20,9 @@ public class PlayerLootEvent extends LootEvent {
     /**
      * Creates a new event with the given data
      *
-     * @param looter The Player who is looting
-     * @param phatLoot The PhatLoot that the Player looted
-     * @param chest The PhatLootChest being looted or null if no chest was involved
+     * @param looter     The Player who is looting
+     * @param phatLoot   The PhatLoot that the Player looted
+     * @param chest      The PhatLootChest being looted or null if no chest was involved
      * @param lootBundle The Loot that the Player received
      */
     public PlayerLootEvent(Player looter, PhatLoot phatLoot, PhatLootChest chest, LootBundle lootBundle) {

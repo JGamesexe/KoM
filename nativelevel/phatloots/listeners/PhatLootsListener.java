@@ -1,13 +1,7 @@
 package nativelevel.phatloots.listeners;
 
 import nativelevel.KoM;
-import nativelevel.phatloots.ForgettableInventory;
-import nativelevel.phatloots.PhatLoot;
-import nativelevel.phatloots.PhatLootChest;
-import nativelevel.phatloots.PhatLoots;
-import nativelevel.phatloots.PhatLootsAPI;
-import nativelevel.phatloots.PhatLootsConfig;
-import nativelevel.phatloots.PhatLootsUtil;
+import nativelevel.phatloots.*;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.HumanEntity;
@@ -32,28 +26,28 @@ public class PhatLootsListener implements Listener {
      *
      * @param event The PlayerInteractEvent that occurred
      */
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (!event.hasBlock() || event.getHand() != EquipmentSlot.HAND) {
             return;
         }
-        
+
         KoM.debug("PL EVENT");
 
         boolean autoSpill = false;
         switch (event.getAction()) {
-        case RIGHT_CLICK_BLOCK:
-            break;
-        case LEFT_CLICK_BLOCK:
-            if (event.getClickedBlock().getType() == Material.DISPENSER) {
+            case RIGHT_CLICK_BLOCK:
                 break;
-            } else if (autoBreakOnPunch) {
-                autoSpill = true;
-                break;
-            }
-            return;
-        default:
-            return;
+            case LEFT_CLICK_BLOCK:
+                if (event.getClickedBlock().getType() == Material.DISPENSER) {
+                    break;
+                } else if (autoBreakOnPunch) {
+                    autoSpill = true;
+                    break;
+                }
+                return;
+            default:
+                return;
         }
 
         Player player = event.getPlayer();
@@ -69,7 +63,7 @@ public class PhatLootsListener implements Listener {
      *
      * @param event The InventoryCloseEvent that occurred
      */
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerCloseChest(InventoryCloseEvent event) {
         HumanEntity human = event.getPlayer();
         if (human instanceof Player) {
@@ -87,7 +81,7 @@ public class PhatLootsListener implements Listener {
      *
      * @param event The BlockBreakEvent that occurred
      */
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
         //Return if the Material of the Block is not a linkable type
         Block block = event.getBlock();

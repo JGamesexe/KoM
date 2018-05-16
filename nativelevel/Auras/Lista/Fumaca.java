@@ -10,7 +10,7 @@ public class Fumaca extends Aura {
 
     @Override
     public String getNome() {
-        return "Fumacento";    
+        return "Fumacento";
     }
 
     @Override
@@ -27,6 +27,6 @@ public class Fumaca extends Aura {
     public void tick(Player p, boolean newTick) {
         PlayEffect.play(VisualEffect.CLOUD, p.getLocation().add(0, 1, 0), "");
     }
-    
-   
+
+
 }

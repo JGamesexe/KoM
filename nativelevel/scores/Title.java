@@ -1,18 +1,19 @@
 package nativelevel.scores;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Minecraft 1.8 Title
- * 
-* @version 1.0.4
+ *
  * @author Maxim Van de Wynckel
+ * @version 1.0.4
  */
 public class Title {
     /* Title packet */
@@ -40,8 +41,7 @@ public class Title {
      *
      * @param title Title
      */
-    public Title(String title)
-    {
+    public Title(String title) {
         this.title = title;
         loadClasses();
     }
@@ -49,11 +49,10 @@ public class Title {
     /**
      * Create a new 1.8 title
      *
-     * @param title Title text
+     * @param title    Title text
      * @param subtitle Subtitle text
      */
-    public Title(String title, String subtitle)
-    {
+    public Title(String title, String subtitle) {
         this.title = title;
         this.subtitle = subtitle;
         loadClasses();
@@ -64,8 +63,7 @@ public class Title {
      *
      * @param title Title
      */
-    public Title(Title title)
-    {
+    public Title(Title title) {
         // Copy title
         this.title = title.title;
         this.subtitle = title.subtitle;
@@ -81,14 +79,13 @@ public class Title {
     /**
      * Create a new 1.8 title
      *
-     * @param title Title text
-     * @param subtitle Subtitle text
-     * @param fadeInTime Fade in time
-     * @param stayTime Stay on screen time
+     * @param title       Title text
+     * @param subtitle    Subtitle text
+     * @param fadeInTime  Fade in time
+     * @param stayTime    Stay on screen time
      * @param fadeOutTime Fade out time
      */
-    public Title(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime)
-    {
+    public Title(String title, String subtitle, int fadeInTime, int stayTime, int fadeOutTime) {
         this.title = title;
         this.subtitle = subtitle;
         this.fadeInTime = fadeInTime;
@@ -100,8 +97,7 @@ public class Title {
     /**
      * Load spigot and NMS classes
      */
-    private void loadClasses()
-    {
+    private void loadClasses() {
         packetTitle = getClass("org.spigotmc.ProtocolInjector$PacketTitle");
         packetActions = getClass("org.spigotmc.ProtocolInjector$PacketTitle$Action");
         nmsChatSerializer = getNMSClass("ChatSerializer");
@@ -112,8 +108,7 @@ public class Title {
      *
      * @param title Title
      */
-    public void setTitle(String title)
-    {
+    public void setTitle(String title) {
         this.title = title;
     }
 
@@ -122,8 +117,7 @@ public class Title {
      *
      * @return Title text
      */
-    public String getTitle()
-    {
+    public String getTitle() {
         return this.title;
     }
 
@@ -132,8 +126,7 @@ public class Title {
      *
      * @param subtitle Subtitle text
      */
-    public void setSubtitle(String subtitle)
-    {
+    public void setSubtitle(String subtitle) {
         this.subtitle = subtitle;
     }
 
@@ -142,8 +135,7 @@ public class Title {
      *
      * @return Subtitle text
      */
-    public String getSubtitle()
-    {
+    public String getSubtitle() {
         return this.subtitle;
     }
 
@@ -152,8 +144,7 @@ public class Title {
      *
      * @param color Chat color
      */
-    public void setTitleColor(ChatColor color)
-    {
+    public void setTitleColor(ChatColor color) {
         this.titleColor = color;
     }
 
@@ -162,8 +153,7 @@ public class Title {
      *
      * @param color Chat color
      */
-    public void setSubtitleColor(ChatColor color)
-    {
+    public void setSubtitleColor(ChatColor color) {
         this.subtitleColor = color;
     }
 
@@ -172,8 +162,7 @@ public class Title {
      *
      * @param time Time
      */
-    public void setFadeInTime(int time)
-    {
+    public void setFadeInTime(int time) {
         this.fadeInTime = time;
     }
 
@@ -182,8 +171,7 @@ public class Title {
      *
      * @param time Time
      */
-    public void setFadeOutTime(int time)
-    {
+    public void setFadeOutTime(int time) {
         this.fadeOutTime = time;
     }
 
@@ -192,24 +180,21 @@ public class Title {
      *
      * @param time Time
      */
-    public void setStayTime(int time)
-    {
+    public void setStayTime(int time) {
         this.stayTime = time;
     }
 
     /**
      * Set timings to ticks
      */
-    public void setTimingsToTicks()
-    {
+    public void setTimingsToTicks() {
         ticks = true;
     }
 
     /**
      * Set timings to seconds
      */
-    public void setTimingsToSeconds()
-    {
+    public void setTimingsToSeconds() {
         ticks = false;
     }
 
@@ -218,14 +203,11 @@ public class Title {
      *
      * @param player Player
      */
-    public void send(Player player)
-    {
-        if (getProtocolVersion(player) >= 47 && isSpigot() && packetTitle != null)
-        {
+    public void send(Player player) {
+        if (getProtocolVersion(player) >= 47 && isSpigot() && packetTitle != null) {
             // First reset previous settings
             resetTitle(player);
-            try
-            {
+            try {
                 // Send timings first
                 Object handle = getHandle(player);
                 Object connection = getField(handle.getClass(),
@@ -235,46 +217,42 @@ public class Title {
                         "sendPacket");
                 Object packet = packetTitle.getConstructor(packetActions,
                         Integer.TYPE, Integer.TYPE, Integer.TYPE).newInstance(
-                                actions[2], fadeInTime * (ticks ? 1 : 20),
-                                stayTime * (ticks ? 1 : 20),
-                                fadeOutTime * (ticks ? 1 : 20));
+                        actions[2], fadeInTime * (ticks ? 1 : 20),
+                        stayTime * (ticks ? 1 : 20),
+                        fadeOutTime * (ticks ? 1 : 20));
                 // Send if set
-                if (fadeInTime != -1 && fadeOutTime != -1 && stayTime != -1)
-                {
+                if (fadeInTime != -1 && fadeOutTime != -1 && stayTime != -1) {
                     sendPacket.invoke(connection, packet);
                 }
                 // Send title
                 Object serialized = getMethod(nmsChatSerializer, "a",
                         String.class).invoke(
-                                null,
-                                "{text:\""
+                        null,
+                        "{text:\""
                                 + ChatColor.translateAlternateColorCodes('&',
-                                        title) + "\",color:"
+                                title) + "\",color:"
                                 + titleColor.name().toLowerCase() + "}");
                 packet = packetTitle.getConstructor(packetActions,
                         getNMSClass("IChatBaseComponent")).newInstance(
-                                actions[0], serialized);
+                        actions[0], serialized);
                 sendPacket.invoke(connection, packet);
-                if (subtitle != "")
-                {
+                if (subtitle != "") {
                     // Send subtitle if present
                     serialized = getMethod(nmsChatSerializer, "a", String.class)
                             .invoke(null,
                                     "{text:\""
-                                    + ChatColor
-                                    .translateAlternateColorCodes(
-                                            '&', subtitle)
-                                    + "\",color:"
-                                    + subtitleColor.name()
-                                    .toLowerCase() + "}");
+                                            + ChatColor
+                                            .translateAlternateColorCodes(
+                                                    '&', subtitle)
+                                            + "\",color:"
+                                            + subtitleColor.name()
+                                            .toLowerCase() + "}");
                     packet = packetTitle.getConstructor(packetActions,
                             getNMSClass("IChatBaseComponent")).newInstance(
-                                    actions[1], serialized);
+                            actions[1], serialized);
                     sendPacket.invoke(connection, packet);
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -283,10 +261,8 @@ public class Title {
     /**
      * Broadcast the title to all players
      */
-    public void broadcast()
-    {
-        for (Player p : Bukkit.getOnlinePlayers())
-        {
+    public void broadcast() {
+        for (Player p : Bukkit.getOnlinePlayers()) {
             send(p);
         }
     }
@@ -296,12 +272,9 @@ public class Title {
      *
      * @param player Player
      */
-    public void clearTitle(Player player)
-    {
-        if (getProtocolVersion(player) >= 47 && isSpigot())
-        {
-            try
-            {
+    public void clearTitle(Player player) {
+        if (getProtocolVersion(player) >= 47 && isSpigot()) {
+            try {
                 // Send timings first
                 Object handle = getHandle(player);
                 Object connection = getField(handle.getClass(),
@@ -312,9 +285,7 @@ public class Title {
                 Object packet = packetTitle.getConstructor(packetActions)
                         .newInstance(actions[3]);
                 sendPacket.invoke(connection, packet);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -325,12 +296,9 @@ public class Title {
      *
      * @param player Player
      */
-    public void resetTitle(Player player)
-    {
-        if (getProtocolVersion(player) >= 47 && isSpigot())
-        {
-            try
-            {
+    public void resetTitle(Player player) {
+        if (getProtocolVersion(player) >= 47 && isSpigot()) {
+            try {
                 // Send timings first
                 Object handle = getHandle(player);
                 Object connection = getField(handle.getClass(),
@@ -341,9 +309,7 @@ public class Title {
                 Object packet = packetTitle.getConstructor(packetActions)
                         .newInstance(actions[4]);
                 sendPacket.invoke(connection, packet);
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -355,11 +321,9 @@ public class Title {
      * @param player Player
      * @return Protocol version
      */
-    private int getProtocolVersion(Player player)
-    {
+    private int getProtocolVersion(Player player) {
         int version = 0;
-        try
-        {
+        try {
             Object handle = getHandle(player);
             Object connection = getField(handle.getClass(), "playerConnection")
                     .get(handle);
@@ -367,9 +331,7 @@ public class Title {
             version = (Integer) getMethod("getVersion",
                     networkManager.getClass()).invoke(networkManager);
             return version;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return version;
@@ -380,8 +342,7 @@ public class Title {
      *
      * @return Spigot
      */
-    private boolean isSpigot()
-    {
+    private boolean isSpigot() {
         return Bukkit.getVersion().contains("Spigot");
     }
 
@@ -391,136 +352,104 @@ public class Title {
      * @param namespace Namespace url
      * @return Class
      */
-    private Class<?> getClass(String namespace)
-    {
-        try
-        {
+    private Class<?> getClass(String namespace) {
+        try {
             return Class.forName(namespace);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
         }
         return null;
     }
 
-    private Field getField(String name, Class<?> clazz) throws Exception
-    {
+    private Field getField(String name, Class<?> clazz) throws Exception {
         return clazz.getDeclaredField(name);
     }
 
-    private Object getValue(String name, Object obj) throws Exception
-    {
+    private Object getValue(String name, Object obj) throws Exception {
         Field f = getField(name, obj.getClass());
         f.setAccessible(true);
         return f.get(obj);
     }
 
-    private Class<?> getPrimitiveType(Class<?> clazz)
-    {
+    private Class<?> getPrimitiveType(Class<?> clazz) {
         return CORRESPONDING_TYPES.containsKey(clazz) ? CORRESPONDING_TYPES
                 .get(clazz) : clazz;
     }
 
-    private Class<?>[] toPrimitiveTypeArray(Class<?>[] classes)
-    {
+    private Class<?>[] toPrimitiveTypeArray(Class<?>[] classes) {
         int a = classes != null ? classes.length : 0;
         Class<?>[] types = new Class<?>[a];
-        for (int i = 0; i < a; i++)
-        {
+        for (int i = 0; i < a; i++) {
             types[i] = getPrimitiveType(classes[i]);
         }
         return types;
     }
 
-    private static boolean equalsTypeArray(Class<?>[] a, Class<?>[] o)
-    {
-        if (a.length != o.length)
-        {
+    private static boolean equalsTypeArray(Class<?>[] a, Class<?>[] o) {
+        if (a.length != o.length) {
             return false;
         }
-        for (int i = 0; i < a.length; i++)
-        {
-            if (!a[i].equals(o[i]) && !a[i].isAssignableFrom(o[i]))
-            {
+        for (int i = 0; i < a.length; i++) {
+            if (!a[i].equals(o[i]) && !a[i].isAssignableFrom(o[i])) {
                 return false;
             }
         }
         return true;
     }
 
-    private Object getHandle(Object obj)
-    {
-        try
-        {
+    private Object getHandle(Object obj) {
+        try {
             return getMethod("getHandle", obj.getClass()).invoke(obj);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
     private Method getMethod(String name, Class<?> clazz,
-            Class<?>... paramTypes)
-    {
+                             Class<?>... paramTypes) {
         Class<?>[] t = toPrimitiveTypeArray(paramTypes);
-        for (Method m : clazz.getMethods())
-        {
+        for (Method m : clazz.getMethods()) {
             Class<?>[] types = toPrimitiveTypeArray(m.getParameterTypes());
-            if (m.getName().equals(name) && equalsTypeArray(types, t))
-            {
+            if (m.getName().equals(name) && equalsTypeArray(types, t)) {
                 return m;
             }
         }
         return null;
     }
 
-    private String getVersion()
-    {
+    private String getVersion() {
         String name = Bukkit.getServer().getClass().getPackage().getName();
         String version = name.substring(name.lastIndexOf('.') + 1) + ".";
         return version;
     }
 
-    private Class<?> getNMSClass(String className)
-    {
+    private Class<?> getNMSClass(String className) {
         String fullName = "net.minecraft.server." + getVersion() + className;
         Class<?> clazz = null;
-        try
-        {
+        try {
             clazz = Class.forName(fullName);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return clazz;
     }
 
-    private Field getField(Class<?> clazz, String name)
-    {
-        try
-        {
+    private Field getField(Class<?> clazz, String name) {
+        try {
             Field field = clazz.getDeclaredField(name);
             field.setAccessible(true);
             return field;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private Method getMethod(Class<?> clazz, String name, Class<?>... args)
-    {
-        for (Method m : clazz.getMethods())
-        {
+    private Method getMethod(Class<?> clazz, String name, Class<?>... args) {
+        for (Method m : clazz.getMethods()) {
             if (m.getName().equals(name)
                     && (args.length == 0 || ClassListEqual(args,
-                            m.getParameterTypes())))
-            {
+                    m.getParameterTypes()))) {
                 m.setAccessible(true);
                 return m;
             }
@@ -528,17 +457,13 @@ public class Title {
         return null;
     }
 
-    private boolean ClassListEqual(Class<?>[] l1, Class<?>[] l2)
-    {
+    private boolean ClassListEqual(Class<?>[] l1, Class<?>[] l2) {
         boolean equal = true;
-        if (l1.length != l2.length)
-        {
+        if (l1.length != l2.length) {
             return false;
         }
-        for (int i = 0; i < l1.length; i++)
-        {
-            if (l1[i] != l2[i])
-            {
+        for (int i = 0; i < l1.length; i++) {
+            if (l1[i] != l2[i]) {
                 equal = false;
                 break;
             }

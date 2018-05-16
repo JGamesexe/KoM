@@ -14,13 +14,14 @@
  */
 package nativelevel.chunkGen;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class GeneratorBase extends ChunkGenerator {
 
@@ -35,7 +36,7 @@ public class GeneratorBase extends ChunkGenerator {
 
     @Override
     public byte[][] generateBlockSections(World world, Random rand, int ChunkX,
-            int ChunkZ, BiomeGrid biome) {
+                                          int ChunkZ, BiomeGrid biome) {
         byte[][] chunk = new byte[world.getMaxHeight() / 16][];
         for (int x = 0; x < 16; x++) { //loop through all of the blocks in the chunk that are lower than maxHeight
             for (int z = 0; z < 16; z++) {

@@ -14,15 +14,7 @@
  */
 package nativelevel.sisteminhas;
 
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.flags.DefaultFlag;
-import com.sk89q.worldguard.protection.flags.StateFlag;
-import com.sk89q.worldguard.protection.flags.StateFlag.State;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import java.util.ArrayList;
-import java.util.List;
 import nativelevel.Jobs;
-import nativelevel.KoM;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -35,25 +27,22 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Tralhas {
 
-    
-    
-   
-    
-    
-    
+
     /**
      * Gets entities inside a cone.
      *
-     * @see Utilities#getPlayersInCone(List, Location, int, int, int)
-     *
-     * @param entities - {@code List<Entity>}, list of nearby entities
+     * @param entities   - {@code List<Entity>}, list of nearby entities
      * @param startpoint - {@code Location}, center point
-     * @param radius - {@code int}, radius of the circle
-     * @param degrees - {@code int}, angle of the cone
-     * @param direction - {@code int}, direction of the cone
+     * @param radius     - {@code int}, radius of the circle
+     * @param degrees    - {@code int}, angle of the cone
+     * @param direction  - {@code int}, direction of the cone
      * @return {@code List<Entity>} - entities in the cone
+//     * @see Utilities#getPlayersInCone(List, Location, int, int, int)
      */
     public static List<Entity> getEntitiesInCone(List<Entity> entities, Location startpoint, int radius, int degrees, int direction) {
         List<Entity> newEntities = new ArrayList<Entity>();
@@ -75,8 +64,8 @@ public class Tralhas {
     }
 
     public static double getAngle(Vector vec1, Vector vec2) {
-       // vec1 = vec1.normalize();
-       // vec2 = vec2.normalize();
+        // vec1 = vec1.normalize();
+        // vec2 = vec2.normalize();
         vec1.setY(1);
         vec2.setY(1);
         return vec1.angle(vec2) * 180.0F / 3.141592653589793D;
@@ -120,8 +109,8 @@ public class Tralhas {
     }
 
     public static void doRandomKnock(LivingEntity e, float power) {
-        if(e.getType()==EntityType.PLAYER) {
-            if(((Player)e).hasPermission("kom.semkb")) {
+        if (e.getType() == EntityType.PLAYER) {
+            if (((Player) e).hasPermission("kom.semkb")) {
                 return;
             }
         }

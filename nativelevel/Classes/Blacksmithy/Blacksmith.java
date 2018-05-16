@@ -1,51 +1,64 @@
 package nativelevel.Classes.Blacksmithy;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.Equipment.EquipmentEvents;
-import nativelevel.Equipment.Generator.EquipGenerator;
+import nativelevel.Attributes.Stamina;
 import nativelevel.Classes.Thief;
-import nativelevel.Crafting.CraftCache;
-import nativelevel.Crafting.Craftable;
-import nativelevel.Custom.CustomItem;
+import nativelevel.Custom.Items.CajadoElemental;
 import nativelevel.CustomEvents.BeginCraftEvent;
 import nativelevel.CustomEvents.FinishCraftEvent;
+import nativelevel.Equipment.EquipmentEvents;
+import nativelevel.Equipment.Generator.EquipGenerator;
 import nativelevel.Jobs;
-import nativelevel.Jobs.Sucesso;
-import nativelevel.Menu.Menu;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.Lang.LangMinecraft;
-import nativelevel.Attributes.Stamina;
 import nativelevel.bencoes.TipoBless;
 import nativelevel.gemas.Raridade;
 import nativelevel.rankings.Estatistica;
 import nativelevel.rankings.RankDB;
 import nativelevel.sisteminhas.KomSystem;
 import nativelevel.spec.PlayerSpec;
-import nativelevel.sisteminhas.XP;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class Blacksmith extends KomSystem {
+
+    public static void onHit(EntityDamageByEntityEvent ev) {
+
+        Player attacker = (Player) ev.getDamager();
+        ItemStack weapon = attacker.getInventory().getItemInMainHand();
+
+        if (weapon.getType().toString().contains("SPADE") && !CajadoElemental.isCajadoElemental(weapon)) {
+
+            if (weapon.getType().name().contains("GOLD")) ev.setDamage(ev.getDamage() + 0.5);
+
+            ev.setDamage(ev.getDamage() * 1.10);
+
+        }
+
+    }
+
+    public static void onDamaged(EntityDamageEvent ev) {
+
+        if (ev.getCause().equals(EntityDamageEvent.DamageCause.FIRE) || ev.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) || ev.getCause().equals(EntityDamageEvent.DamageCause.LAVA))
+            ev.setCancelled(true);
+
+        if (ev.getCause().equals(EntityDamageEvent.DamageCause.DROWNING)) ev.setDamage(ev.getDamage() * 2);
+        else ev.setDamage(ev.getDamage() * 0.85);
+
+    }
 
     public static boolean usaBigorna(Player p) {
 
@@ -155,10 +168,10 @@ public class Blacksmith extends KomSystem {
     public static void terminaDeCriarItem(FinishCraftEvent ev) {
         ev.getPlayer().playSound(ev.getPlayer().getLocation(), Sound.BLOCK_ANVIL_USE, 1.2F, 1);
 
-        if(!EquipmentEvents.isWeapon(ev.getResult()) && !EquipmentEvents.isArmor(ev.getResult())) {
+        if (!EquipmentEvents.isWeapon(ev.getResult()) && !EquipmentEvents.isArmor(ev.getResult())) {
             return;
         }
-        
+
         int chanceExceptional = 1 + (ev.getPlayer().getLevel() / 10);
         if (PlayerSpec.temSpec(ev.getPlayer(), PlayerSpec.Forjador)) {
             chanceExceptional *= 2;
@@ -178,7 +191,7 @@ public class Blacksmith extends KomSystem {
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(rar.getIcone() + " " + LangMinecraft.get().get(item) + " Excepcional");
             item.setItemMeta(meta);
-            item.addEnchantment(Enchantment.DURABILITY, Jobs.rnd.nextInt(3)+1);
+            item.addEnchantment(Enchantment.DURABILITY, Jobs.rnd.nextInt(3) + 1);
             ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Voce fez um item Excepcional !"));
         }
         RankDB.addPontoCache(ev.getPlayer(), Estatistica.FERREIRO, 1);
@@ -223,7 +236,7 @@ public class Blacksmith extends KomSystem {
                     if (inimigo.getInventory().getHelmet().getType() == Material.LEATHER_HELMET) {
                         inimigo.getInventory().setHelmet(null);
                     } else {
-                        if(inimigo.getInventory().getHelmet().getType()!=Material.SKULL_ITEM)
+                        if (inimigo.getInventory().getHelmet().getType() != Material.SKULL_ITEM)
                             inimigo.getInventory().getHelmet().setDurability((short) (inimigo.getInventory().getHelmet().getDurability() + 20));
                     }
                 }

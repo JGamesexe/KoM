@@ -8,9 +8,7 @@ import java.nio.channels.FileChannel;
 import java.util.Date;
 
 /**
- *
  * @author NeT32
- * 
  */
 
 public class AutoUpdate {
@@ -36,8 +34,8 @@ public class AutoUpdate {
     /**
      * Copia arquivos de um local para o outro
      *
-     * @param origem - Arquivo de origem
-     * @param destino - Arquivo de destino
+     * @param origem    - Arquivo de origem
+     * @param destino   - Arquivo de destino
      * @param overwrite - Confirmação para sobrescrever os arquivos
      * @throws IOException
      */

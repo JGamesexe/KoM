@@ -5,41 +5,17 @@
  */
 package nativelevel.sisteminhas;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import nativelevel.Menu.Menu;
 import nativelevel.KoM;
-import nativelevel.utils.jnbt.ByteTag;
-import nativelevel.utils.jnbt.CompoundTag;
-import nativelevel.utils.jnbt.IntTag;
-import nativelevel.utils.jnbt.ListTag;
-import nativelevel.utils.jnbt.NBTInputStream;
-import nativelevel.utils.jnbt.ShortTag;
-import nativelevel.utils.jnbt.Tag;
+import nativelevel.Menu.Menu;
+import nativelevel.utils.jnbt.*;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.permissions.Permission;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
+
+import java.io.*;
+import java.util.*;
 
 /**
- *
  * @author USER
- * 
  */
 
 public class Html {
@@ -78,11 +54,11 @@ public class Html {
             ArrayList<KomPlayer> toplevel = new ArrayList();
             ArrayList<KomPlayer> topeme = new ArrayList();
             ArrayList<KomPlayer> topkdr = new ArrayList();
-            HashMap<String,String> negada =  KoM.database.getUuidsAndNames();
+            HashMap<String, String> negada = KoM.database.getUuidsAndNames();
             for (String s : negada.keySet()) {
                 String uuid = s;
                 String name = negada.get(s);
-                if(!new File("vila" + File.separator + "playerdata" + File.separator + uuid + ".dat").exists()){
+                if (!new File("vila" + File.separator + "playerdata" + File.separator + uuid + ".dat").exists()) {
                     break;
                 }
                 KomPlayer km = new KomPlayer(uuid, name);
@@ -187,7 +163,7 @@ public class Html {
             ex.printStackTrace();
             KoM.log.info(ex.getMessage());
         } finally {
-           
+
         }
 
     }
@@ -216,26 +192,26 @@ public class Html {
 
         HashMap<String, String> negada = KoM.database.getUuidsAndNames();
         for (String s : negada.keySet()) {
-            
+
             //OfflinePlayer of = Bukkit.getOfflinePlayer(UUID.fromString(s));
             String name = negada.get(s);
             String uuid = s;
-            KoM.log.info("processando player "+name+" "+s);
+            KoM.log.info("processando player " + name + " " + s);
             String h = "<html>";
             FileWriter fstream = null;
             ClanPlayer cp = ClanLand.manager.getClanPlayer(UUID.fromString(uuid));
             try {
-                if(!new File("vila" + File.separator + "playerdata" + File.separator + uuid + ".dat").exists()){
+                if (!new File("vila" + File.separator + "playerdata" + File.separator + uuid + ".dat").exists()) {
                     break;
                 }
                 File playerfile = new File("plugins" + File.separator + "kom" + File.separator + "site" + File.separator + "jogadores" + File.separator + name + ".html");
-               if(!playerfile.exists()){
-                   playerfile.createNewFile();
-               }   
+                if (!playerfile.exists()) {
+                    playerfile.createNewFile();
+                }
                 fstream = new FileWriter("plugins" + File.separator + "kom" + File.separator + "site" + File.separator + "jogadores" + File.separator + name + ".html");
                 KoM.log.info("Arquivo criado");
                 BufferedWriter out = new BufferedWriter(fstream);
-                
+
                 String clan = "Nao tem";
                 String tag = "";
                 String kdr = "0.0";
@@ -252,14 +228,14 @@ public class Html {
                 KoM.log.info("obtive clan");
                 h += "<head>";
                 h += "<meta charset=\"utf-8\">";
-                h += "<title>Jogador " + name+ "</title>";
+                h += "<title>JogadorDAO " + name + "</title>";
                 h += "<link rel=\"stylesheet\" href=\"../stylep.css\">";
                 h += "<link href=\"../favicon.ico\" rel=\"shortcut icon\" type=\"image/x-icon\" />";
                 h += "</head>";
                 h += "<body>";
                 h += "<img src=\"http://www.knightsofminecraft.com.br/img/company-logo.png\" class=\"logo\" alt=\"Logo KoM\"></h1>";
 
-                h += "<h2>" + name+ "</h2>";
+                h += "<h2>" + name + "</h2>";
                 h += "<img src=\"https://minotar.net/helm/" + name + "/150.png\"\" class=\"logo\" alt=\"Cara de " + name + "\"></h1><br>";
 
                 h += "<table class =\"info\" border=\"4px\">";
@@ -296,9 +272,9 @@ public class Html {
                 h += "</tr>";
                 h += "<tr>";
                 //h += "<td class=\"cabe\">Vip</td>";
-               // PermissionUser pu = PermissionsEx.getUser(name);
-               // String g = pu.has("kom.vip") ? "Sim" : "Nao";
-               // h += "<td>" + g + "</td>";
+                // PermissionUser pu = PermissionsEx.getUser(name);
+                // String g = pu.has("kom.vip") ? "Sim" : "Nao";
+                // h += "<td>" + g + "</td>";
                 h += "<td class=\"cabe\">Deus Favorito</td><td>Jabu</td>";
                 h += "</tr>";
                 h += "<tr>";
@@ -316,7 +292,7 @@ public class Html {
                 ex.printStackTrace();
                 KoM.log.info(ex.getMessage());
             } finally {
-             
+
             }
         }
     }
@@ -398,7 +374,7 @@ public class Html {
                     geraPlayerRank();
                     geraRankGuildas();
                     for (Clan c : ClanLand.manager.getClans()) {
-                        KoM.log.info("[Html] Processando guilda "+c.getTag());
+                        KoM.log.info("[Html] Processando guilda " + c.getTag());
                         String h = "<html>";
                         FileWriter fstream = null;
                         try {
@@ -499,7 +475,7 @@ public class Html {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                     KoM.log.info(ex.getMessage());
-                   
+
                 }
                 KoM.log.info("O Update do site levou " + String.valueOf((System.currentTimeMillis() - co)) + " milisegundos!");
 
@@ -523,10 +499,10 @@ public class Html {
         FileWriter fstream = null;
         KoM.log.info("Gerando rank de guildas");
         try {
-           
+
             fstream = new FileWriter("plugins" + File.separator + "kom" + File.separator + "site" + File.separator + "ClanRank.html");
             BufferedWriter out = new BufferedWriter(fstream);
- KoM.log.info("Arquivo aberto");
+            KoM.log.info("Arquivo aberto");
             h += "<head>";
             h += "<meta charset=\"utf-8\">";
             h += "<title> Rank de Guildas</title>";
@@ -537,7 +513,7 @@ public class Html {
             h += "<img src=\"http://www.knightsofminecraft.com.br/img/company-logo.png\" class=\"logo\" alt=\"Logo KoM\"></h1>";
             h += "<h2>Top Poder</h2>";
             h += "<table border=1 class=\"topg\">";
-             KoM.log.info("foi header");
+            KoM.log.info("foi header");
             ArrayList<KomPlayer> top = new ArrayList();
             ArrayList<Clan> toppoder = new ArrayList();
             ArrayList<Clan> topkdr = new ArrayList();
@@ -547,13 +523,13 @@ public class Html {
                 toppoder.add(c);
                 topkdr.add(c);
             }
-             KoM.log.info("vi os clans");
+            KoM.log.info("vi os clans");
             Collections.sort(toppoder, new Comparator<Clan>() {
                 public int compare(Clan one, Clan other) {
                     return ClanLand.getPoder(other.getTag()) - ClanLand.getPoder(one.getTag());
                 }
             });
-             KoM.log.info("fiz o sort KDR");
+            KoM.log.info("fiz o sort KDR");
             Collections.sort(topkdr, new Comparator<Clan>() {
                 public int compare(Clan one, Clan other) {
                     if (one.getTotalKDR() < other.getTotalKDR()) {
@@ -566,7 +542,7 @@ public class Html {
                 }
 
             });
-             KoM.log.info("fiz o sort PODER");
+            KoM.log.info("fiz o sort PODER");
 
             h += "<tr>";
             h += "<td class =\"cabeg\">Lugar</td>";
@@ -608,7 +584,7 @@ public class Html {
                 h += "<td>" + kp.getTotalKDR() + "</td>";
                 h += "</tr>";
             }
-             KoM.log.info("criei as tabelas");
+            KoM.log.info("criei as tabelas");
             h += "</table><br>";
 
             h += "</body>";
@@ -622,7 +598,7 @@ public class Html {
             ex.printStackTrace();
             KoM.log.info(ex.getMessage());
         } finally {
-       
+
         }
     }
 }

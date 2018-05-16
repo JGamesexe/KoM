@@ -5,22 +5,20 @@
  */
 package nativelevel.Attributes.Buffs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-import nativelevel.KoM;
 import nativelevel.Equipment.EquipMeta;
+import nativelevel.KoM;
 import org.bukkit.Bukkit;
-import org.bukkit.EntityEffect;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
 
 /**
- *
  * @author User
  */
 public class BuffControl {
@@ -42,7 +40,7 @@ public class BuffControl {
                             b.secondTick();
                         }
                     }
-                    
+
                     for (Buff b : rem) {
                         remBuff(b.getEntity(), b);
                     }
@@ -53,32 +51,32 @@ public class BuffControl {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(KoM._instance, r, 20, 20);
     }
 
-   // private static List<Buff> activeBuffs = new LinkedList<Buff>();
+    // private static List<Buff> activeBuffs = new LinkedList<Buff>();
     public static HashMap<UUID, List<Buff>> buffs = new HashMap<UUID, List<Buff>>();
 
     private static HashMap<UUID, List<EquipMeta>> modifiers = new HashMap<UUID, List<EquipMeta>>();
 
     public static boolean temBuff(Class<? extends Buff> buff, LivingEntity e) {
-        for(Buff b : getBuffs(e)) {
-            if(b.getClass().equals(buff.getClass())) 
+        for (Buff b : getBuffs(e)) {
+            if (b.getClass().equals(buff.getClass()))
                 return true;
         }
         return false;
     }
-    
+
     private static List<Buff> getBuffs(LivingEntity p) {
         if (!buffs.containsKey(p.getUniqueId())) {
             buffs.put(p.getUniqueId(), new ArrayList<Buff>());
         }
         return buffs.get(p.getUniqueId());
     }
-    
+
     public static Buff getBuff(LivingEntity p, Class<? extends Buff> buff) {
         if (!buffs.containsKey(p.getUniqueId())) {
             buffs.put(p.getUniqueId(), new ArrayList<Buff>());
         }
-        for(Buff b : buffs.get(p.getUniqueId())) {
-            if(b.getClass().equals(buff.getClass()))
+        for (Buff b : buffs.get(p.getUniqueId())) {
+            if (b.getClass().equals(buff.getClass()))
                 return b;
         }
         return null;

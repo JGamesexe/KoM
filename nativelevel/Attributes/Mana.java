@@ -1,8 +1,5 @@
 package nativelevel.Attributes;
 
-import java.util.HashMap;
-import java.util.UUID;
-import nativelevel.Custom.CustomItem;
 import nativelevel.Equipment.Atributo;
 import nativelevel.Equipment.EquipManager;
 import nativelevel.Equipment.EquipMeta;
@@ -13,7 +10,9 @@ import nativelevel.spec.PlayerSpec;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class Mana {
 

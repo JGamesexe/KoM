@@ -1,7 +1,5 @@
 package nativelevel.karma;
 
-import java.util.HashSet;
-import java.util.UUID;
 import nativelevel.KoM;
 import nativelevel.MetaShit;
 import nativelevel.scores.SBCore;
@@ -10,10 +8,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
+import java.util.UUID;
+
 /**
- *
  * @author Ziden
- *
  */
 public class Criminoso {
 
@@ -27,16 +26,16 @@ public class Criminoso {
 
         KoM.debug("Setando crim");
 
-        if(p.getWorld().getName().equalsIgnoreCase("arena") || p.getWorld().getName().equalsIgnoreCase("woe"))
+        if (p.getWorld().getName().equalsIgnoreCase("arena") || p.getWorld().getName().equalsIgnoreCase("woe"))
             return;
-        
+
         if (criminosos.contains(p.getUniqueId())) {
 
             int idTask = (Integer) MetaShit.getMetaObject("crim", p);
             Bukkit.getScheduler().cancelTask(idTask);
 
         } else {
-            p.sendMessage(KoM.tag+ChatColor.RED + "Você agora é um criminoso por alguns minutos");
+            p.sendMessage(KoM.tag + ChatColor.RED + "Você agora é um criminoso por alguns minutos");
             if (p.getLevel() < 10 && !p.hasMetadata("1crim")) {
                 MetaShit.setMetaObject("1crim", p, true);
                 p.sendMessage("§e§l[Dica] §aEnquanto você for um criminoso, poderão te atacar livremente.");

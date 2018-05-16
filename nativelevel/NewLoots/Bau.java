@@ -6,15 +6,14 @@
 package nativelevel.NewLoots;
 
 /**
- *
  * @author User
  */
 public class Bau {
-    
+
     public String loot;
     public int x;
     public int y;
     public int z;
     public int chance;
-    
+
 }
