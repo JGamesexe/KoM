@@ -10,6 +10,9 @@ import java.util.logging.Logger;
 
 public class DB {
 
+    public static String dbName = "kom";
+    public static String connStr = "jdbc:mysql://localhost:3306/kom?autoReconnect=true";
+
     private static Connection conn = null;
 
     public static void createTables() {
@@ -150,11 +153,9 @@ public class DB {
         return 0;
     }
 
-    public static String dbName = "kom";
-    public static String connStr = "jdbc:mysql://localhost:3306/kom?autoReconnect=true";
-
     private static Connection createConnection() {
         try {
+            dbName = KoM.config.getConfig().getString("database.name");
             connStr = "jdbc:mysql://localhost:3306/" + dbName + "?autoReconnect=true";
             try {
                 Class.forName("com.mysql.jdbc.Driver").newInstance();

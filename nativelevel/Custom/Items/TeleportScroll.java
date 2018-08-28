@@ -73,7 +73,13 @@ public class TeleportScroll extends CustomItem {
     public static void use(final Player p) {
         ItemStack scroll = p.getInventory().getItemInMainHand();
         if (scroll != null && scroll.getType() == Material.PAPER) {
+
+            ItemMeta meta = scroll.getItemMeta();
+
+            if (!meta.getLore().get((meta.getLore().size() - 1)).contains(":Pergaminho de Teleporte")) return;
+
             p.playEffect(EntityEffect.SHEEP_EAT);
+
             if (KoM.debugMode) {
                 KoM.log.info("Usando pergaminho de teleporte !");
             }
@@ -85,7 +91,6 @@ public class TeleportScroll extends CustomItem {
                 p.sendMessage(ChatColor.RED + L.m("Aguarde para usar outro pergaminho !"));
                 return;
             }
-            ItemMeta meta = scroll.getItemMeta();
             //  if(meta.getLore().size()==8) {
             //World w = Bukkit.getWorld(meta.getLore().get(0).split(":")[1]);
 

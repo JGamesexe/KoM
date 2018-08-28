@@ -1,7 +1,7 @@
 package nativelevel.guis.guilda;
 
 import nativelevel.KoM;
-import nativelevel.conversations.InternalStringPrompt;
+import nativelevel.conversations.InternalStringPrompts;
 import nativelevel.sisteminhas.ClanLand;
 import nativelevel.utils.GUI;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
@@ -21,17 +21,17 @@ import java.util.Arrays;
 
 public class GuildaMembrosGUI extends GUI {
 
+    private String viewer;
     private ClanPlayer clanPlayer;
     private Clan clan;
     private boolean isFounder;
 
     public GuildaMembrosGUI(Player player, Clan clan) {
         super(Bukkit.createInventory(null, 45, "§3§l" + clan.getTag().toUpperCase() + ", §3Menu de Guilda, Membros"));
-        if (ClanLand.manager.getClanPlayer(player).getTag().equalsIgnoreCase(clan.getTag()))
-            this.clanPlayer = ClanLand.manager.getClanPlayer(player);
-        else this.clanPlayer = null;
+        this.clanPlayer = ClanLand.manager.getClanPlayer(player) != null && ClanLand.manager.getClanPlayer(player).getTag().equalsIgnoreCase(clan.getTag()) ? ClanLand.manager.getClanPlayer(player) : null;
+        this.viewer = clanPlayer != null ? player.getName() : "";
         this.clan = clan;
-        this.isFounder = ClanLand.isFounder(player.getUniqueId(), clan.getTag());
+        this.isFounder = clanPlayer != null && ClanLand.isFounder(player.getUniqueId(), clan.getTag());
         cria();
     }
 
@@ -92,18 +92,21 @@ public class GuildaMembrosGUI extends GUI {
             else if (membro.isTrusted()) skullMeta.setDisplayName("§a§n" + name);
             else skullMeta.setDisplayName("§7§n" + name);
 
-            if (membro.isLeader())
-                if (isFounder)
-                    skullMeta.setLore(Arrays.asList("", "§8Clique, para rebaixar este membro", "§8Pressione com 'Q' para tirar o membro da Guilda", ""));
-                else skullMeta.setLore(Arrays.asList("", "§8Você não pode fazer nada com outro Lider", ""));
-            else if (membro.isTrusted())
-                skullMeta.setLore(Arrays.asList("", "§8Clique, para desconfiar este membro", "§8Clique com Shift, para promover este membro", "§8Pressione com 'Q' para tirar o membro da Guilda", ""));
-            else
-                skullMeta.setLore(Arrays.asList("", "§8Clique, para confiar este membro", "§8Pressione com 'Q' para tirar o membro da Guilda", ""));
+            if (name.equalsIgnoreCase(viewer)) {
+                skullMeta.setLore(Arrays.asList("","§7Este é você, um pedaço importante para está guilda!",""));
+            } else if (clanPlayer != null && clanPlayer.isLeader()) {
+                if (membro.isLeader()) {
+                    if (isFounder) skullMeta.setLore(Arrays.asList("", "§8Clique, para rebaixar este membro", "§8Pressione com botão de DROP para tirar o membro da Guilda", ""));
+                    else skullMeta.setLore(Arrays.asList("", "§8Você não pode fazer nada com outro Lider", ""));
+                } else if (membro.isTrusted()) {
+                    skullMeta.setLore(Arrays.asList("", "§8Clique, para desconfiar este membro", "§8Clique com Shift, para promover este membro", "§8Pressione com  botão de DROP para tirar o membro da Guilda", ""));
+                } else {
+                    skullMeta.setLore(Arrays.asList("", "§8Clique, para confiar este membro", "§8Pressione com botão de DROP para tirar o membro da Guilda", ""));
+                }
+            }
 
             itemStack.setItemMeta(skullMeta);
             itemStacks[index] = itemStack;
-
 
             index++;
         }
@@ -124,14 +127,18 @@ public class GuildaMembrosGUI extends GUI {
             else if (membro.isTrusted()) skullMeta.setDisplayName("§a" + name);
             else skullMeta.setDisplayName("§7" + name);
 
-            if (membro.isLeader())
-                if (isFounder)
-                    skullMeta.setLore(Arrays.asList(" ", "§8Clique, para rebaixar este membro", "§8Pressione com 'Q' para tirar o membro da Guilda", ""));
-                else skullMeta.setLore(Arrays.asList(" ", "§8Você não pode fazer nada com outro Lider", ""));
-            else if (membro.isTrusted())
-                skullMeta.setLore(Arrays.asList("", "§8Clique, para desconfiar este membro", "§8Clique com Shift, para promover este membro", "§8Pressione com 'Q' para tirar o membro da Guilda", ""));
-            else
-                skullMeta.setLore(Arrays.asList("", "§8Clique, para confiar este membro", "§8Pressione com 'Q' para tirar o membro da Guilda", ""));
+            if (name.equalsIgnoreCase(viewer)) {
+                skullMeta.setLore(Arrays.asList("","§7Este é você, um pedaço importante para está guilda!",""));
+            } else if (clanPlayer != null && clanPlayer.isLeader()) {
+                if (membro.isLeader()) {
+                    if (isFounder) skullMeta.setLore(Arrays.asList(" ", "§8Clique, para rebaixar este membro", "§8Pressione com botão de DROP para tirar o membro da Guilda", ""));
+                    else skullMeta.setLore(Arrays.asList(" ", "§8Você não pode fazer nada com outro Lider", ""));
+                } else if ((membro.isTrusted())) {
+                    skullMeta.setLore(Arrays.asList("", "§8Clique, para desconfiar este membro", "§8Clique com Shift, para promover este membro", "§8Pressione com botão de DROP para tirar o membro da Guilda", ""));
+                } else {
+                    skullMeta.setLore(Arrays.asList("", "§8Clique, para confiar este membro", "§8Pressione com botão de DROP para tirar o membro da Guilda", ""));
+                }
+            }
 
             itemStack.setItemMeta(skullMeta);
             itemStacks[index] = itemStack;
@@ -151,7 +158,7 @@ public class GuildaMembrosGUI extends GUI {
                 skullMeta.setOwner("MHF_Question");
                 skullMeta.setDisplayName("§eSem membro...");
 
-                skullMeta.setLore(Arrays.asList("", "§8Clique aqui para convidar um membro para sua guilda", ""));
+                if (clanPlayer != null && clanPlayer.isLeader()) skullMeta.setLore(Arrays.asList("", "§8Clique aqui para convidar um membro para sua guilda", ""));
 
                 itemStack.setItemMeta(skullMeta);
 
@@ -174,19 +181,14 @@ public class GuildaMembrosGUI extends GUI {
 
         if (itemStack == null || itemStack.getType() == Material.AIR) return;
 
-        if (!clanPlayer.isLeader()) return;
+        if (clanPlayer == null || !clanPlayer.isLeader()) return;
 
         if (slot == 34) return;
 
         if (itemStack.getType().equals(Material.SKULL_ITEM)) {
             if (itemStack.getItemMeta().getDisplayName().contains("Sem membro...")) {
-                Conversation conv = KoM.conversationFactory.
-                        withFirstPrompt(new InternalStringPrompt()).
-                        withLocalEcho(false).
-                        withConversationCanceller(new InactivityConversationCanceller(KoM._instance, 25)).
-                        buildConversation(player);
+                Conversation conv = InternalStringPrompts.createConversation(player, "addMembroGuilda");
 
-                conv.getContext().setSessionData("id", "addMembroGuilda");
                 conv.getContext().setSessionData("clan", clan);
                 conv.begin();
                 player.closeInventory();
@@ -196,6 +198,7 @@ public class GuildaMembrosGUI extends GUI {
                 for (ClanPlayer cp : clan.getAllMembers()) {
                     if (cp.getName().equalsIgnoreCase(nick)) {
 
+                        if (cp.getCleanName().equalsIgnoreCase(viewer)) return;
                         if (cp.isLeader() && !isFounder) return;
 
                         InventoryAction action = event.getAction();
@@ -227,6 +230,5 @@ public class GuildaMembrosGUI extends GUI {
         }
 
     }
-
 
 }

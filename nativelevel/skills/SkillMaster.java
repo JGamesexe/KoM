@@ -1,5 +1,9 @@
 package nativelevel.skills;
 
+import nativelevel.Classes.*;
+import nativelevel.Classes.Alchemy.Alchemist;
+import nativelevel.Classes.Blacksmithy.Blacksmith;
+import nativelevel.Classes.Mage.Wizard;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Menu.Menu;
@@ -22,33 +26,38 @@ import java.util.List;
  */
 public class SkillMaster {
 
+    public static HashMap<Jobs.Classe, List<Skill>> skills = new HashMap<>();
+
     public static void load() {
-        Paladino.load();
-        Alquimista.load();
-        Lenhador.load();
-        Mago.load();
-        Minerador.load();
-        Engenheiro.load();
-        Ladino.load();
-        Ferreiro.load();
-        Fazendeiro.load();
+        skills.put(Paladin.classe, Paladin.skillList);
+        skills.put(Alchemist.classe, Alchemist.skillList);
+        skills.put(Lumberjack.classe, Lumberjack.skillList);
+        skills.put(Wizard.classe, Wizard.skillList);
+        skills.put(Minerador.classe, Minerador.skillList);
+        skills.put(Engineer.classe, Engineer.skillList);
+        skills.put(Thief.classe, Thief.skillList);
+        skills.put(Blacksmith.classe, Blacksmith.skillList);
+        skills.put(Farmer.classe, Farmer.skillList);
     }
 
-    public static HashMap<String, List<Skill>> skills = new HashMap<String, List<Skill>>();
+    public static boolean temSkill(Player p, Jobs.Classe job, String nome) {
+        Jobs.TipoClasse is = Jobs.getJobLevel(job, p);
+        if (is == Jobs.TipoClasse.NADA) return false;
 
-    public static boolean temSkill(Player p, String job, String nome) {
-        if (Jobs.getPrimarias(p).contains(job) || Jobs.getSecundarias(p).contains(job)) {
-
-            List<Skill> lista = skills.get(job.toLowerCase());
-            for (Skill s : lista) {
-                if (s.getNome().equalsIgnoreCase(nome)) {
-                    if (s.isPrecisaPrimaria() && !Jobs.getPrimarias(p).contains(job)) return false;
-                    return p.getLevel() >= s.getNivel();
-                }
+        List<Skill> lista = skills.get(job);
+        for (Skill s : lista)
+            if (s.getNome().equalsIgnoreCase(nome)) {
+                if (s.isPrecisaPrimaria() && is != Jobs.TipoClasse.PRIMARIA) return false;
+                return p.getLevel() >= s.getNivel();
             }
-            KoM.log.info("Nao encontrei a skill " + nome + " do job " + job);
-        }
+
+        KoM.log.info("Nao encontrei a skill " + nome + " do job " + job);
+
         return false;
+    }
+
+    public static boolean temSkill(Player p, Skill skill) {
+        return temSkill(p, skill.getClasse(), skill.getNome());
     }
 
     public static void abreSkills(Player p) {
@@ -82,14 +91,14 @@ public class SkillMaster {
     }
 
     public static void invClick(InventoryClickEvent ev) {
-        if (ev != null && ev.getClickedInventory() != null && (ev.getClickedInventory().getName() != null && ev.getClickedInventory().getName().equalsIgnoreCase("Vendo Skills")) || (ev.getClickedInventory().getTitle() != null && ev.getClickedInventory().getTitle().equalsIgnoreCase("Vendo Skills"))) {
+        if (ev.getClickedInventory() != null && (ev.getClickedInventory().getName() != null && ev.getClickedInventory().getName().equalsIgnoreCase("Vendo Skills")) || (ev.getClickedInventory().getTitle() != null && ev.getClickedInventory().getTitle().equalsIgnoreCase("Vendo Skills"))) {
             ev.setCancelled(true);
         }
         if (ev.getClickedInventory() != null && ev.getClickedInventory().getName().equalsIgnoreCase("Minhas Skills") || ev.getClickedInventory().getTitle().equalsIgnoreCase("Minhas Skills")) {
             ev.setCancelled(true);
             if (ev.getCurrentItem() != null && ev.getCurrentItem().getItemMeta().getDisplayName() != null) {
                 String clicado = ChatColor.stripColor(ev.getCurrentItem().getItemMeta().getDisplayName());
-                List<Skill> lista = skills.get(clicado.toLowerCase());
+                List<Skill> lista = skills.get(Jobs.Classe.valueOf(clicado));
                 ev.getWhoClicked().closeInventory();
                 Inventory skills = Bukkit.createInventory(ev.getWhoClicked(), InventoryType.CHEST, "Vendo Skills");
                 Player p = (Player) ev.getWhoClicked();
@@ -99,7 +108,7 @@ public class SkillMaster {
                             ItemStack skill = new ItemStack(Material.EMERALD_BLOCK, 1);
                             ItemMeta meta = skill.getItemMeta();
                             String nome = s.getNome();
-                            List<String> lore = new ArrayList<String>(s.getLore());
+                            List<String> lore = new ArrayList<>(s.getLore());
                             if (s.isSkillDeCraft()) {
                                 //TODO DIFERSIFICAR A CHANCE PRA SECUNDARIA!!!!!!
                                 int nivelDaSkill = p.getLevel() / 2;
@@ -129,7 +138,7 @@ public class SkillMaster {
                         ItemStack skill = new ItemStack(Material.REDSTONE_BLOCK, 1);
                         ItemMeta meta = skill.getItemMeta();
                         meta.setDisplayName(ChatColor.RED + "... SEGREDO ...");
-                        List<String> lore = new ArrayList<String>();
+                        List<String> lore = new ArrayList<>();
                         lore.add(ChatColor.RED + "Aprende no nivel " + s.getNivel());
                         meta.setLore(lore);
                         skill.setItemMeta(meta);
@@ -141,12 +150,12 @@ public class SkillMaster {
         }
     }
 
-    public static Skill aprendeuSkill(Player p, String job, int lvl) {
+    public static Skill aprendeuSkill(Player p, Jobs.Classe job, int lvl) {
         if (KoM.debugMode) {
             KoM.log.info("Buscando skills do job " + job);
             KoM.log.info(skills.keySet().toString());
         }
-        List<Skill> lista = skills.get(job.toLowerCase());
+        List<Skill> lista = skills.get(job);
         for (Skill s : lista) {
             if (s.getNivel() == lvl) {
                 return s;

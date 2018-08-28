@@ -6,7 +6,7 @@
 package nativelevel.Planting;
 
 import nativelevel.KoM;
-import nativelevel.config.ConfigManager;
+import pixelmc.utils.ConfigManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -65,7 +65,7 @@ public class PlantConfig {
         String node = h.classe + "." + h.m.name() + "-" + h.data;
         ConfigFile.getConfig().set(node + ".MinSkill", h.difficulty);
         ConfigFile.getConfig().set(node + ".ExpRatio", h.expRatio);
-        ConfigFile.SaveConfig();
+        ConfigFile.saveConfig();
         PlantCache.add(h);
     }
 
@@ -73,7 +73,7 @@ public class PlantConfig {
         if (!ConfigFile.getConfig().contains(node)) {
             ConfigFile.getConfig().set(node, value);
         }
-        ConfigFile.SaveConfig();
+        ConfigFile.saveConfig();
     }
 
 }

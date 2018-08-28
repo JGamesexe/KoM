@@ -22,6 +22,7 @@ import nativelevel.Comandos.Terreno;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.MetaShit;
+import nativelevel.utils.GeneralUtils;
 import nativelevel.utils.TitleAPI;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
@@ -108,21 +109,21 @@ public class ClanLand {
 
         final List<Location> locais = new ArrayList<Location>();
 
-        locais.add(c.getWorld().getHighestBlockAt(c.getBlock(0, 0, 0).getLocation()).getLocation().add(0, -1, 0));
-        locais.add(c.getWorld().getHighestBlockAt(c.getBlock(1, 0, 0).getLocation()).getLocation().add(0, -1, 0));
-        locais.add(c.getWorld().getHighestBlockAt(c.getBlock(0, 0, 1).getLocation()).getLocation().add(0, -1, 0));
+        locais.add(GeneralUtils.getHighestBlockAt(c.getBlock(0, 0, 0).getLocation()).getLocation().add(0, -1, 0));
+        locais.add(GeneralUtils.getHighestBlockAt(c.getBlock(1, 0, 0).getLocation()).getLocation().add(0, -1, 0));
+        locais.add(GeneralUtils.getHighestBlockAt(c.getBlock(0, 0, 1).getLocation()).getLocation().add(0, -1, 0));
 
-        locais.add(c.getWorld().getHighestBlockAt(c.getBlock(15, 0, 0).getLocation()).getLocation().add(0, -1, 0));
-        locais.add(c.getWorld().getHighestBlockAt(c.getBlock(15, 0, 1).getLocation()).getLocation().add(0, -1, 0));
-        locais.add(c.getWorld().getHighestBlockAt(c.getBlock(14, 0, 0).getLocation()).getLocation().add(0, -1, 0));
+        locais.add(GeneralUtils.getHighestBlockAt(c.getBlock(15, 0, 0).getLocation()).getLocation().add(0, -1, 0));
+        locais.add(GeneralUtils.getHighestBlockAt(c.getBlock(15, 0, 1).getLocation()).getLocation().add(0, -1, 0));
+        locais.add(GeneralUtils.getHighestBlockAt(c.getBlock(14, 0, 0).getLocation()).getLocation().add(0, -1, 0));
 
-        locais.add(c.getWorld().getHighestBlockAt(c.getBlock(0, 0, 15).getLocation()).getLocation().add(0, -1, 0));
-        locais.add(c.getWorld().getHighestBlockAt(c.getBlock(1, 0, 15).getLocation()).getLocation().add(0, -1, 0));
-        locais.add(c.getWorld().getHighestBlockAt(c.getBlock(0, 0, 14).getLocation()).getLocation().add(0, -1, 0));
+        locais.add(GeneralUtils.getHighestBlockAt(c.getBlock(0, 0, 15).getLocation()).getLocation().add(0, -1, 0));
+        locais.add(GeneralUtils.getHighestBlockAt(c.getBlock(1, 0, 15).getLocation()).getLocation().add(0, -1, 0));
+        locais.add(GeneralUtils.getHighestBlockAt(c.getBlock(0, 0, 14).getLocation()).getLocation().add(0, -1, 0));
 
-        locais.add(c.getWorld().getHighestBlockAt(c.getBlock(15, 0, 15).getLocation()).getLocation().add(0, -1, 0));
-        locais.add(c.getWorld().getHighestBlockAt(c.getBlock(14, 0, 15).getLocation()).getLocation().add(0, -1, 0));
-        locais.add(c.getWorld().getHighestBlockAt(c.getBlock(15, 0, 14).getLocation()).getLocation().add(0, -1, 0));
+        locais.add(GeneralUtils.getHighestBlockAt(c.getBlock(15, 0, 15).getLocation()).getLocation().add(0, -1, 0));
+        locais.add(GeneralUtils.getHighestBlockAt(c.getBlock(14, 0, 15).getLocation()).getLocation().add(0, -1, 0));
+        locais.add(GeneralUtils.getHighestBlockAt(c.getBlock(15, 0, 14).getLocation()).getLocation().add(0, -1, 0));
 
         new Thread() {
             public void run() {
@@ -149,14 +150,16 @@ public class ClanLand {
         if (type.equalsIgnoreCase("SAFE")) {
             //rawMsg(p, ChatColor.AQUA + " ~" + ChatColor.GOLD + "SafeZone");
             String[] coisasSafe = getCoisasSafe(to);
-            TitleAPI.sendTitle(p, 10, 10, 60, ChatColor.GOLD + "Vila " + coisasSafe[0], coisasSafe[1]);
+            TitleAPI.sendTitle(p, 20, 20, 60, ChatColor.GOLD + "Vila " + coisasSafe[0], coisasSafe[1]);
         } else if (type.equalsIgnoreCase("WARZ")) {
-            TitleAPI.sendTitle(p, 10, 10, 60, ChatColor.DARK_RED + "Zona de Guerra", "§cPvP Ativado com DROP Reduzido.");
+            TitleAPI.sendTitle(p, 20, 20, 60, ChatColor.DARK_RED + "Zona de Guerra", "§cPvP Ativado com DROP Reduzido.");
             // rawMsg(p, ChatColor.AQUA + " ~" + ChatColor.DARK_RED + "WarZone");
         } else if (type.equalsIgnoreCase("WILD")) {
             //rawMsg(p, ChatColor.AQUA + " ~" + ChatColor.DARK_GREEN + L.m("Terras sem Dono"));
-            TitleAPI.sendTitle(p, 10, 10, 60, ChatColor.DARK_GREEN + L.m("Terras sem Dono"), "");
-        } else {
+            TitleAPI.sendTitle(p, 20, 20, 60, ChatColor.DARK_GREEN + L.m("Terras sem Dono"), "");
+        } else if (type.equalsIgnoreCase("RUIN")) {
+            TitleAPI.sendTitle(p, 20, 20, 60, ChatColor.DARK_GREEN + L.m("Terras sem Dono"), "§8Terreno em Ruínas");
+        } else if (type.equalsIgnoreCase("CLAN")) {
             Clan c = getClanAt(to);
             if (c.getAllMembers().contains(ClanLand.manager.getClanPlayer(p))) {
                 String[] owner = getOwnerAt(to);
@@ -164,19 +167,19 @@ public class ClanLand {
                     // rawMsg(p, ChatColor.AQUA + "~§r" + c.getColorTag() + ChatColor.AQUA
                     //        + " - " + "§r" + c.getName() + ChatColor.AQUA
                     //         + " - " + ChatColor.DARK_GREEN + L.m("Publico"));
-                    TitleAPI.sendTitle(p, 10, 10, 60, c.getColorTag() + ChatColor.AQUA
-                            + " - " + "§r" + c.getName() + ChatColor.AQUA, ChatColor.AQUA + tipoTerreno(to) + ", Público");
+                    TitleAPI.sendTitle(p, 20, 20, 60, c.getColorTag() + ChatColor.AQUA
+                            + " - " + "§r" + c.getName() + ChatColor.AQUA, ChatColor.AQUA + tipoTerreno(to).text + ", Público");
                 } else {
                     //rawMsg(p, ChatColor.AQUA + "~§r" + c.getColorTag() + ChatColor.AQUA
                     //        + " - " + "§r" + c.getName() + ChatColor.AQUA
                     //        + " - " + ChatColor.DARK_GREEN + L.m("Terreno de") + "§r" + owner);
-                    TitleAPI.sendTitle(p, 10, 10, 60, c.getColorTag() + ChatColor.AQUA
-                            + " - " + "§r" + c.getName() + ChatColor.AQUA, ChatColor.AQUA + tipoTerreno(to) + ", Privado de " + owner[1]);
+                    TitleAPI.sendTitle(p, 20, 20, 60, c.getColorTag() + ChatColor.AQUA
+                            + " - " + "§r" + c.getName() + ChatColor.AQUA, ChatColor.AQUA + tipoTerreno(to).text + ", Privado de " + owner[1]);
                 }
             } else {
                 //rawMsg(p, ChatColor.AQUA + "~§r" + c.getColorTag() + ChatColor.AQUA + " - " + "§r" + c.getName());
-                TitleAPI.sendTitle(p, 10, 10, 60, c.getColorTag() + ChatColor.AQUA
-                        + " - " + "§r" + c.getName() + ChatColor.AQUA, ChatColor.AQUA + tipoTerreno(to));
+                TitleAPI.sendTitle(p, 20, 20, 60, c.getColorTag() + ChatColor.AQUA
+                        + " - " + "§r" + c.getName() + ChatColor.AQUA, ChatColor.AQUA + tipoTerreno(to).text);
             }
         }
     }
@@ -446,19 +449,16 @@ public class ClanLand {
     }
 
     public static void setPoder(String minhaTag, int ptos) {
-        try {
-            est = KoM.database.pegaConexao().createStatement();
-            est.executeUpdate("UPDATE guilda SET qtd = " + ptos + " WHERE minhaTag='" + minhaTag + "'");
-            //KnightsOfMania.database.pegaConexao().commit();
-        } catch (SQLException ex) {
-            log.log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                est.close();
-                KoM.database.pegaConexao().commit();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try (PreparedStatement ps = KoM.database.pegaConexao().prepareStatement("INSERT INTO guilda(minhaTag, poder) VALUES (?, ?) ON DUPLICATE KEY UPDATE poder=?")) {
+
+            ps.setString(1, minhaTag);
+            ps.setInt(2, ptos);
+            ps.setInt(3, ptos);
+
+            ps.executeUpdate();
+            KoM.database.pegaConexao().commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -519,7 +519,7 @@ public class ClanLand {
         if (bm == null) {
             return null;
         }
-        if (bm.getTitle() == null || bm.getTitle().equals("WILD")) {
+        if (bm.getTitle() == null || bm.getTitle().equals("WILD") || bm.getTitle().equals("SAFE") || bm.getTitle().equals("WARZ")) {
             return null;
         }
         return getClan(bm.getTitle().replace("#", ""));
@@ -660,7 +660,7 @@ public class ClanLand {
         } else {
             while (set.iterator().hasNext()) {
                 ProtectedRegion regiao = set.iterator().next();
-                if (regiao.getPriority() > 0 && regiao.getId().contains("mobspawn")) {
+                if (regiao.getPriority() > 0 && regiao.getId().contains("dungeon_")) {
                     return regiao.getPriority();
                 } else {
                     int distancia = getChunkDistanceFromSpawn(l);
@@ -691,6 +691,12 @@ public class ClanLand {
             return false;
         }
         return bm.getTitle().equals("SAFE");
+    }
+
+    public static boolean isRuina(Location l) {
+        BookMeta bm = getBookMeta(l);
+        if (bm == null || bm.getTitle() == null) return false;
+        return bm.getTitle().equals("RUIN");
     }
 
     public static int getPermLevel(Location l) {
@@ -779,9 +785,10 @@ public class ClanLand {
             KoM.log.info(l.toString());
             KoM.log.info(clan);
         }
-        if (clan.equalsIgnoreCase("WILD") || clan.equalsIgnoreCase("SAFE") || clan.equalsIgnoreCase("WARZ")) {
+
+        if (clan.equalsIgnoreCase("WILD") || clan.equalsIgnoreCase("SAFE") || clan.equalsIgnoreCase("WARZ") || clan.equalsIgnoreCase("RUIN"))
             return;
-        }
+
         int[] xz = getChunkLocation(l);
         try {
             est = KoM.database.pegaConexao().createStatement();
@@ -842,6 +849,8 @@ public class ClanLand {
                 return "SAFE";
             } else if (isWarZone(l)) {
                 return "WARZ";
+            } else if (isRuina(l)) {
+                return "RUIN";
             } else {
                 return "WILD";
             }
@@ -850,7 +859,19 @@ public class ClanLand {
         }
     }
 
-    public static String tipoTerreno(Location l) {
+    public enum ClaimType {
+        PODER("Terreno de Poder"),
+        PRIMARIO("Terreno Primário");
+
+        public String text;
+
+        ClaimType(String text) {
+            this.text = text;
+        }
+
+    }
+
+    public static ClaimType tipoTerreno(Location l) {
         BookMeta bm = getBookMeta(l);
         if (bm == null) {
             return null;
@@ -858,23 +879,22 @@ public class ClanLand {
         if (bm.getTitle() == null || bm.getTitle().equals("WILD")) {
             return null;
         }
-        if (bm.getTitle().contains("#")) return "Terreno de Poder";
-        else return "Terreno Primário";
+        if (bm.getTitle().contains("#")) return ClaimType.PODER;
+        else return ClaimType.PRIMARIO;
     }
 
     public static void setFounder(String tag, UUID founder) {
+        try (PreparedStatement ps = KoM.database.pegaConexao().prepareStatement("INSERT INTO guilda(minhaTag, founder) VALUES (?, ?) ON DUPLICATE KEY UPDATE founder=?")) {
 
-        try (PreparedStatement ps = KoM.database.pegaConexao().prepareStatement("UPDATE guilda SET founder=? WHERE minhaTag=?")) {
-
-            ps.setString(1, founder.toString());
-            ps.setString(2, tag);
+            ps.setString(1, tag);
+            ps.setString(2, founder.toString());
+            ps.setString(3, founder.toString());
 
             ps.executeUpdate();
-
+            KoM.database.pegaConexao().commit();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
     public static UUID getFounder(String tag) {
@@ -899,11 +919,34 @@ public class ClanLand {
         return null;
     }
 
+    public static boolean isTerrenoPoder(Location l) {
+        BookMeta bm = getBookMeta(l);
+        return (bm != null && bm.getTitle() != null && bm.getTitle().contains("#"));
+    }
+
     public static boolean isFounder(UUID uuid, String tag) {
 
-        UUID founder = getFounder(tag);
+        UUID founder = getFounder(tag.toLowerCase());
 
         return founder != null && founder.equals(uuid);
+    }
+
+    public enum ClanType {
+        OWN,
+        NEUTRAL,
+        ALLY,
+        ENEMY
+    }
+
+    public static ClanType getClanType(Clan clan1, Clan clan2) {
+
+        if (clan1 == null || clan2 == null) return ClanType.NEUTRAL;
+
+        if (clan1.getTag().equalsIgnoreCase(clan2.getTag())) return ClanType.OWN;
+        else if (clan1.isAlly(clan2.getTag())) return ClanType.ALLY;
+        else if (clan2.isRival(clan2.getTag())) return ClanType.ENEMY;
+        else return ClanType.NEUTRAL;
+
     }
 
     public static void msg(CommandSender cs, String msg) {

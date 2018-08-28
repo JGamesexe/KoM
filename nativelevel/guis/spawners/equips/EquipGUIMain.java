@@ -29,15 +29,13 @@ public class EquipGUIMain extends GUI {
         super(Bukkit.createInventory(null, 54, "§3MobSPAWNAER, Equip's"), spawner);
         this.spawner = (CreatureSpawner) spawner.getBlock().getState();
 
-        if (!spawner.getWorld().getBlockAt(spawner.getLocation().add(0, -3, 0)).getType().equals(Material.SPONGE)) {
-            spawner.getWorld().getBlockAt(spawner.getLocation().add(0, -3, 0)).setType(Material.SPONGE);
-        }
+        if (!spawner.getWorld().getBlockAt(spawner.getLocation().add(0, -3, 0)).getType().equals(Material.BEDROCK))
+            spawner.getWorld().getBlockAt(spawner.getLocation().add(0, -3, 0)).setType(Material.BEDROCK);
 
-        if (!spawner.getWorld().getBlockAt(spawner.getLocation().add(0, -2, 0)).getType().equals(Material.CHEST)) {
+        if (!spawner.getWorld().getBlockAt(spawner.getLocation().add(0, -2, 0)).getType().equals(Material.CHEST))
             spawner.getWorld().getBlockAt(spawner.getLocation().add(0, -2, 0)).setType(Material.CHEST);
-        }
 
-        if (!spawner.getWorld().getBlockAt(spawner.getLocation().add(0, -3, 0)).getType().equals(Material.SPONGE) || !spawner.getWorld().getBlockAt(spawner.getLocation().add(0, -2, 0)).getType().equals(Material.CHEST)) {
+        if (!spawner.getWorld().getBlockAt(spawner.getLocation().add(0, -3, 0)).getType().equals(Material.BEDROCK) || !spawner.getWorld().getBlockAt(spawner.getLocation().add(0, -2, 0)).getType().equals(Material.CHEST)) {
             botaVidros();
             return;
         }
@@ -232,55 +230,15 @@ public class EquipGUIMain extends GUI {
         int slot = event.getSlot();
         InventoryAction inventoryAction = event.getAction();
 
-        if (inventory.getItem(slot) != null && inventory.getItem(slot).getType().equals(Material.STAINED_GLASS_PANE)) {
-            cancelaInteract = true;
-            return;
-        }
+        cancelaInteract = true;
 
-        switch (slot) {
-            default:
-                cancelaInteract = true;
-                break;
-            case 10:
-                cancelaInteract = false;
-                break;
-            case 11:
-                cancelaInteract = false;
-                break;
-            case 12:
-                cancelaInteract = false;
-                break;
-            case 13:
-                cancelaInteract = false;
-                break;
-            case 15:
-                cancelaInteract = false;
-                break;
-            case 16:
-                cancelaInteract = false;
-                break;
-            case 19:
-                attProb(slot, inventoryAction);
-                break;
-            case 20:
-                attProb(slot, inventoryAction);
-                break;
-            case 21:
-                attProb(slot, inventoryAction);
-                break;
-            case 22:
-                attProb(slot, inventoryAction);
-                break;
-            case 24:
-                attProb(slot, inventoryAction);
-                break;
-            case 25:
-                attProb(slot, inventoryAction);
-                break;
-            case 40:
-                trocaItems();
-                open(player, new SpawnerGUIMain(spawner));
-                break;
+        if (slot == 10 || slot == 11 || slot == 12 || slot == 13 || slot == 15 || slot == 16)
+            cancelaInteract = false;
+        else if (slot == 19 || slot == 20 || slot == 21 || slot == 22 || slot == 24 || slot == 25)
+            attProb(slot, inventoryAction);
+        else if (slot == 40) {
+            trocaItems();
+            open(player, new SpawnerGUIMain(spawner));
         }
 
     }

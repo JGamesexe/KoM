@@ -228,7 +228,7 @@ public class Html {
                 KoM.log.info("obtive clan");
                 h += "<head>";
                 h += "<meta charset=\"utf-8\">";
-                h += "<title>JogadorDAO " + name + "</title>";
+                h += "<title>Jogador " + name + "</title>";
                 h += "<link rel=\"stylesheet\" href=\"../stylep.css\">";
                 h += "<link href=\"../favicon.ico\" rel=\"shortcut icon\" type=\"image/x-icon\" />";
                 h += "</head>";

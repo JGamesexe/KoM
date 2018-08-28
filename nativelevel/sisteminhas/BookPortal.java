@@ -8,8 +8,8 @@
  ╰╯╰━┻━━┻╯╰╯╰╯
 
  Desenvolvedor: ZidenVentania
- Colaboradores: NeT32, Gabripj, Feldmann
- Patrocionio: InstaMC
+ Colaboradores: NeT32, Gabripj, Feldmann, JGamesexe
+ Patrocionio: InstaMC > PixelMC
 
  */
 package nativelevel.sisteminhas;
@@ -21,6 +21,8 @@ import nativelevel.utils.BungLocation;
 import nativelevel.utils.Fireworks;
 import nativelevel.utils.JotaGUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.EntityType;
@@ -56,7 +58,11 @@ public class BookPortal {
                     player.setBedSpawnLocation(BungLocation.toLocation(l), true);
 
                 player.sendMessage(ChatColor.LIGHT_PURPLE + "* poof *");
-                Fireworks.purpleFirework((Firework) player.getWorld().spawnEntity(player.getLocation().add(0, -0.6, 0), EntityType.FIREWORK));
+                Fireworks.doFirework(
+                        player.getLocation().add(0, -0.6, 0),
+                        FireworkEffect.Type.BURST,
+                        Color.PURPLE,
+                        Color.AQUA, 2);
             }
         }
     }

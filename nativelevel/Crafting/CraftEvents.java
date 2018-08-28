@@ -12,6 +12,7 @@ import nativelevel.Classes.Blacksmithy.RecipeLoader;
 import nativelevel.Custom.CustomItem;
 import nativelevel.CustomEvents.BeginCraftEvent;
 import nativelevel.CustomEvents.FinishCraftEvent;
+import nativelevel.Equipment.ItemAttributes;
 import nativelevel.Equipment.WeaponDamage;
 import nativelevel.Jobs;
 import nativelevel.Jobs.TipoClasse;
@@ -425,7 +426,7 @@ public class CraftEvents {
         }
 
         if (craftable.m == Material.WOOD) {
-            if (tipoClasse == tipoClasse.SEGUNDARIA && finalAmt > 3) {
+            if (tipoClasse == tipoClasse.SECUNDARIA && finalAmt > 3) {
                 finalAmt = 3;
             } else if (tipoClasse == tipoClasse.NADA && finalAmt > 1) {
                 finalAmt = 1;
@@ -460,7 +461,7 @@ public class CraftEvents {
             double xp = XP.getExpPorAcao(craftable.diff);
             xp *= craftable.expRatio;
             xp *= beginCraftEvent.getMultiplyExp();
-            if (tipoClasse == Jobs.TipoClasse.SEGUNDARIA) {
+            if (tipoClasse == Jobs.TipoClasse.SECUNDARIA) {
                 xp /= 2;
             }
             if (tipoClasse == Jobs.TipoClasse.NADA) {
@@ -488,16 +489,14 @@ public class CraftEvents {
                 List<String> lore = finishCraftEvent.getResult().getItemMeta().getLore() == null ? new ArrayList<String>() : new ArrayList<String>(finishCraftEvent.getResult().getItemMeta().getLore());
                 lore.add("");
                 lore.add(ChatColor.GREEN + "Criado por " + ChatColor.YELLOW + p.getName());
-                lore.add("");
                 ItemMeta meta = finishCraftEvent.getResult().getItemMeta();
                 meta.setLore(lore);
                 ev.getCurrentItem().setItemMeta(meta);
                 KoM.debug("lore setada");
             } else {
                 List<String> lore = finishCraftEvent.getResult().getItemMeta().getLore() == null ? new ArrayList<String>() : new ArrayList<String>(finishCraftEvent.getResult().getItemMeta().getLore());
-                lore.add(lore.size() - 2, "");
-                lore.add(lore.size() - 2, ChatColor.GREEN + "Criado por " + ChatColor.YELLOW + p.getName());
-                lore.add(lore.size() - 2, "");
+                lore.add(ItemAttributes.lastSlot(lore), "");
+                lore.add(ItemAttributes.lastSlot(lore), ChatColor.GREEN + "Criado por " + ChatColor.YELLOW + p.getName());
                 ItemMeta meta = finishCraftEvent.getResult().getItemMeta();
                 meta.setLore(lore);
                 ev.getCurrentItem().setItemMeta(meta);
@@ -505,7 +504,7 @@ public class CraftEvents {
 
         } else {
             ev.setCancelled(true);
-            p.sendMessage(KoM.tag + "§c Voce §4§nfalhou§c ao tentar criar " + amt + " " + nomeItem + " " + pctFinal);
+            p.sendMessage(KoM.tag + "§c Voce §4falhou§c ao tentar criar " + amt + " " + nomeItem + " " + pctFinal);
             p.playSound(p.getLocation(), Sound.BLOCK_ANVIL_BREAK, 1.2F, 1);
             for (int i = 1; i < contents.length; i++) {
                 Material item = contents[i].getType();

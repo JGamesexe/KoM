@@ -3,13 +3,17 @@ package nativelevel.utils;
 import me.blackvein.quests.Quest;
 import nativelevel.KoM;
 import nativelevel.sisteminhas.ClanLand;
-import net.minecraft.server.v1_12_R1.ChunkCoordIntPair;
-import net.minecraft.server.v1_12_R1.PlayerChunk;
-import net.minecraft.server.v1_12_R1.WorldServer;
+import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftLivingEntity;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -79,26 +83,27 @@ public class JotaGUtils {
         long chunkKey = ChunkCoordIntPair.a(x, z);
         ws.getChunkProviderServer().unloadQueue.remove(chunkKey);
         net.minecraft.server.v1_12_R1.Chunk ck;
+        wsBKP.getChunkProviderServer().loadChunk(x, z);
         ck = wsBKP.getChunkAt(x, z);
         PlayerChunk playerChunk = ws.getPlayerChunkMap().getChunk(x, z);
         if (playerChunk != null) {
             playerChunk.chunk = ck;
         }
 
-        if (ck != null) {
-            ws.getChunkProviderServer().chunks.put(chunkKey, ck);
-            ck.addEntities();
-            ck.loadNearby(ws.getChunkProviderServer(), ws.getChunkProviderServer().chunkGenerator, true);
-            cw.refreshChunk(x, z);
+        ws.getChunkProviderServer().chunks.put(chunkKey, ck);
+        ck.addEntities();
+        ck.loadNearby(ws.getChunkProviderServer(), ws.getChunkProviderServer().chunkGenerator, true);
+        cw.refreshChunk(x, z);
 
-            ws.getChunkProviderServer().unloadChunk(ws.getChunkAt(x, z), true);
-            ws.getChunkProviderServer().loadChunk(x, z);
+        ws.getChunkProviderServer().unloadChunk(ws.getChunkAt(x, z), true);
+        ws.getChunkProviderServer().loadChunk(x, z);
 
-            cw.refreshChunk(x, z);
+        cw.refreshChunk(x, z);
 
-            ClanLand.removeClanAt(chunk.getBlock(0, 0, 0).getLocation());
-            ClanLand.setClanAt(chunk.getBlock(0, 0, 0).getLocation(), "WILD");
-        }
+        ClanLand.removeClanAt(chunk.getBlock(0, 0, 0).getLocation());
+        ClanLand.setClanAt(chunk.getBlock(0, 0, 0).getLocation(), "WILD");
+
+        wsBKP.getChunkProviderServer().unload(ck);
         return ck != null;
     }
 
@@ -160,5 +165,10 @@ public class JotaGUtils {
         if (rd > 1) rd -= 2;
         return rd;
     }
+
+    public static boolean hasItem(org.bukkit.Material m) {
+        return Item.getById(m.getId()) != null;
+    }
+
 
 }

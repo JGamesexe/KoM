@@ -29,6 +29,7 @@ public class Kom extends Comando {
         subs.add(new CmdItem());
         subs.add(new CmdLocal());
         subs.add(new CmdCraftings());
+        subs.add(new CmdReload());
     }
 
     @Override

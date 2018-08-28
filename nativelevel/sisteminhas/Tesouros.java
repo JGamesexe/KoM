@@ -45,37 +45,25 @@ public class Tesouros implements Listener {
             if (ev.getBlock().getType() == Material.STONE) {
                 if (Jobs.rnd.nextInt(chance) == 1) {
                     ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Voce encontrou um velho livro enterrado"));
-                    geraTesouro(ev.getPlayer());
+                    ev.getPlayer().getInventory().addItem(geraTesouro());
+                    ev.getPlayer().updateInventory();
                 }
             }
         }
     }
 
-    @EventHandler
-    public void pescaBaiacu(PlayerFishEvent ev) {
-        // CALCULANDO CHANCE DE PEGAR TESOURO
-        if (ev.getCaught() != null) {
-            if (Jobs.rnd.nextInt(900) == 0) {
-                ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Voce pescou um velho livro"));
-                geraTesouro(ev.getPlayer());
-            }
-        }
-    }
-
-    public ItemStack geraTesouro(Player p) {
+    public static ItemStack geraTesouro() {
         ItemStack livro = new ItemStack(Material.WRITTEN_BOOK, 1);
         BookMeta meta = (BookMeta) livro.getItemMeta();
         meta.setTitle(ChatColor.AQUA + "[Quest] Tesouro de Jabu");
         meta.setAuthor("Jabu Tesoureiro");
         List<String> pages = new ArrayList<String>();
-        pages.add(0, "Isto e um tesouro de Jabu. Vá em sorathes e encontre estas coordenadas e use este livro para obter o tesouro !");
+        pages.add(0, "Isto e um tesouro de Jabu. Vá para o mundo de guildas e encontre estas coordenadas e use este livro para obter o tesouro !");
         pages.add(1, "Mas lembre-se dos mobs que podem lhe atacar !!");
         pages.add(2, "X:" + (2500 - (Jobs.rnd.nextInt(5000))));
         pages.add(3, "Z:" + (2500 - (Jobs.rnd.nextInt(5000))));
         meta.setPages(pages);
         livro.setItemMeta(meta);
-        p.getInventory().addItem(livro);
-        p.updateInventory();
         return livro;
     }
 
@@ -133,15 +121,16 @@ public class Tesouros implements Listener {
                             c.getWorld().spawn(bau.getRelative(-1, 0, 0).getLocation(), Blaze.class);
                             c.getWorld().spawn(bau.getRelative(1, 0, 0).getLocation(), Creeper.class);
 
-                            p.setItemInHand(null);
+                            p.getInventory().setItemInMainHand(null);
                         } else {
                             p.sendMessage(ChatColor.RED + "Voce nao esta no local correto !");
                         }
                     } else {
-                        p.sendMessage(ChatColor.GOLD + "Neste mundo não tem tesouros vá em Sorathes !");
+                        p.sendMessage(ChatColor.GOLD + "Neste mundo não tem tesouros vá para o mundo de guildas !");
                     }
                 }
             }
         }
     }
+
 }

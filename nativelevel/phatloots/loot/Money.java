@@ -25,8 +25,8 @@ import java.util.TreeMap;
  */
 @SerializableAs("Money")
 public class Money extends Loot {
-    private int lowerAmount;
-    private int upperAmount;
+    public int lowerAmount;
+    public int upperAmount;
 
     /**
      * Adds Money as Loot

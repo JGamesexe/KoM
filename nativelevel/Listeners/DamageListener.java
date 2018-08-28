@@ -1,34 +1,118 @@
 package nativelevel.Listeners;
 
 import nativelevel.Attributes.AtributeListener;
+import nativelevel.*;
 import nativelevel.Classes.Alchemy.Alchemist;
 import nativelevel.Classes.Blacksmithy.Blacksmith;
 import nativelevel.Classes.*;
 import nativelevel.Classes.Mage.Wizard;
-import nativelevel.Dano;
+import nativelevel.Custom.Items.Pistola;
+import nativelevel.Custom.Mobs.IncursionIronTotem;
 import nativelevel.Equipment.WeaponDamage;
-import nativelevel.Jobs;
-import nativelevel.KoM;
+import nativelevel.karma.Criminoso;
 import nativelevel.sisteminhas.ClanLand;
+import nativelevel.sisteminhas.XP;
 import nativelevel.utils.LocUtils;
+import net.minecraft.server.v1_12_R1.EntityLiving;
+import net.minecraft.server.v1_12_R1.EntityPlayer;
+import net.minecraft.server.v1_12_R1.PacketPlayOutEntityStatus;
+import net.sacredlabyrinth.phaed.simpleclans.Clan;
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.Sound;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.vehicle.VehicleDamageEvent;
+import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import java.util.*;
 
 /**
  * @author Ziden
  */
 public class DamageListener implements Listener {
 
+    public static ArrayList<KoMBoss> bosses = new ArrayList<>();
+
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void doDamage(EntityDamageByEntityEvent ev) {
+    public static void reciveDamage(EntityDamageEvent ev) {
+        if (ev.getEntity().hasMetadata("NPC")) return;
+
+        if (ev.getCause() == EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK) {
+            ev.setCancelled(true);
+            return;
+        }
+
+        KoM.debug("!=- reciveDamage " + ev.getEntity().getType() + " " + ev.getCause() + " " + LocUtils.loc2str(ev.getEntity().getLocation()));
+
+        if (ev instanceof EntityDamageByEntityEvent) doDamage((EntityDamageByEntityEvent) ev);
+        if (ev.isCancelled()) {
+            KoM.debug("!=- Cancelado dps doDamage");
+            return;
+        }
+
+        if (ev.getEntity() instanceof Player) {
+            playerLevaHit(ev);
+            if (ev.isCancelled()) KoM.debug("!=- Cancelado dps playerLevaHit");
+        } else if (ev.getEntity() instanceof Creature) {
+            mobLevaHit(ev);
+            if (ev.isCancelled()) KoM.debug("!=- Cancelado dps de mobLevaHit");
+        }
+
+        if (ev.isCancelled()) return;
+
+        if (ev instanceof EntityDamageByEntityEvent && ((EntityDamageByEntityEvent) ev).getDamager() instanceof Player)
+            Minerador.desarma((Player) ((EntityDamageByEntityEvent) ev).getDamager(), (LivingEntity) ev.getEntity());
+
+        if (ev instanceof EntityDamageByEntityEvent && ((EntityDamageByEntityEvent) ev).getDamager() instanceof Player)
+            KoM.dano.mostraDano((Player) ((EntityDamageByEntityEvent) ev).getDamager(), ev.getDamage(), Dano.BATI);
+        if (ev.getEntity() instanceof Player)
+            KoM.dano.mostraDano((Player) ev.getEntity(), ev.getDamage(), Dano.TOMEI);
+
+    }
+
+    private static void doDamage(EntityDamageByEntityEvent ev) {
+        if (ev.getEntity() instanceof Player) {
+
+            if (ClanLand.isSafeZone(ev.getEntity().getLocation())) {
+                if (!Criminoso.isCriminoso((Player) ev.getEntity())) {
+                    ev.setCancelled(true);
+                    ((Player) ev.getEntity()).playSound(ev.getDamager().getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.05F, 2);
+                    KoM.debug("!=- Cancelei em SAFEZONE");
+                    LivingEntity hitter = getShooter(ev.getDamager());
+                    if (hitter == null) return;
+                    if (ev.getDamager() instanceof Player) ((Player) hitter).playSound(ev.getDamager().getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.05F, 2);
+                    else hitter.remove();
+                    return;
+                }
+            }
+
+            Clan clanAt = ClanLand.getClanAt(ev.getEntity().getLocation());
+            if (clanAt != null) {
+                ClanPlayer cp = ClanLand.manager.getClanPlayer((Player) ev.getEntity());
+                if (cp != null && clanAt.getTag().equalsIgnoreCase(cp.getTag())) {
+                    LivingEntity hitter = getShooter(ev.getDamager());
+                    if (hitter != null && !(hitter instanceof Player)) {
+                        hitter.remove();
+                        ev.getEntity().sendMessage("§6Jabu retirou o monstro de sua guilda!");
+                        return;
+                    }
+                }
+            }
+
+        }
 
         if (ev.getEntity() instanceof LivingEntity)
             if (ev.getCause() == EntityDamageEvent.DamageCause.POISON || ev.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK)
@@ -36,50 +120,50 @@ public class DamageListener implements Listener {
 
         if (ev.getDamager().getType().equals(EntityType.FIREWORK)) {
             ev.setCancelled(true);
-            KoM.debug("Cancelei firework " + ev.getCause().name());
-            return;
+            KoM.debug("!=- Cancelei firework " + ev.getCause().name());
+        } else if (ev.getDamager() instanceof Projectile) {
+            projectileHit(ev);
+            if (ev.isCancelled()) KoM.debug("!=- Cancelado dps projectileHit");
+        } else if (ev.getDamager() instanceof Player) {
+            playerDoDamage(ev);
+            if (ev.isCancelled()) KoM.debug("!=- Cancelado dps playerDoDamage");
+        } else if (ev.getDamager() instanceof Creature) {
+            mobDoDamage(ev);
+            if (ev.isCancelled()) KoM.debug("!=- Cancelado dps mobDoDamage");
         }
 
-        if (ev.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK && ev.getDamager() instanceof Player)
-            playerBate(ev);
-        if (ev.isCancelled()) {
-            KoM.debug("Cancelado dps playerBate");
-            return;
-        }
+        if (!ev.isCancelled()) registraDanos(ev.getEntity(), ev.getDamager(), ev.getDamage());
 
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void reciveDamage(EntityDamageEvent ev) {
-
-        if (ev.getEntity().hasMetadata("NPC") || ev.getEntity().getType().equals(EntityType.ARMOR_STAND)) return;
-
-        KoM.debug("!=- reciveDamage " + ev.getEntity().getType() + " " + ev.getCause() + " " + LocUtils.loc2str(ev.getEntity().getLocation()));
-
-        if (ev.getEntity() instanceof Player) playerLevaHit(ev);
-        if (ev.isCancelled()) {
-            KoM.debug("Cancelado dps playerLevaHit");
-            return;
-        }
-
-    }
-
-    //ToDo MAGIAS!!!MAGIAS!!! E MAIS MAGIAS!!! PROJETEIS !!!
-    private void playerBate(EntityDamageByEntityEvent ev) {
-
-        hitOnArmorStand(ev);
-        if (ev.getEntity().hasMetadata("NPC")) ev.setCancelled(true);
-
+    private static void playerDoDamage(EntityDamageByEntityEvent ev) {
+        if (ev.isCancelled()) KoM.debug("Sei lá como, mas tem algo cancelando antes de playerDoDamage...");
         if (ev.isCancelled()) return;
 
-        if (ev.isCancelled()) {
-            KoM.debug("Sei lá como, mas tem algo cancelando antes de playerBate...");
+        Player attacker = (Player) ev.getDamager();
+
+        if (InteractEvents.decorationsEntitys.contains(ev.getEntity().getType()) && !InteractEvents.touchIn(attacker, ev.getEntity().getLocation())) {
+            ev.setCancelled(true);
             return;
         }
 
-        KoM.debug("!=- playerBate chegou com " + ev.getDamage());
+        if (ev.getEntity() instanceof Player && ev.getEntity().getWorld().getName().equalsIgnoreCase(CFG.mundoDungeon)) {
+            ev.setCancelled(true);
+            KoM.debug("!=- Cancelei em mundo de DG");
+            return;
+        }
 
-        Player attacker = (Player) ev.getDamager();
+        if (Minerador.bracoAdormecido(attacker)) {
+            attacker.sendMessage("§cSeu braço não responde seus comandos");
+            ev.setCancelled(true);
+            KoM.debug("!=- Cancelei braço cansado");
+            return;
+        }
+
+        if (!(ev.getEntity() instanceof Player)) MetaShit.setMetaObject("hitOnMob", attacker, System.currentTimeMillis() + 100);
+
+        KoM.debug("!=- playerDoDamage chegou com " + ev.getDamage());
+
         ItemStack hand = attacker.getInventory().getItemInMainHand();
 
         WeaponDamage.getItemDamage(hand);
@@ -90,17 +174,17 @@ public class DamageListener implements Listener {
             else if (Jobs.getSecundarias(attacker).contains(Paladin.name)) Paladin.onHitSec(ev);
             else Paladin.noHit(ev);
 
-            if (Jobs.getPrimarias(attacker).contains(Thief.name)) Thief.onHit(ev);
-            else if (!Jobs.getSecundarias(attacker).contains(Thief.name)) Thief.noHit(ev);
+            if (Jobs.getJobLevel(Jobs.Classe.Ladino, attacker) == Jobs.TipoClasse.PRIMARIA) Thief.onHit(ev);
+            else if (Jobs.getJobLevel(Jobs.Classe.Ladino, attacker) == Jobs.TipoClasse.NADA) Thief.noHit(ev);
 
-            if (Jobs.getPrimarias(attacker).contains("Mago")) Wizard.onHit(ev);
+            if (Jobs.getJobLevel(Jobs.Classe.Mago, attacker) == Jobs.TipoClasse.PRIMARIA) Wizard.onHit(ev);
             else Wizard.noHit(ev);
 
-            if (Jobs.getPrimarias(attacker).contains("Lenhador")) Lumberjack.onHit(ev);
+            if (Jobs.getJobLevel(Jobs.Classe.Lenhador, attacker) == Jobs.TipoClasse.PRIMARIA) Lumberjack.onHit(ev);
 
-            if (Jobs.getPrimarias(attacker).contains("Minerador")) Minerador.onHit(ev);
+            if (Jobs.getJobLevel(Minerador.classe, attacker) == Jobs.TipoClasse.PRIMARIA) Minerador.onHit(ev);
 
-            if (Jobs.getPrimarias(attacker).contains(Farmer.name)) Farmer.onHit(ev);
+            if (Jobs.getJobLevel(Jobs.Classe.Fazendeiro, attacker) == Jobs.TipoClasse.PRIMARIA) Farmer.onHit(ev);
 
             if (Jobs.getPrimarias(attacker).contains("Alquimista")) Alchemist.onHit(ev);
 
@@ -111,21 +195,38 @@ public class DamageListener implements Listener {
         AtributeListener.entityDamage(ev);
 
         //Leveling de ZONAs
-        ev.setDamage(ev.getDamage() * (1 - (attacker.getLevel() - ClanLand.getMobLevel(attacker.getLocation())) / 200));
+        int zona = ClanLand.getMobLevel(attacker.getLocation());
+        if (zona <= 20) zona = (zona * 5);
+        else zona = 225;
+
+        if (attacker.getLevel() <= zona)
+            ev.setDamage(ev.getDamage() * (1 + ((attacker.getLevel() - zona) / 200)));
+        else
+            ev.setDamage(ev.getDamage() * (1 - ((attacker.getLevel() - zona) / 200)));
 
         if (Thief.taInvisivel(attacker)) Thief.revela(attacker);
 
-        if (ev.isCancelled()) KoM.debug("!=- playerBate foi cancelado");
-        else KoM.debug("!=- playerBate saiu com " + ev.getDamage());
+        if (ev.isCancelled()) KoM.debug("!=- playerDoDamage foi cancelado");
+        else KoM.debug("!=- playerDoDamage saiu com " + ev.getDamage());
     }
 
-    private void playerLevaHit(EntityDamageEvent ev) {
+    private static void playerLevaHit(EntityDamageEvent ev) {
+        Player receptor = (Player) ev.getEntity();
 
-        //TODO TERMINAR NÉ
+        if (ev.getCause().equals(EntityDamageEvent.DamageCause.FALL) || ev.getCause().equals(EntityDamageEvent.DamageCause.DROWNING))
+            if (ClanLand.isSafeZone(receptor.getLocation())) {
+                ev.setCancelled(true);
+                KoM.debug("!=- Cancelei em SAFEZONE");
+                return;
+            }
+
+        if (quebraPernoca(ev)) return;
 
         KoM.debug("!=- playerLevaHit chegou com " + ev.getDamage() + " " + ev.getCause());
 
-        Player receptor = (Player) ev.getEntity();
+        if (receptor.isBlocking()) Paladin.onBlocking(ev);
+        if (ev.isCancelled()) KoM.debug("!=- Cancelado em onBlocking");
+        if (ev.isCancelled()) return;
 
         if (Jobs.getPrimarias(receptor).contains(Paladin.name)) Paladin.onDamaged(ev);
         else if (Jobs.getSecundarias(receptor).contains(Paladin.name)) Paladin.onDamagedSec(ev);
@@ -135,16 +236,22 @@ public class DamageListener implements Listener {
 
         if (Jobs.getPrimarias(receptor).contains(Farmer.name)) Farmer.onDamaged(ev);
 
-        if (Jobs.getPrimarias(receptor).contains("Alquimista")) Alchemist.onDamaged(ev);
+        if (Jobs.getPrimarias(receptor).contains(Alchemist.name)) Alchemist.onDamaged(ev);
 
-        if (Jobs.getPrimarias(receptor).contains("Ferreiro")) Blacksmith.onDamaged(ev);
+        if (Jobs.getPrimarias(receptor).contains(Blacksmith.name)) Blacksmith.onDamaged(ev);
 
-        if (Jobs.getPrimarias(receptor).contains("Engenheiro")) ; //TODO LIGHTNING?
+        if (Jobs.getPrimarias(receptor).contains(Engineer.name)) Engineer.onDamaged(ev);
 
-        AtributeListener.takeDamage(ev);
+        if (!ev.isCancelled()) AtributeListener.takeDamage(ev);
 
         //Leveling de ZONAs
-        ev.setDamage(ev.getDamage() * (1 + (receptor.getLevel() - ClanLand.getMobLevel(receptor.getLocation())) / 400));
+        if (!ev.isCancelled()) {
+            int zona = ClanLand.getMobLevel(receptor.getLocation());
+            if (zona <= 20) zona = (zona * 5);
+            else zona = 250;
+
+            ev.setDamage(ev.getDamage() * (1 - ((receptor.getLevel() - zona) / 400)));
+        }
 
         if (!ev.isCancelled() && Thief.taInvisivel(receptor)) Thief.revela(receptor);
 
@@ -153,24 +260,136 @@ public class DamageListener implements Listener {
 
     }
 
-    private void mobBate(EntityDamageByEntityEvent ev) {
+    private static boolean quebraPernoca(EntityDamageEvent ev) {
+        if (!ev.getCause().equals(EntityDamageEvent.DamageCause.FALL)) return false;
+
+        float distance = ev.getEntity().getFallDistance();
+        if (distance <= 5 && Jobs.dado(3) == 1) {
+            int amplifier;
+
+            if (distance <= 10) amplifier = 0;
+            else if (distance <= 20) amplifier = 1;
+            else amplifier = 2;
+
+            ev.getEntity().sendMessage("§cVocê machucou sua perna !");
+            ((Player) ev.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (distance * 10), amplifier), true);
+        }
+        return true;
     }
 
-    private void playerLevaHitMob(EntityDamageEvent ev) {
+    private static void projectileHit(EntityDamageByEntityEvent ev) {
+
+        if (!(ev.getDamager() instanceof Projectile)) return;
+
+        Projectile projectile = (Projectile) ev.getDamager();
+
+        if (projectile.getShooter() instanceof Player && ev.getEntity() instanceof Player && ev.getEntity().getWorld().getName().equalsIgnoreCase(CFG.mundoDungeon)) {
+            ev.setCancelled(true);
+            KoM.debug("!=- Cancelei Projetil em mundo de DG");
+            return;
+        }
+
+        KoM.debug("!=- projectileHit " + projectile.getType() + " com " + ev.getDamage() + " em " + LocUtils.loc2str(projectile.getLocation()));
+
+        if (projectile.hasMetadata("modDano")) ev.setDamage((Double) MetaShit.getMetaObject("modDano", projectile));
+
+        if (projectile.getType().equals(EntityType.ARROW)) {
+
+            if (projectile.hasMetadata("exitLocation")) ev.setDamage(((Location) MetaShit.getMetaObject("exitLocation", projectile)).distance(ev.getEntity().getLocation()) / 3);
+
+            if (getPlayerDamager(projectile) != null) Thief.onFlechada(ev);
+        } else if (projectile.getType().equals(EntityType.SNOWBALL)) {
+            if (projectile.hasMetadata("bonka")) Pistola.onHit(ev);
+        } else if (projectile.getType().equals(EntityType.SMALL_FIREBALL)) {
+            //ToDo Magias são necassarias??
+        }
+
+        AtributeListener.dealDamage(ev);
+
+        KoM.debug("!=- projectileHit " + projectile.getType() + " saiu com " + ev.getDamage() + " em " + LocUtils.loc2str(projectile.getLocation()));
 
     }
 
-    private void hitOnArmorStand(EntityDamageByEntityEvent ev) {
-        //Não vai quebrar armorstand...
-        if (ev.getEntity().getType().equals(EntityType.ARMOR_STAND)) {
-            if (ev.getDamager().isOp() && ((Player) ev.getDamager()).getInventory().getItemInMainHand().getType().equals(Material.TRIPWIRE_HOOK)) {
-                KoM.debug("Deixei " + ev.getDamager().getName() + " quebrar ArmorStand em " + ev.getEntity().getLocation());
-                return;
+    private static void mobDoDamage(EntityDamageByEntityEvent ev) {
+
+        if (ev.getDamager() instanceof IronGolem) IncursionIronTotem.doDamage(ev);
+        if (ev.isCancelled()) KoM.debug("!=- Cancelado em IncIT.doDamaged");
+
+    }
+
+    private static void mobLevaHit(EntityDamageEvent ev) {
+        Creature mob = (Creature) ev.getEntity();
+
+        if (ev instanceof EntityDamageByEntityEvent && ((EntityDamageByEntityEvent) ev).getDamager() instanceof LivingEntity) {
+            LivingEntity leDamager = (LivingEntity) ((EntityDamageByEntityEvent) ev).getDamager();
+            if (((EntityDamageByEntityEvent) ev).getDamager() instanceof Wolf) mob.setTarget(leDamager);
+        }
+
+        if (mob instanceof IronGolem) IncursionIronTotem.onDamaged(ev);
+        if (ev.isCancelled()) KoM.debug("Cancelado em IncIT.onDamaged");
+
+    }
+
+    private static void registraDanos(Entity entity, Entity damager, double damage) {
+        Player player = getPlayerDamager(damager);
+        if (player != null)
+            if (entity instanceof Monster)
+                if (entity.hasMetadata("boss")) {
+                    if (damage > ((Monster) entity).getHealth()) getBoss(entity.getUniqueId()).addDamage(player.getUniqueId(), ((Monster) entity).getHealth());
+                    else getBoss(entity.getUniqueId()).addDamage(player.getUniqueId(), damage);
+                }
+    }
+
+    public static Player getPlayerDamager(Entity damager) {
+        if (damager == null) return null;
+
+        if (damager instanceof Player) {
+            return (Player) damager;
+        } else if (damager instanceof Projectile) {
+            if (((Projectile) damager).getShooter() instanceof Player)
+                return (Player) ((Projectile) damager).getShooter();
+        } else if (damager instanceof TNTPrimed) {
+            if (((TNTPrimed) damager).getSource() != null && ((TNTPrimed) damager).getSource() instanceof Player)
+                return (Player) ((TNTPrimed) damager).getSource();
+        } else if (damager instanceof Wolf) {
+// TODO     if (Lobo.fazendeirosList.containsKey(damager.getTamer())) return player...
+        }
+
+        return null;
+    }
+
+    private static LivingEntity getShooter(Entity damager) {
+        if (damager == null) return null;
+
+        if (damager instanceof Projectile) {
+            if (((Projectile) damager).getShooter() instanceof LivingEntity)
+                return (LivingEntity) ((Projectile) damager).getShooter();
+        } else if (damager instanceof LivingEntity) {
+            return (LivingEntity) damager;
+        }
+
+        return null;
+    }
+
+    @EventHandler
+    public static void vehicleDamage(VehicleDamageEvent ev) {
+        if (InteractEvents.minecartsEntitys.contains(ev.getVehicle().getType())) {
+            if (ev.getAttacker() instanceof Player) {
+                if (!ev.getAttacker().isOp()) {
+                    ev.setCancelled(true);
+                    if (ev.getVehicle() instanceof InventoryHolder) ((InventoryHolder) ev.getVehicle()).getInventory().clear();
+                    if (InteractEvents.touchIn((Player) ev.getAttacker(), ev.getVehicle().getLocation())) ev.getVehicle().remove();
+                }
             } else {
                 ev.setCancelled(true);
-                KoM.debug("Cancelando HIT em ArmorSTAND");
-                return;
             }
+        }
+    }
+
+    @EventHandler
+    public static void vehicleDestroy(VehicleDestroyEvent ev) {
+        if (InteractEvents.minecartsEntitys.contains(ev.getVehicle().getType())) {
+            if (ev.getVehicle() instanceof InventoryHolder) ((InventoryHolder) ev.getVehicle()).getInventory().clear();
         }
     }
 
@@ -675,7 +894,7 @@ public class DamageListener implements Listener {
 //        }
 //
 //        // player hits something..
-//        ExecutaSkill.playerBate(event);
+//        ExecutaSkill.playerDoDamage(event);
 //        KoM.debug("Dano no final do rolaporrada " + event.getDamage());
 //    }
 
@@ -683,10 +902,104 @@ public class DamageListener implements Listener {
     public void danoHighest(EntityDamageByEntityEvent ev) {
         KoM.debug("Recebendo do danoHighest " + ev.getDamage() + " em " + ev.getEntity().getName() + " cancelado " + ev.isCancelled());
         KoM.debug("DAMAGER " + (ev.getDamager() instanceof Player) + "  canceled " + ev.isCancelled() + "  dano " + ev.getDamage());
-        if (ev.getDamager() instanceof Player && !ev.isCancelled() && ev.getDamage() > 0) {
-            KoM.dano.mostraDano((Player) ev.getDamager(), ev.getDamage(), Dano.BATI);
+    }
+
+    public static class KoMBoss {
+
+        private UUID entityUUID;
+        private LivingEntity entity;
+        private int mobLevel;
+        private double exp;
+        private HashMap<UUID, Double> danos = new HashMap<>();
+
+        public KoMBoss(LivingEntity entity) {
+            this.entityUUID = entity.getUniqueId();
+            this.entity = entity;
+            int mobLevel = (int) MetaShit.getMetaObject("mobLevel", entity);
+            if (mobLevel > 20) mobLevel = 20;
+            this.mobLevel = mobLevel;
+            this.exp = (XP.getExpProximoNivel(mobLevel) * 0.10);
         }
 
+        public LivingEntity getEntity() {
+            return entity;
+        }
+
+        public UUID getEntityUUID() {
+            return entityUUID;
+        }
+
+        public int getMobLevel() {
+            return mobLevel;
+        }
+
+        public double getExp() {
+            return exp;
+        }
+
+        public void addDamage(UUID uuid, double damage) {
+            if (danos.containsKey(uuid)) damage = danos.get(uuid) + damage;
+            danos.put(uuid, damage);
+        }
+
+        public Set<Map.Entry<UUID, Double>> getDanos() {
+            return danos.entrySet();
+        }
+
+    }
+
+    public static KoMBoss getBoss(UUID entityUUID) {
+        for (KoMBoss boss : bosses) {
+            if (boss.getEntityUUID() == entityUUID) return boss;
+        }
+        return null;
+    }
+
+    private static void darDano(Player damager, Double damage, Player damaged) {
+        if (damaged.getHealth() <= damage) DeathEvents.ultimoDano.put(damaged.getUniqueId(), damager.getUniqueId());
+    }
+
+    private static void darDano(Entity damager, Double damage, LivingEntity damaged) {
+        if (damaged instanceof Player && damager instanceof Player) darDano((Player) damager, damage, (Player) damaged);
+        damaged.setHealth(damaged.getHealth() - damage);
+        actionDamage(damaged);
+
+    }
+
+    public static void darDano(Entity damager, Double damage, Entity damaged) {
+        if (damaged instanceof LivingEntity) darDano(damager, damage, (LivingEntity) damaged);
+    }
+
+    public static void darDano(LivingEntity damager, Double damage, LivingEntity damaged, EntityDamageEvent.DamageCause cause) {
+        EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(damager, damaged, cause, damage);
+        DamageListener.reciveDamage(event);
+        if (event.isCancelled()) return;
+        darDano(damager, event.getDamage(), damaged);
+    }
+
+    public static void actionDamage(org.bukkit.entity.LivingEntity livingEntity) {
+        EntityLiving entityLiving = ((CraftLivingEntity) livingEntity).getHandle();
+        PacketPlayOutEntityStatus status = new PacketPlayOutEntityStatus(entityLiving, (byte) 2);
+        EntityPlayer craftDamaged;
+        if (livingEntity instanceof Player) {
+            craftDamaged = ((CraftPlayer) livingEntity).getHandle();
+            craftDamaged.playerConnection.sendPacket(status);
+        }
+        for (Entity nearby : livingEntity.getNearbyEntities(48, 20, 48)) {
+            if (nearby instanceof Player) {
+                craftDamaged = ((CraftPlayer) nearby).getHandle();
+                craftDamaged.playerConnection.sendPacket(status);
+            }
+        }
+    }
+
+    public static void deiDano(Player damager, LivingEntity damaged, long ticks) {
+        if (damaged instanceof Player) {
+            DeathEvents.ultimoDano.put(damaged.getUniqueId(), damager.getUniqueId());
+            Bukkit.getScheduler().runTaskLater(KoM._instance, () -> {
+                if (DeathEvents.ultimoDano.containsKey(damaged.getUniqueId())) DeathEvents.ultimoDano.remove(damaged.getUniqueId());
+            }, ticks);
+        }
     }
 
 }

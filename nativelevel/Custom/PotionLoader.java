@@ -1,7 +1,9 @@
 package nativelevel.Custom;
 
+import nativelevel.Classes.Alchemy.AlchemyCauldron;
 import nativelevel.KoM;
 import nativelevel.RecipeBooks.RecipePage;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +44,14 @@ public class PotionLoader {
                     customItemsClass.put(h.getClass(), h);
                     RecipePage.recipes.set(h.name, h.generateRecipe());
                 }
+            }
+        }
+
+        for (CustomPotion pot : PotionLoader.customItems.values()) {
+            for (ItemStack ss : pot.getRecipe()) {
+                if (AlchemyCauldron.reagentes.contains(ss.getType())) continue;
+                KoM.log.info("Colocado como Reagente " + ss.getType());
+                AlchemyCauldron.reagentes.add(ss.getType());
             }
         }
 

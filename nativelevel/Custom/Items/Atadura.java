@@ -21,10 +21,12 @@ import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.MetaShit;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.UUID;
@@ -42,118 +44,103 @@ public class Atadura extends CustomItem {
         ss.getData().setData(DyeColor.YELLOW.getDyeData());
     }
 
-    private class AtaduraRun implements Runnable {
+    private class AtaduraRun2 implements Runnable {
 
-        private UUID u;
-        private int duracao;
-        private int qtosFaltam;
-        public double vaiCurar;
-        private long inicio;
-        public int taskId;
-        private Location inicial;
+        //Cura a cada 0.2 segundos          5ticks
+        //Demora 10 segundos                200ticks
+        //Cura no total metade da vida
 
-        public AtaduraRun(int duracao, UUID u, int vaiCurar, Location l) {
-            this.u = u;
-            inicio = System.currentTimeMillis() / 1000;
-            this.duracao = duracao;
-            this.qtosFaltam = duracao;
-            this.vaiCurar = vaiCurar;
-            this.inicial = l;
+        private UUID uuid;
+        private int taskId;
+
+        private double howManyCura;
+        private int howManyTimes = 40;
+        private int whereIs;
+
+        private Location loc;
+
+        private AtaduraRun2(Player player) {
+            this.uuid = player.getUniqueId();
+            this.howManyCura = ((player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() / 2) / howManyTimes);
+            this.whereIs = 0;
+            this.loc = player.getLocation().clone();
         }
 
+        @Override
         public void run() {
 
-            Player p = Bukkit.getPlayer(u);
-            if (p == null) {
-                Bukkit.getScheduler().cancelTask(taskId);
+            Player player = Bukkit.getPlayer(uuid);
+            if (player == null) {
+                para(player);
                 return;
             }
 
-            KoM.efeitoBlocos(p, Material.WOOL);
-
-            if (!p.getLocation().getWorld().getName().equalsIgnoreCase(inicial.getWorld().getName())) {
-                p.sendMessage(ChatColor.RED + "[ : : ] " + ChatColor.GREEN + "Você se movimentou muito e parou de se curar.");
-                p.removeMetadata("atadura", KoM._instance);
-                Bukkit.getScheduler().cancelTask(taskId);
+            if (player.isDead()) {
+                para(player);
                 return;
             }
 
-            double distancia = p.getLocation().distance(inicial);
-            if (distancia > DISTANCIA_ANDAR) {
-                p.sendMessage(ChatColor.RED + "[ : : ] " + ChatColor.GREEN + "Você se movimentou muito e parou de se curar.");
-                p.removeMetadata("atadura", KoM._instance);
-                Bukkit.getScheduler().cancelTask(taskId);
+
+            if (!player.getLocation().getWorld().getName().equalsIgnoreCase(loc.getWorld().getName())) {
+                para(player);
+                player.sendMessage("§cA Atadura se perdeu no caminho...");
                 return;
             }
 
-            inicial = p.getLocation().clone();
+            if (player.getLocation().distance(loc) > 0.5) {
+                para(player);
+                player.sendMessage("§cA Atadura se perdeu em quanto você se movia...");
+                return;
+            }
 
-            qtosFaltam--;
-            if (qtosFaltam < 0) {
+            if (whereIs <= 40) {
 
-                if (p.hasPotionEffect(PotionEffectType.POISON)) {
-                    p.sendMessage(ChatColor.RED + "Voce parou de se curar por causa do veneno");
-                    Bukkit.getScheduler().cancelTask(taskId);
-                    return;
-                }
-                if (p.getFireTicks() > 0) {
-                    p.sendMessage(ChatColor.RED + "Voce parou de se curar por causa do fogo");
-                    Bukkit.getScheduler().cancelTask(taskId);
+                if ((player.getHealth() + howManyCura) > player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) {
+                    player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+                    para(player);
+                    player.sendMessage("§e[ : : ] §aA ferida foi tratada o suficiente!");
                     return;
                 }
 
-                p.sendMessage(ChatColor.YELLOW + "[ : : ] " + ChatColor.GREEN + "Você terminou de se curar.");
-                double vida = p.getHealth();
-                vida += vaiCurar;
-                if (vida > p.getMaxHealth()) {
-                    vida = p.getMaxHealth();
+                whereIs++;
+                player.setHealth(player.getHealth() + howManyCura);
+
+                if ((whereIs % 5) == 0) {
+                    player.playSound(player.getLocation(), Sound.BLOCK_WATERLILY_PLACE, 1, 2);
+                    player.spawnParticle(Particle.BLOCK_CRACK, player.getLocation().add(0, 1, 0), 4, Jobs.rnd.nextDouble(), Jobs.rnd.nextDouble(), Jobs.rnd.nextDouble(), new MaterialData(Material.WOOL));
+                    loc = player.getLocation();
                 }
-                p.setHealth(vida);
-                p.removeMetadata("atadura", KoM._instance);
-                Bukkit.getScheduler().cancelTask(taskId);
-            } else {
-                p.sendMessage(ChatColor.YELLOW + "[ : : ] " + ChatColor.GREEN + "Voce está se curando.");
+
+                if (whereIs == 40) {
+                    Bukkit.getScheduler().cancelTask(taskId);
+                    player.sendMessage("§e[ : : ] §aA Atadura que você usava acabou!");
+                }
+
             }
+
         }
-    }
 
-    ;
-
-    public static void tomaDano(Player p, double dano) {
-        AtaduraRun run = seCurando(p);
-        if (run != null) {
-
-            run.vaiCurar -= dano;
-            if (run.vaiCurar <= 0) {
-                para(p);
-                p.sendMessage(ChatColor.RED + "[ : : ] " + ChatColor.GREEN + "Você não conseguiu se curar.");
-            } else {
-                p.sendMessage(ChatColor.YELLOW + "[ : : ] " + ChatColor.GREEN + "Seus dedos escorregaram.");
-            }
-
-            if (Jobs.rnd.nextInt(3) == 1) {
-
-            }
+        private void para(Player player) {
+            Bukkit.getScheduler().cancelTask(taskId);
+            if (player != null) player.removeMetadata("atadura", KoM._instance);
         }
+
     }
 
     public static void para(Player p) {
-        AtaduraRun run = seCurando(p);
+        AtaduraRun2 run = seCurando(p);
         if (run != null) {
+            p.sendMessage("§e[ : : ] §cVocê para de aplicar as Ataduras");
             Bukkit.getScheduler().cancelTask(run.taskId);
-        }
-    }
-
-    public static AtaduraRun seCurando(Player p) {
-        if (p.hasMetadata("atadura")) {
-            AtaduraRun run = (AtaduraRun) MetaShit.getMetaObject("atadura", p);
             p.removeMetadata("atadura", KoM._instance);
-            return run;
         }
-        return null;
     }
 
-    public static boolean podeInterromper(Player p) {
+    private static AtaduraRun2 seCurando(Player p) {
+        return p.hasMetadata("atadura") ? (AtaduraRun2) MetaShit.getMetaObject("atadura", p) : null;
+    }
+
+    private static boolean podeInterromper(Player p) {
         if (p.hasPotionEffect(PotionEffectType.POISON) || p.hasPotionEffect(PotionEffectType.WITHER)) {
             p.sendMessage(ChatColor.RED + "Você não consegue aplicar as ataduras estando envenenado.");
             return true;
@@ -164,12 +151,12 @@ public class Atadura extends CustomItem {
             return true;
         }
 
-        if (p.getLocation().getBlock().getType() == Material.WATER) {
+        if (p.getLocation().add(0, 1, 0).getBlock().getType() == Material.WATER) {
             p.sendMessage(ChatColor.RED + "Você nao consegue aplicar as ataduras na agua.");
             return true;
         }
 
-        if (p.getLocation().getBlock().getType() == Material.WEB) {
+        if (p.getLocation().add(0, 1, 0).getBlock().getType() == Material.WEB) {
             p.sendMessage(ChatColor.RED + "Você nao consegue aplicar as ataduras em um emaranhado de teias.");
             return true;
         }
@@ -179,41 +166,37 @@ public class Atadura extends CustomItem {
 
     @Override
     public boolean onItemInteract(Player p) {
-        AtaduraRun run = seCurando(p);
+        AtaduraRun2 run = seCurando(p);
         if (run != null) {
             p.sendMessage(ChatColor.RED + "Você já está com ataduras.");
             return true;
         }
 
-        if (p.getMaxHealth() == p.getHealth()) {
+        if (p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() == p.getHealth()) {
             p.sendMessage(ChatColor.RED + "Você não tem nenhum ferimento.");
             return true;
         }
 
-        if (podeInterromper(p)) {
-            return true;
-        }
+        if (podeInterromper(p)) return true;
+
 
         int stack = p.getInventory().getItemInMainHand().getAmount();
         stack--;
-        if (stack == 0) {
-            p.setItemInHand(new ItemStack(Material.AIR, 1));
-        } else {
-            p.getInventory().getItemInMainHand().setAmount(stack);
-        }
 
-        if (Thief.taInvisivel(p))
-            Thief.revela(p);
+        if (stack == 0) p.getInventory().setItemInMainHand(null);
+        else p.getInventory().getItemInMainHand().setAmount(stack);
+
+        if (Thief.taInvisivel(p)) Thief.revela(p);
 
         for (Entity e : p.getNearbyEntities(10, 4, 10)) {
             if (e.getType() == EntityType.PLAYER) {
-                ((Player) e).sendMessage(ChatColor.AQUA + "* " + p.getName() + " começou a aplicar ataduras *");
+                e.sendMessage(ChatColor.AQUA + "* " + p.getName() + " começou a aplicar ataduras *");
             }
         }
 
-        run = new AtaduraRun(4, p.getUniqueId(), 20, p.getLocation().clone());
+        run = new AtaduraRun2(p);
         MetaShit.setMetaObject("atadura", p, run);
-        run.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(KoM._instance, run, 60, 60);
+        run.taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(KoM._instance, run, 5, 5);
         p.sendMessage(ChatColor.YELLOW + "[ : : ] " + ChatColor.GREEN + "Aplicando Ataduras");
         return true;
     }

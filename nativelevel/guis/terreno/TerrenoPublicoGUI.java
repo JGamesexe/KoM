@@ -1,7 +1,6 @@
 package nativelevel.guis.terreno;
 
-import nativelevel.KoM;
-import nativelevel.conversations.InternalStringPrompt;
+import nativelevel.conversations.InternalStringPrompts;
 import nativelevel.sisteminhas.ClanLand;
 import nativelevel.utils.GUI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
@@ -10,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.InactivityConversationCanceller;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +22,7 @@ public class TerrenoPublicoGUI extends GUI {
     private ClanPlayer clanPlayer;
 
     public TerrenoPublicoGUI(Player player) {
-        super(Bukkit.createInventory(null, 27, "§f§l" + ClanLand.manager.getClanPlayer(player).getTag().toUpperCase() + " §3" + ClanLand.tipoTerreno(player.getLocation()) + ", Público"));
+        super(Bukkit.createInventory(null, 27, "§f§l" + ClanLand.manager.getClanPlayer(player).getTag().toUpperCase() + "§3 " + ClanLand.tipoTerreno(player.getLocation()).text + ", Públi"));
         this.location = player.getLocation();
         this.clanPlayer = ClanLand.manager.getClanPlayer(player);
         cria();
@@ -35,6 +33,7 @@ public class TerrenoPublicoGUI extends GUI {
         botaVidros();
 
         inventory.setItem(11, permItem());
+        if (ClanLand.isTerrenoPoder(location)) inventory.setItem(13, new ItemStack(Material.ANVIL));
         inventory.setItem(15, terrenoItem());
 
     }
@@ -50,6 +49,8 @@ public class TerrenoPublicoGUI extends GUI {
             ArrayList<String> lore = new ArrayList<>();
             lore.add("");
             lore.add("§8Clique para tornar alguém dono deste terreno.");
+            lore.add("");
+            lore.add("§8Para desconquistar pressione o número [9]");
             lore.add("");
             itemMeta.setLore(lore);
         }
@@ -168,38 +169,23 @@ public class TerrenoPublicoGUI extends GUI {
 
         switch (slot) {
             case 11:
-
                 ClanLand.changePermLevel(location);
                 inventory.setItem(11, permItem());
                 player.playSound(player.getLocation(), Sound.BLOCK_ENCHANTMENT_TABLE_USE, 0.5f, 2f);
 
                 return;
             case 15:
+                Conversation conv;
 
-                Conversation conv = KoM.conversationFactory.
-                        withFirstPrompt(new InternalStringPrompt()).
-                        withLocalEcho(false).
-                        withConversationCanceller(new InactivityConversationCanceller(KoM._instance, 25)).
-                        buildConversation(player);
+                if (event.getClick().isKeyboardClick() && event.getHotbarButton() == 8)
+                    conv = InternalStringPrompts.createConversation(player, "terrenoDesconquistar");
+                else
+                    conv = InternalStringPrompts.createConversation(player, "setTerrenoOwner");
 
-                if (event.getClick().isKeyboardClick() && event.getHotbarButton() == 8) {
-
-                    conv.getContext().setSessionData("id", "terrenoDesconquistar");
-                    conv.getContext().setSessionData("location", location);
-                    conv.begin();
-                    player.closeInventory();
-                    player.updateInventory();
-
-                } else {
-
-                    conv.getContext().setSessionData("id", "setTerrenoOwner");
-                    conv.getContext().setSessionData("location", location);
-                    conv.begin();
-                    player.closeInventory();
-                    player.updateInventory();
-
-                }
-
+                conv.getContext().setSessionData("location", location);
+                conv.begin();
+                player.closeInventory();
+                player.updateInventory();
         }
     }
 

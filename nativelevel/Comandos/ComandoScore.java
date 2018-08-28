@@ -5,8 +5,8 @@
  */
 package nativelevel.Comandos;
 
+import nativelevel.KoM;
 import nativelevel.scores.SBCore;
-import nativelevel.scores.ScoreboardManager;
 import nativelevel.utils.Cooldown;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -22,8 +22,6 @@ import java.util.UUID;
  */
 public class ComandoScore implements CommandExecutor {
 
-    public static HashSet<UUID> remove = new HashSet<UUID>();
-
     @Override
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] strings) {
         Player p = (Player) cs;
@@ -32,14 +30,11 @@ public class ComandoScore implements CommandExecutor {
             return false;
         }
         Cooldown.setMetaCooldown(p, "comandoscore", 10000);
-        if (remove.contains(p.getUniqueId())) {
-            remove.remove(p.getUniqueId());
+        if (KoM.sb.disableSidebar.contains(p.getUniqueId())) {
+            KoM.sb.enableSidebar(p);
             p.sendMessage("§c§l[!] Scoreboard adicionado!");
-
-            SBCore.AtualizaObjetivos();
         } else {
-            remove.add(p.getUniqueId());
-            ScoreboardManager.clearScoreboard(p, DisplaySlot.SIDEBAR);
+            KoM.sb.disableSidebar(p);
             p.sendMessage("§c§l[!] Scoreboard removido!");
         }
         return false;

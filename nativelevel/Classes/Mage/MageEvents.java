@@ -22,6 +22,7 @@ import nativelevel.integration.WorldGuardKom;
 import nativelevel.sisteminhas.KomSystem;
 import nativelevel.utils.Cooldown;
 import nativelevel.utils.TitleAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -69,17 +70,14 @@ public class MageEvents extends KomSystem {
                 RecipeBook book = (RecipeBook) ci;
                 if (book.getBookType(ev.getPlayer().getInventory().getItemInMainHand()) == BookTypes.Magia) {
 
-                    if (WorldGuardKom.ehSafeZone(ev.getPlayer().getLocation())) {
-                        ev.getPlayer().sendMessage(ChatColor.RED + "Você não pode usar magias em cidades. Imagina a loucura que seria ?");
-                        ev.setCancelled(true);
-                        return;
-                    }
+                    if (WorldGuardKom.ehSafeZone(ev.getPlayer().getLocation())) return;
 
                     TipoClasse tipo = Jobs.getJobLevel(Jobs.Classe.Mago, ev.getPlayer());
 
                     Elements summoned = null;
 
                     if (ev.getPlayer().isSneaking() && (ev.getAction() == Action.RIGHT_CLICK_AIR || ev.getAction() == Action.RIGHT_CLICK_BLOCK)) {
+                        Bukkit.getScheduler().runTaskLater(KoM._instance, () -> ev.getPlayer().closeInventory(), 1);
                         summoned = Elements.Raio;
                     } else if (ev.getPlayer().isSneaking() && (ev.getAction() == Action.LEFT_CLICK_AIR || ev.getAction() == Action.LEFT_CLICK_BLOCK)) {
                         summoned = Elements.Fogo;

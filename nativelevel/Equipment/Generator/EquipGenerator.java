@@ -313,7 +313,7 @@ public class EquipGenerator {
                     sorteaveis.add(a);
                 }
                 // só couro e armas tem chance esquiva
-            } else if (a == Atributo.Mana || a == Atributo.Magia) {
+            } else if (a == Atributo.Mana || a == Atributo.Dano_Magico) {
                 if (EquipmentEvents.isArmor(ss) && (ss.getType().name().contains("GOLD") || ss.getType().name().contains("LEATHER")) || ss.getType() == Material.STICK) {
                     sorteaveis.add(a);
                 }

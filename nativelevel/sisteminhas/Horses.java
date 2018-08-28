@@ -130,19 +130,10 @@ public class Horses extends KomSystem {
             final String tipo = s3[1];
             final String raca = s4 == null ? null : s4[1];
 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, new Runnable() {
-                public void run() {
-                    w.setStyle(pegaTipo(tipo));
-                    w.setColor(pegaCor(cor));
-                    if (raca != null) {
-                        //w.setVariant(Farmer.pegaVariant(raca));
-                    }
-
-                }
-            }, 1);
-
-            //w.setStyle(pegaTipo(tipo));
-            //w.setColor(pegaCor(cor));
+            Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, () -> {
+                w.setStyle(pegaTipo(tipo));
+                w.setColor(pegaCor(cor));
+            }, 3);
             if (nome.length() > 0) {
                 w.setCustomName(nome);
                 w.setCustomNameVisible(false);
@@ -159,13 +150,11 @@ public class Horses extends KomSystem {
         MetaShit.setMetaObject("mount", w, "sim");
         Cooldown.setMetaCooldown(ev.getPlayer(), "cavalo", 2000);
         w.setOwner(ev.getPlayer());
-        w.setPassenger(ev.getPlayer());
-        ev.getPlayer().getLocation().getWorld().playEffect(ev.getPlayer().getLocation(), Effect.LARGE_SMOKE, 1);
-        //PlayEffect.play(VisualEffect.SMOKE_LARGE, ev.getPlayer().getLocation(), "num:1");
+        w.addPassenger(ev.getPlayer());
+        ev.getPlayer().getLocation().getWorld().spawnParticle(Particle.SMOKE_LARGE, ev.getPlayer().getLocation(), 5);
         ev.getPlayer().sendMessage(ChatColor.GREEN + "Voce montou no animal");
 
-        ev.getPlayer().getLocation().getWorld().playEffect(ev.getPlayer().getLocation(), Effect.SPELL, 1);
-        //PlayEffect.play(VisualEffect.SPELL_INSTANT, ev.getPlayer().getLocation(), "num:10");
+        ev.getPlayer().getLocation().getWorld().spawnParticle(Particle.SPELL, ev.getPlayer().getLocation(), 3);
         ev.setCancelled(true);
     }
 

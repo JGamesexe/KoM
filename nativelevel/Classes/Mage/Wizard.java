@@ -16,9 +16,6 @@ package nativelevel.Classes.Mage;
 
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
-import nativelevel.Attributes.Mana;
-import nativelevel.Classes.Thief;
-import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.CajadoElemental;
 import nativelevel.Equipment.Atributo;
 import nativelevel.Equipment.EquipManager;
@@ -31,7 +28,7 @@ import nativelevel.MetaShit;
 import nativelevel.bencoes.TipoBless;
 import nativelevel.integration.SimpleClanKom;
 import nativelevel.sisteminhas.ClanLand;
-import nativelevel.sisteminhas.Tralhas;
+import nativelevel.skills.Skill;
 import nativelevel.skills.SkillMaster;
 import nativelevel.spec.PlayerSpec;
 import net.minecraft.server.v1_12_R1.ContainerEnchantTable;
@@ -57,6 +54,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -87,6 +85,8 @@ public class Wizard {
         return null;
     }
 
+    public static final Jobs.Classe classe = Jobs.Classe.Mago;
+
     public static String FIRE = ChatColor.RED + "☣";
     public static String LIGHT = ChatColor.YELLOW + "☼";
     public static String TERRA = ChatColor.GREEN + "☢";
@@ -97,7 +97,7 @@ public class Wizard {
         ItemStack weapon = attacker.getInventory().getItemInMainHand();
 
         if (!CajadoElemental.isCajadoElemental(weapon)) return;
-        if (SkillMaster.temSkill(attacker, "Mago", "Cajados elementais")) {
+        if (SkillMaster.temSkill(attacker, Skills.Cajados_elementais.skill)) {
             attacker.sendMessage("§cVocê ainda não tem a habilidade necessaria para usar este item");
             ev.setCancelled(true);
             return;
@@ -156,7 +156,7 @@ public class Wizard {
             return;
         }
 
-        double magia = EquipManager.getPlayerAttribute(Atributo.Magia, p);
+        double magia = EquipManager.getPlayerAttribute(Atributo.Dano_Magico, p);
 
         int distance = (int) Math.round(8 + (p.getLevel() / 10) * (1 + magia / 100 / 2));
         HashSet<Material> m = null;
@@ -193,7 +193,7 @@ public class Wizard {
             return;
         }
         ClanPlayer cp = ClanLand.manager.getAnyClanPlayer(p.getUniqueId());
-        double magia = EquipManager.getPlayerAttribute(Atributo.Magia, p);
+        double magia = EquipManager.getPlayerAttribute(Atributo.Dano_Magico, p);
         int area = 2 + intel / 30;
         if (PlayerSpec.temSpec(p, PlayerSpec.Sacerdote)) {
             area += 4;
@@ -409,143 +409,41 @@ public class Wizard {
         enchant.a(enchant.enchantSlots);
     }
 
-    public static void soltaRaio(Player p) {
+//     public static boolean erraMagia(Player p) {
+//     PlayEffect.play(VisualEffect.SPELL, p.getLocation(), "num:1");
+//     p.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Mago") + " " + ChatColor.GOLD + L.m("Voce falhou ao soltar a magia !"));
+//     return true;
+//     }
+//
+//
+//     public static boolean consomeReagentes(Player p, int qtos) {
+//            int polvora = p.getInventory().first(reagente);
+//            if (polvora == -1) {
+//                p.sendMessage(ChatColor.GOLD + "Voce precisa de polvora para poder soltar magias !");
+//               return false;
+//            }
+//            int qtd = p.getInventory().getItem(polvora).getAmount();
+//            if (qtd > 1) {
+//               p.getInventory().getItem(polvora).setAmount(qtd - 1);
+//           } else {
+//               p.getInventory().setItem(polvora, new ItemStack(Material.AIR, 1));
+//           }
+//     if (!KnightsOfMania.gastaReagentes(p, p.getInventory(), 1)) {
+//     p.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Mago") + " " + ChatColor.GOLD + L.m("Voce precisa de pocoes de mana para usar magias !"));
+//     return false;
+//     }
+//     return true;
+//     }
+//
+//    public int velocidadeFogo = 4;
+//    HashSet<Player> fireImmunity = new HashSet<Player>();
 
-        HashSet<Material> m = null;
-        Block target = p.getTargetBlock(m, 100);
-        if (target.getWorld().getHighestBlockYAt(target.getLocation()) != target.getY() + 1) {
-            target = null;
-        }
-        if (target != null) {
-
-            int range = 1 + p.getLevel() / 120;
-            ClanPlayer cp = ClanLand.manager.getAnyClanPlayer(p.getUniqueId());
-            Entity frexa = target.getWorld().spawnEntity(target.getLocation(), EntityType.ARROW);
-            boolean segurou = false;
-            for (Entity e : frexa.getNearbyEntities(range + 5, range, range + 5)) {
-                if (e instanceof LivingEntity) {
-                    if (e.getType() == EntityType.PLAYER) {
-                        Player alvo = (Player) e;
-                        String ci = CustomItem.getCustomItem(alvo.getInventory().getItemInMainHand());
-                        if (ci != null && ci.equalsIgnoreCase(L.m("Para Raio")) && Jobs.getJobLevel("Engenheiro", alvo) == 1) {
-                            if (Mana.spendMana(alvo, 30)) {
-                                alvo.sendMessage(ChatColor.GREEN + L.m("Seu para raios segurou o raio !"));
-                                PlayEffect.play(VisualEffect.SMOKE_LARGE, alvo.getLocation(), "");
-                                frexa.remove();
-                                segurou = true;
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-            LightningStrike strike = target.getWorld().strikeLightningEffect(target.getLocation());
-            for (Entity e : frexa.getNearbyEntities(range, range, range)) {
-                if (e instanceof LivingEntity) {
-                    if (e.getType() == EntityType.PLAYER) {
-                        Player alvo = (Player) e;
-
-                        ClanPlayer t = ClanLand.manager.getAnyClanPlayer(((Player) e).getUniqueId());
-                        if (t != null && cp != null && (t.getTag().equalsIgnoreCase(cp.getTag()) || t.isAlly(p))) {
-                            continue;
-                        }
-                    }
-                    LivingEntity le = ((LivingEntity) e);
-                    if (le instanceof Player && le.getLocation().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
-                    } else {
-                        if (!ClanLand.isSafeZone(le.getLocation())) {
-                            if (le.getType() == EntityType.PLAYER) {
-                                int job = Jobs.getJobLevel("Engenheiro", (Player) le);
-                                if (job == 1) {
-                                    continue;
-                                }
-                                ItemStack mao = ((Player) le).getInventory().getItemInMainHand();
-                                String ci = CustomItem.getCustomItem(mao);
-                                String cajadoElemental = null;
-                                if (ci != null && ci.equalsIgnoreCase("Cajado Elemental") && Jobs.getJobLevel("Mago", (Player) le) == 1) {
-                                    cajadoElemental = CajadoElemental.getElemento(p.getInventory().getItemInMainHand());
-                                    if (cajadoElemental == null) {
-                                        cajadoElemental = "Nulo";
-                                    }
-                                }
-                                if (cajadoElemental != null) {
-                                    if (cajadoElemental.equalsIgnoreCase("Nulo")) {
-                                        CajadoElemental.botaElemento(mao, "Raio");
-                                        p.sendMessage(ChatColor.GREEN + "Seu cajado absorveu o elemento Raio");
-                                    }
-                                }
-                            }
-                            double damage = 6D;
-                            double magia = EquipManager.getPlayerAttribute(Atributo.Magia, p);
-                            damage *= 1 + (magia / 100);
-                            if (PlayerSpec.temSpec(p, PlayerSpec.Sabio)) {
-                                damage *= 1.3;
-                            } else if (PlayerSpec.temSpec(p, PlayerSpec.Sacerdote)) {
-                                damage *= 0.6;
-                            }
-                            if (le.getType() == EntityType.PLAYER) {
-                                damage = damage * 0.6;
-                                if (Jobs.getJobLevel("Paladino", (Player) le) == 1) {
-                                    damage = damage * 1.4;
-                                }
-                                if (Thief.taInvisivel((Player) le)) ;
-                                Thief.revela((Player) le);
-                            }
-
-                            // if (!ev.isCancelled()) {
-                            if (le.getHealth() <= damage) {
-                                GeneralListener.ultimoDano.put(le.getUniqueId(), p.getUniqueId());
-                            }
-                            le.damage(damage);
-                            if (GeneralListener.ultimoDano.containsKey(le.getUniqueId())) {
-                                GeneralListener.ultimoDano.remove(le.getUniqueId());
-                            }
-                            Tralhas.doRandomKnock(le, 0.9f);
-
-                            //   }
-                        }
-                    }
-                }
-            }
-            frexa.remove();
-        }
-    }
-
-    /*
-     public static boolean erraMagia(Player p) {
-     PlayEffect.play(VisualEffect.SPELL, p.getLocation(), "num:1");
-     p.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Mago") + " " + ChatColor.GOLD + L.m("Voce falhou ao soltar a magia !"));
-     return true;
-     }
-     */
-    /*
-     public static boolean consomeReagentes(Player p, int qtos) {
-     //       int polvora = p.getInventory().first(reagente);
-     //       if (polvora == -1) {
-     //           p.sendMessage(ChatColor.GOLD + "Voce precisa de polvora para poder soltar magias !");
-     //          return false;
-     //       }
-     //       int qtd = p.getInventory().getItem(polvora).getAmount();
-     //       if (qtd > 1) {
-     //          p.getInventory().getItem(polvora).setAmount(qtd - 1);
-     //      } else {
-     //          p.getInventory().setItem(polvora, new ItemStack(Material.AIR, 1));
-     //      }
-     if (!KnightsOfMania.gastaReagentes(p, p.getInventory(), 1)) {
-     p.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Mago") + " " + ChatColor.GOLD + L.m("Voce precisa de pocoes de mana para usar magias !"));
-     return false;
-     }
-     return true;
-     }
-     */
-    //public int velocidadeFogo = 4;
-    //HashSet<Player> fireImmunity = new HashSet<Player>();
     public void soltaFireNova(Player p) {
         if (p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
             p.sendMessage(ChatColor.RED + L.m("Esta magia parece nao funcionar aqui !"));
             return;
         }
-        double magia = EquipManager.getPlayerAttribute(Atributo.Magia, p);
+        double magia = EquipManager.getPlayerAttribute(Atributo.Dano_Magico, p);
         //fireImmunity.add(p);
         //new FirenovaAnimation(p);
         p.sendMessage(ChatColor.GREEN + "Voce emite um calor intenso");
@@ -596,94 +494,95 @@ public class Wizard {
         PlayEffect.play(VisualEffect.FIREWORKS_EXPLODE, p.getLocation(), "type:ball color:white");
     }
 
-    /*
-     public static void fazCustomItem(InventoryClickEvent event, ItemStack queFiz) {
-     Player p = ((Player) event.getWhoClicked());
-     if (event.getCursor() != null && event.getCursor().getAmount() > 63) {
-     return;
-     }
-     int dificuldade = 0;
-     //if (queFiz instanceof Runa) {
-     //    dificuldade = 65;
-     //}
-     //if (queFiz instanceof GemaBrilhante) {
-     //    dificuldade = 55;
-     //}
-     int suc = Jobs.hasSuccess(dificuldade, "Mago", p);
-     if (suc == Jobs.fail) {
-     p.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Mago") + " " + ChatColor.RED + L.m("Voce falhou ao criar o item magico !"));
-     event.setCurrentItem(new ItemStack(Material.SULPHUR, 1));
-     return;
-     }
-     p.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Mago") + " " + ChatColor.GOLD + L.m("Voce fez o item com sucesso !"));
-     }
-     */
+//    /*
+//     public static void fazCustomItem(InventoryClickEvent event, ItemStack queFiz) {
+//     Player p = ((Player) event.getWhoClicked());
+//     if (event.getCursor() != null && event.getCursor().getAmount() > 63) {
+//     return;
+//     }
+//     int dificuldade = 0;
+//     //if (queFiz instanceof Runa) {
+//     //    dificuldade = 65;
+//     //}
+//     //if (queFiz instanceof GemaBrilhante) {
+//     //    dificuldade = 55;
+//     //}
+//     int suc = Jobs.hasSuccess(dificuldade, "Mago", p);
+//     if (suc == Jobs.fail) {
+//     p.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Mago") + " " + ChatColor.RED + L.m("Voce falhou ao criar o item magico !"));
+//     event.setCurrentItem(new ItemStack(Material.SULPHUR, 1));
+//     return;
+//     }
+//     p.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Mago") + " " + ChatColor.GOLD + L.m("Voce fez o item com sucesso !"));
+//     }
+//     */
+//
+//    /*
+//     private class FirenovaAnimation implements Runnable {
+//
+//     Player player;
+//     int i;
+//     Block center;
+//     HashSet<Block> fireBlocks;
+//     int taskId;
+//
+//     public FirenovaAnimation(Player player) {
+//     this.player = player;
+//     //Events.ganhaExp(15, player);
+//     PlayEffect.play(VisualEffect.LAVA, player.getLocation(), "num:2");
+//     player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 140, 1));
+//     player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 80, 1));
+//     player.getWorld().createExplosion(player.getLocation(), 0);
+//     this.i = 0;
+//     this.center = player.getLocation().getBlock();
+//     this.fireBlocks = new HashSet();
+//
+//     this.taskId = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(KnightsOfMania._instance, this, 0L, Wizard.this.velocidadeFogo);
+//     }
+//
+//     public void run() {
+//     for (Block block : this.fireBlocks) {
+//     if (block.getType() == Material.FIRE) {
+//     byte b = 0;
+//     block.setTypeIdAndData(0, b, false);
+//     }
+//     }
+//     this.fireBlocks.clear();
+//
+//     this.i += 1;
+//     if (this.i <= 5) {
+//     byte byt = 15;
+//     int bx = this.center.getX();
+//     int y = this.center.getY();
+//     int bz = this.center.getZ();
+//     for (int x = bx - this.i; x <= bx + this.i; x++) {
+//     for (int z = bz - this.i; z <= bz + this.i; z++) {
+//     if ((Math.abs(x - bx) == this.i) || (Math.abs(z - bz) == this.i)) {
+//     Block b = this.center.getWorld().getBlockAt(x, y, z);
+//     if ((b.getType() == Material.AIR) || ((b.getType() == Material.LONG_GRASS))) {
+//     Block under = b.getRelative(BlockFace.DOWN);
+//     if ((under.getType() == Material.AIR) || ((under.getType() == Material.LONG_GRASS))) {
+//     b = under;
+//     }
+//
+//     b.setTypeIdAndData(Material.FIRE.getId(), byt, false);
+//     this.fireBlocks.add(b);
+//     } else if ((b.getRelative(BlockFace.UP).getType() == Material.AIR) || ((b.getRelative(BlockFace.UP).getType() == Material.LONG_GRASS))) {
+//     b = b.getRelative(BlockFace.UP);
+//     b.setTypeIdAndData(Material.FIRE.getId(), byt, false);
+//     this.fireBlocks.add(b);
+//     }
+//     }
+//     }
+//     }
+//     } else if (this.i > 5 + 1) {
+//     Bukkit.getServer().getScheduler().cancelTask(this.taskId);
+//     // Mago.this.fireImmunity.remove(this.player);
+//     }
+//     }
+//     }
+//     */
 
-    /*
-     private class FirenovaAnimation implements Runnable {
-
-     Player player;
-     int i;
-     Block center;
-     HashSet<Block> fireBlocks;
-     int taskId;
-
-     public FirenovaAnimation(Player player) {
-     this.player = player;
-     //Events.ganhaExp(15, player);
-     PlayEffect.play(VisualEffect.LAVA, player.getLocation(), "num:2");
-     player.addPotionEffect(new PotionEffect(PotionEffectType.FIRE_RESISTANCE, 140, 1));
-     player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 80, 1));
-     player.getWorld().createExplosion(player.getLocation(), 0);
-     this.i = 0;
-     this.center = player.getLocation().getBlock();
-     this.fireBlocks = new HashSet();
-
-     this.taskId = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(KnightsOfMania._instance, this, 0L, Wizard.this.velocidadeFogo);
-     }
-
-     public void run() {
-     for (Block block : this.fireBlocks) {
-     if (block.getType() == Material.FIRE) {
-     byte b = 0;
-     block.setTypeIdAndData(0, b, false);
-     }
-     }
-     this.fireBlocks.clear();
-
-     this.i += 1;
-     if (this.i <= 5) {
-     byte byt = 15;
-     int bx = this.center.getX();
-     int y = this.center.getY();
-     int bz = this.center.getZ();
-     for (int x = bx - this.i; x <= bx + this.i; x++) {
-     for (int z = bz - this.i; z <= bz + this.i; z++) {
-     if ((Math.abs(x - bx) == this.i) || (Math.abs(z - bz) == this.i)) {
-     Block b = this.center.getWorld().getBlockAt(x, y, z);
-     if ((b.getType() == Material.AIR) || ((b.getType() == Material.LONG_GRASS))) {
-     Block under = b.getRelative(BlockFace.DOWN);
-     if ((under.getType() == Material.AIR) || ((under.getType() == Material.LONG_GRASS))) {
-     b = under;
-     }
-
-     b.setTypeIdAndData(Material.FIRE.getId(), byt, false);
-     this.fireBlocks.add(b);
-     } else if ((b.getRelative(BlockFace.UP).getType() == Material.AIR) || ((b.getRelative(BlockFace.UP).getType() == Material.LONG_GRASS))) {
-     b = b.getRelative(BlockFace.UP);
-     b.setTypeIdAndData(Material.FIRE.getId(), byt, false);
-     this.fireBlocks.add(b);
-     }
-     }
-     }
-     }
-     } else if (this.i > 5 + 1) {
-     Bukkit.getServer().getScheduler().cancelTask(this.taskId);
-     // Mago.this.fireImmunity.remove(this.player);
-     }
-     }
-     }
-     */
     public HashSet<Block> paredesCriadas = new HashSet<Block>();
 
     public void fazParede(Player player, boolean fraco) {
@@ -890,4 +789,49 @@ public class Wizard {
             Wizard.this.paredesCriadas.removeAll(this.teias);
         }
     }
+
+// !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=!
+
+    public static final List<Skill> skillList = Arrays.asList(
+            new Skill(classe, "Bola de Fogo", 2, false, new String[]{"§9Combine elementos com um livro", Wizard.FIRE + " " + Wizard.FIRE + " " + Wizard.LIGHT, "§9Solta uma bola de fogo", "Precisa da magia no livro de magias"}),
+            new Skill(classe, "Prisão de Teias", 5, false, new String[]{"§9Combine elementos com um livro", Wizard.TERRA + " " + Wizard.TERRA + " " + Wizard.LIGHT, "§9Prende um inimigo em teias", "Precisa da magia no livro de magias"}),
+            new Skill(classe, "Caçador de Mobs", 6, false, new String[]{"§9Ganha mais XP ao matar Monstros"}),
+            new Skill(classe, "Raio", 8, false, new String[]{"§9Combine elementos com um livro", Wizard.LIGHT + " " + Wizard.LIGHT + " " + Wizard.LIGHT, "§9Solta um raio no inimigo", "Precisa da magia no livro de magias"}),
+            new Skill(classe, "Conjurador", 10, false, new String[]{"§9Aumenta chances de sucesso ao soltar magias.", "§9Quanto maior seu nivel, maior a chance"}),
+            new Skill(classe, "Encantamento", 10, false, new String[]{"§9Aumenta chances de sucesso ao encantar.", "§9Quanto maior seu nivel, maior a chance"}, true),
+            new Skill(classe, "Anel de Fogo", 10, false, new String[]{"§9Combine elementos com um livro", Wizard.FIRE + " " + Wizard.LIGHT + " " + Wizard.LIGHT, "§9Um anel de fogo que revela inimigos", "Precisa da magia no livro de magias"}),
+            new Skill(classe, "Cajados elementais", 13, true, new String[]{"§9Você consegue manuzear cajados elemntais"}),
+            new Skill(classe, "Conversão de Alma", 15, false, new String[]{"§9Combine elementos com um livro", Wizard.FIRE + " " + Wizard.LIGHT + " " + Wizard.TERRA, "§9Buffa aliados proximos", "Precisa da magia no livro de magias"}),
+            new Skill(classe, "Bomba de Fogo", 20, false, new String[]{"§9Combine elementos com um livro", Wizard.FIRE + " " + Wizard.FIRE + " " + Wizard.FIRE, "§9Solta uma bola de fogo imensa", "Precisa da magia no livro de magias"}),
+            new Skill(classe, "Lampejo", 22, false, new String[]{"§9Combine elementos com um livro", Wizard.TERRA + " " + Wizard.LIGHT + " " + Wizard.LIGHT, "§9Se teleporta para um local proximo", "Precisa da magia no livro de magias"}),
+            new Skill(classe, "Repulsão", 25, false, new String[]{"§9Combine elementos com um livro", Wizard.TERRA + " " + Wizard.TERRA + " " + Wizard.FIRE, "§9Repele inimigos proximos", "Precisa da magia no livro de magias"}),
+            new Skill(classe, "Escudo Refletor", 35, false, new String[]{"§9Combine elementos com um livro", Wizard.FIRE + " " + Wizard.FIRE + " " + Wizard.TERRA, "§9Previne e reflete dano de um ataque", "Precisa da magia no livro de magias"}),
+            new Skill(classe, "Marcar Runa", 50, false, new String[]{"§9Combine elementos com um livro", Wizard.TERRA + " " + Wizard.TERRA + " " + Wizard.TERRA, "§9Marca uma runa no local", "§9Pode criar um portal para o local marcado"})
+    );
+
+    public enum Skills {
+        Bola_de_Fogo(skillList.get(0)),
+        Prisao_de_Teias(skillList.get(1)),
+        Cacador_de_Mobs(skillList.get(2)),
+        Raio(skillList.get(3)),
+        Conjurador(skillList.get(4)),
+        Encantamento(skillList.get(5)),
+        Anel_de_Fogo(skillList.get(6)),
+        Cajados_elementais(skillList.get(7)),
+        Conversao_de_Alma(skillList.get(8)),
+        Bomba_de_Fogo(skillList.get(9)),
+        Lampejo(skillList.get(10)),
+        Repulsao(skillList.get(11)),
+        Escudo_Refletor(skillList.get(12)),
+        Marcar_Runa(skillList.get(13));
+
+        public Skill skill;
+
+        Skills(Skill skill) {
+            this.skill = skill;
+        }
+    }
+
+// !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=!
+
 }

@@ -15,6 +15,7 @@
 package nativelevel.Comandos;
 
 import nativelevel.KoM;
+import nativelevel.utils.TitleAPI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,8 +27,7 @@ public class CmdHub implements CommandExecutor {
     public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
         if (cs instanceof Player) {
             Player p = (Player) cs;
-
-            KoM.TeleportarTPBG(p, "PixelHub");
+            KoM.TeleportarTPBG(p, "PixelHub0");
         }
         return true;
     }

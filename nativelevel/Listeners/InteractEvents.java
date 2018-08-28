@@ -8,7 +8,6 @@ import nativelevel.Classes.Alchemy.Alchemist;
 import nativelevel.Classes.Blacksmithy.Blacksmith;
 import nativelevel.Classes.*;
 import nativelevel.Classes.Mage.spelllist.Paralyze;
-import nativelevel.ComandosNovos.commands.list.KomSubs.CmdOE;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.ItemListener;
 import nativelevel.Custom.Items.Ponte;
@@ -22,17 +21,15 @@ import nativelevel.Menu.Menu;
 import nativelevel.Menu.netMenu;
 import nativelevel.MetaShit;
 import nativelevel.bencoes.TipoBless;
+import nativelevel.guis.BancoGUI;
 import nativelevel.guis.GUIsHelp;
-import nativelevel.integration.BungeeCordKom;
 import nativelevel.integration.SimpleClanKom;
 import nativelevel.integration.WorldGuardKom;
 import nativelevel.lojaagricola.LojaAgricola;
 import nativelevel.mercadinho.MenuMercado;
 import nativelevel.sisteminhas.*;
 import nativelevel.spec.PlayerSpec;
-import nativelevel.utils.BookUtil;
-import nativelevel.utils.Cooldown;
-import nativelevel.utils.JotaGUtils;
+import nativelevel.utils.*;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.*;
@@ -45,10 +42,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.player.*;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.Button;
@@ -57,9 +54,9 @@ import org.bukkit.potion.Potion;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-import tw.kid7.BannerMaker.util.InventoryMenuUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -72,8 +69,41 @@ public class InteractEvents implements Listener {
 
     public static final String NPC_CLEAN_ITEM = "Ronald";
     public static final String NPC_FARM_SHOP = "Rey do Gado";
-    public static final String NPC_TAILOR = "Zara";
+    //  public static final String NPC_TAILOR = "Zara"; Sem Banner =V
     public static final String NPC_SHOP = "Narigudo do Mercado";
+
+    private static final List<Material> boats = Arrays.asList(
+            Material.BOAT,
+            Material.BOAT_SPRUCE,
+            Material.BOAT_BIRCH,
+            Material.BOAT_JUNGLE,
+            Material.BOAT_DARK_OAK,
+            Material.BOAT_ACACIA);
+
+    private static final List<Material> decorationItens = Arrays.asList(
+            Material.ARMOR_STAND,
+            Material.ITEM_FRAME,
+            Material.PAINTING);
+
+    private static final List<Material> minecartsItens = Arrays.asList(
+            Material.STORAGE_MINECART,
+            Material.HOPPER_MINECART,
+            Material.POWERED_MINECART,
+            Material.EXPLOSIVE_MINECART,
+            Material.COMMAND_MINECART);
+
+    public static final List<EntityType> decorationsEntitys = Arrays.asList(
+            EntityType.ARMOR_STAND,
+            EntityType.ITEM_FRAME,
+            EntityType.PAINTING);
+
+    public static final List<EntityType> minecartsEntitys = Arrays.asList(
+            EntityType.MINECART_CHEST,
+            EntityType.MINECART_HOPPER,
+            EntityType.MINECART_FURNACE,
+            EntityType.MINECART_TNT,
+            EntityType.MINECART_COMMAND,
+            EntityType.MINECART_MOB_SPAWNER);
 
     @EventHandler(priority = EventPriority.LOW)
     public void interageEntidade(PlayerInteractEntityEvent ev) {
@@ -84,10 +114,16 @@ public class InteractEvents implements Listener {
             ev.setCancelled(true);
         }
 
-        if (ev.getRightClicked() != null && ev.getRightClicked().getType() == EntityType.ARMOR_STAND) {
-            if (!ev.getPlayer().isOp() && WorldGuardKom.ehSafeZone(ev.getRightClicked().getLocation())) {
-                ev.getPlayer().sendMessage(ChatColor.RED + "Voce nao pode fazer isto aqui");
+        if (decorationsEntitys.contains(ev.getRightClicked().getType()) && !touchIn(ev.getPlayer(), ev.getRightClicked().getLocation())) {
+            ev.setCancelled(true);
+            return;
+        }
+
+        if (minecartsEntitys.contains(ev.getRightClicked().getType())) {
+            if (!ev.getPlayer().isOp()) {
                 ev.setCancelled(true);
+                if (ev.getRightClicked() instanceof InventoryHolder) ((InventoryHolder) ev.getRightClicked()).getInventory().clear();
+                if (touchIn(ev.getPlayer(), ev.getRightClicked().getLocation())) ev.getRightClicked().remove();
                 return;
             }
         }
@@ -96,26 +132,6 @@ public class InteractEvents implements Listener {
             ev.setCancelled(true);
             ev.getPlayer().setVelocity(new Vector(0, -0.2, 0));
             return;
-        }
-
-        if (ev.getRightClicked().getType() == EntityType.ITEM_FRAME) {
-            String tipo = ClanLand.getTypeAt(ev.getPlayer().getLocation());
-            if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon") || tipo.equalsIgnoreCase("SAFE") || tipo.equalsIgnoreCase("WARZ")) {
-                if (!ev.getPlayer().isOp()) {
-                    ev.setCancelled(true);
-                }
-            }
-        }
-
-        if (!ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon") && ev.getRightClicked() != null && (ev.getRightClicked().getType() == EntityType.MINECART_CHEST
-                || ev.getRightClicked().getType() == EntityType.MINECART_FURNACE
-                || ev.getRightClicked().getType() == EntityType.MINECART_HOPPER
-                || ev.getRightClicked().getType() == EntityType.MINECART_MOB_SPAWNER
-                || ev.getRightClicked().getType() == EntityType.MINECART_TNT)) {
-            if (!ev.getPlayer().isOp()) {
-                ev.setCancelled(true);
-                return;
-            }
         }
 
         if (ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.SULPHUR) {
@@ -183,9 +199,6 @@ public class InteractEvents implements Listener {
                     if (ChatColor.stripColor(e.getCustomName()).equalsIgnoreCase(NPC_FARM_SHOP)) {
                         ev.setCancelled(true);
                         LojaAgricola.abreMenu(ev.getPlayer());
-                    } else if (ChatColor.stripColor(e.getCustomName()).equalsIgnoreCase((NPC_TAILOR))) {
-                        ev.setCancelled(true);
-                        InventoryMenuUtil.openMenu(ev.getPlayer());
                     }
                 }
             } else {
@@ -201,13 +214,28 @@ public class InteractEvents implements Listener {
             Farmer.handleEgg(ev);
         }
 
-        if (ev.getClickedBlock() != null && ev.getItem() != null && ev.getItem().getType() == Material.ARMOR_STAND) {
-            if (!ev.getPlayer().isOp() && WorldGuardKom.ehSafeZone(ev.getClickedBlock().getLocation())) {
-                ev.getPlayer().sendMessage(ChatColor.RED + "Voce nao pode usar isto aqui");
+        if (ev.getClickedBlock() != null && ev.getItem() != null) {
+
+            if (decorationItens.contains(ev.getItem().getType())) {
+                if (!touchIn(ev.getPlayer(), ev.getClickedBlock().getLocation())) {
+                    ev.getPlayer().sendMessage("§cVoce nao pode usar isto aqui");
+                    ev.setCancelled(true);
+                    return;
+                }
+            } else if (minecartsItens.contains(ev.getItem().getType())) {
+                ev.setCancelled(true);
+                ev.getPlayer().sendMessage("§cEsse item está desabilitado.");
+                return;
+            }
+
+            if (ev.getPlayer().getWorld().getName().equalsIgnoreCase(CFG.mundoDungeon) && boats.contains(ev.getItem().getType())) {
+                ev.getPlayer().sendMessage("§cVocê não pode usar isto aqui");
                 ev.setCancelled(true);
                 return;
             }
+
         }
+
 
         Aura.interage(ev);
 
@@ -254,33 +282,26 @@ public class InteractEvents implements Listener {
                 }
             }
         }
-        if (ev.getItem() != null && ev.getPlayer().isSneaking() && ev.getItem().getType().name().contains("PICKAXE") && Jobs.getJobLevel("Minerador", ev.getPlayer()) == 1) {
-            if (ev != null && ev.getAction() != null && (ev.getAction() == Action.RIGHT_CLICK_AIR || ev.getAction() == Action.RIGHT_CLICK_BLOCK)) {
-                if (ev.getPlayer().hasMetadata("disarmar")) {
-                    ev.getPlayer().removeMetadata("disarmar", KoM._instance);
-                    ev.getPlayer().sendMessage(ChatColor.GREEN + "Voce nao esta mais em modo de desarmamento.");
-                } else {
-                    MetaShit.setMetaObject("disarmar", ev.getPlayer(), true);
-                    ev.getPlayer().sendMessage(ChatColor.GREEN + "Voce entrou no modo disarmamento.");
-                }
-            } else if (ev.getAction() == Action.LEFT_CLICK_AIR || ev.getAction() == Action.LEFT_CLICK_BLOCK) {
-                if (ev.getPlayer().hasMetadata("disarmar")) {
-                    ev.getPlayer().sendMessage(ChatColor.GREEN + "Nao desarmou nada.");
-                    Stamina.spendStamina(ev.getPlayer(), 35);
-                    if (!ev.getPlayer().hasMetadata("disarmmsg")) {
-                        MetaShit.setMetaObject("disarmmsg", ev.getPlayer(), "");
-                        ev.getPlayer().sendMessage(ChatColor.GOLD + "[Dica] " + ChatColor.GREEN + " Use Shift+Click direito para sair do modo desarmador.");
-                    }
+
+        if (ev.getItem() != null && ev.getHand() == EquipmentSlot.HAND) {
+            if (ev.getAction() == Action.LEFT_CLICK_AIR || ev.getAction() == Action.LEFT_CLICK_BLOCK) {
+                if (ev.getPlayer().isSneaking() && ev.getItem().getType().name().contains("_PICKAXE")) {
+                    Minerador.desarma(ev.getPlayer(), null);
+                } else if (ev.getItem().getType().name().contains("_AXE") && ev.getPlayer().hasMetadata("machadadaEpica")) {
+                    ev.getPlayer().removeMetadata("machadadaEpica", KoM._instance);
+                    ev.getPlayer().sendMessage("§cVocê jogou toda força de sua machadada em meio ao nada...");
                 }
             }
         }
 
-        if (ev.getItem() != null && ev.getItem().getType() == Material.HOPPER_MINECART) {
+        if (ev.getItem() != null && ev.getHand() == EquipmentSlot.HAND && ev.getPlayer().isSneaking() && ev.getItem().getType().name().contains("PICKAXE"))
+            if ((ev.getAction() == Action.LEFT_CLICK_AIR || ev.getAction() == Action.LEFT_CLICK_BLOCK)) Minerador.desarma(ev.getPlayer(), null);
+
+        if (ev.getItem() != null && ev.getItem().getType() == Material.HOPPER_MINECART)
             if (!ev.getPlayer().isOp()) {
                 ev.setCancelled(true);
                 return;
             }
-        }
 
         TipoBless.interage(ev);
 
@@ -325,16 +346,27 @@ public class InteractEvents implements Listener {
 
     @EventHandler
     public void interageDenovo(PlayerInteractEvent ev) {
-
         if (!ev.hasBlock()) ev.setCancelled(false);
         //Por algum acaso quando clicko no ar com essa merda ela cancela...
+
+        if (ev.hasBlock() && ev.getClickedBlock().getType() == Material.SOIL && ev.getAction().equals(Action.PHYSICAL)) ev.setCancelled(true);
+        if (ev.isCancelled()) return;
 
         GUIsHelp.interact(ev);
         if (ev.isCancelled()) return;
 
+        if (ev.getClickedBlock() != null && ev.getClickedBlock().getType().isBlock() && ev.getPlayer().isSneaking()) {
+
+            if (ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInOffHand() != null)
+                if (ev.getPlayer().getInventory().getItemInMainHand().getType().name().contains("PICKAXE") && ev.getPlayer().getInventory().getItemInOffHand().getType().name().contains("PICKAXE")) {
+                    Minerador.escala(ev);
+                    return;
+                }
+
+        }
+
         interageLow(ev);
 
-        //  KoM.debug("inter normal com item " + ev.getItem().getType().name());
         if (ev.getAction() != Action.PHYSICAL && ev.getItem() != null && ev.getItem().getType() == Material.COMPASS && !ev.getPlayer().isSneaking()) {
             KoM.debug("Abrindo inv");
             QuestsIntegracao.abreInventarioQuests(ev.getPlayer());
@@ -354,36 +386,10 @@ public class InteractEvents implements Listener {
         }
 
         if (ev.getClickedBlock() != null && ev.getClickedBlock().getType() == Material.ENDER_CHEST && ev.getAction() == Action.RIGHT_CLICK_BLOCK) {
-
             ev.setCancelled(true);
-
-            if (CmdOE.xeretando.contains(ev.getPlayer().getUniqueId())) {
-                return;
-            }
-
-            ev.getPlayer().sendMessage(ChatColor.GREEN + "Voce abriu seu Banco");
-
-            ItemStack[] items = KoM.database.getBanco(ev.getPlayer().getUniqueId());
-            int slots = KoM.database.getSlotsBanco(ev.getPlayer().getUniqueId().toString());
-            int linhas = slots + 1;
-            if (linhas > 5) {
-                linhas = 5;
-            }
-
-            Inventory banco = Bukkit.createInventory(ev.getPlayer(), 9 * linhas, "Banco");
-            if (items != null) {
-                try {
-                    banco.setContents(items);
-                } catch (Exception e) {
-                    ev.getPlayer().sendMessage(ChatColor.RED + "Seu banco foi corrompido. Chame um staff.");
-                }
-            }
-            ev.getPlayer().openInventory(banco);
-        } else if (ev.getClickedBlock() != null) {
-            if (ev.getItem() != null && ev.getItem().getType().name().contains("PICKAXE")) {
-                Minerador.escala(ev);
-            }
+            BancoGUI.openBanco(ev.getPlayer(), ev.getPlayer().getUniqueId());
         }
+
         KoM.debug("fim inter normal");
     }
 
@@ -399,8 +405,7 @@ public class InteractEvents implements Listener {
             return;
         }
 
-        if (Engineer.validaPrisao(ev))
-            return;
+        if (Engineer.validaPrisao(ev)) return;
 
         // CUSTOM ITEMS
         ItemListener.interage(ev);
@@ -413,14 +418,6 @@ public class InteractEvents implements Listener {
             ev.getPlayer().sendMessage(ChatColor.RED + L.m("Voce nao sabe usar isto !"));
             ev.setCancelled(true);
             return;
-        }
-
-        if (ev.getItem() != null && ev.getItem().getType() == Material.MOB_SPAWNER) {
-            if (ev.getClickedBlock().getY() < 6) {
-                ev.getPlayer().sendMessage("§cBota esse bloco mais alto por favor...");
-                ev.setCancelled(true);
-                return;
-            }
         }
 
         if (!ev.getPlayer().isOp() && ev.getItem() != null && ev.getItem().getType() == Material.SPONGE) {
@@ -566,13 +563,14 @@ public class InteractEvents implements Listener {
                     return;
                 }
                 if (ev.getItem().getType() == Material.FISHING_ROD) {
-                    //String customItem = CustomItem.getCustomItem(ev.getItem());
-                    //if (customItem == null) {
                     if (Jobs.getJobLevel("Fazendeiro", ev.getPlayer()) != 1) { // só fazendeiro primario pode
                         ev.getPlayer().sendMessage(ChatColor.AQUA + Menu.getSimbolo("Fazendeiro") + " " + ChatColor.RED + "Apenas bons fazendeiros sabem usar isto !");
                         ev.setCancelled(true);
                     }
-                    // }
+                    if (!ev.getHand().equals(EquipmentSlot.HAND)) { // só pode usar na main hand
+                        ev.getPlayer().sendMessage("§cVocê só pode usar vara de pesca na mão primaria");
+                        ev.setCancelled(true);
+                    }
                 }
                 if (ev.getItem() != null && ev.getItem().getType() == Material.MINECART) {
                     if (ev.getClickedBlock() != null && ev.getClickedBlock().getType() != Material.RAILS) {
@@ -818,7 +816,7 @@ public class InteractEvents implements Listener {
         }
 
         if (ev.getPlayer().isSneaking() && (ev.getAction() == Action.RIGHT_CLICK_AIR || ev.getAction() == Action.RIGHT_CLICK_BLOCK) && ev.getItem() != null && (ev.getItem().getType() == Material.WOOD_AXE || ev.getItem().getType() == Material.IRON_AXE || ev.getItem().getType() == Material.GOLD_AXE || ev.getItem().getType() == Material.STONE_AXE || ev.getItem().getType() == Material.DIAMOND_AXE)) {
-            Lumberjack.preparaMachadadaEpica(ev.getPlayer());
+            Lumberjack.preparaMachadada(ev.getPlayer());
         }
 
         if (KoM.debugMode && ev.getPlayer().isOp()) {
@@ -832,10 +830,6 @@ public class InteractEvents implements Listener {
 
         if (ev.getItem() != null && ev.getItem().getType().equals(Material.LAVA_BUCKET)) {
             ev.setCancelled(true);
-        }
-
-        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
-            Dungeon.interact(ev);
         }
 
         if (ev.getAction().equals(Action.PHYSICAL)) {
@@ -861,13 +855,7 @@ public class InteractEvents implements Listener {
             }
         }
 
-        if (ev.getItem() != null && ev.getItem().getType() == Material.BOOK) {
-            if (!WorldGuardKom.ehSafeZone(ev.getPlayer().getLocation())) {
-                //Wizard.cast(ev);
-            } else {
-                ev.getPlayer().sendMessage(ChatColor.RED + L.m("Jabu impede conjuracao de magias nesta area !"));
-            }
-        } else if (ev.getItem() != null && ev.getItem().getType() == Material.MONSTER_EGG) {
+        if (ev.getItem() != null && ev.getItem().getType() == Material.MONSTER_EGG) {
 
         } else if (ev.getItem() != null && ev.getItem().getType() == Material.TNT) {
             Alchemist.tossTnt(ev);
@@ -919,7 +907,7 @@ public class InteractEvents implements Listener {
                 //int pontos = Attributes.calcSkillPoints(ev.getPlayer().getLevel(), resets);
                 //KnightsOfMania.database.changePoints(ev.getPlayer(), pontos);
                 ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Voce esqueceu tudo que sabia !"));
-                BungeeCordKom.tp(ev.getPlayer(), CFG.spawnTree);
+                ev.getPlayer().teleport(CFG.localInicio);
             } else if (dbaxo.getType() == Material.BEDROCK) {
                 if (ev.getPlayer().getLevel() != 100) {
                     ev.getPlayer().sendMessage(ChatColor.RED + L.m("Voce precisa estar no nivel 100 !"));
@@ -946,7 +934,7 @@ public class InteractEvents implements Listener {
                 }
                 ItemStack esponjas = KoM.geraEs(5 * resets);
                 ev.getPlayer().getInventory().addItem(esponjas);
-                BungeeCordKom.tp(ev.getPlayer(), CFG.spawnTree);
+                ev.getPlayer().teleport(DeathEvents.pertenceAVila(ev.getPlayer()));
             } else if (dbaxo.getType() == Material.LAPIS_BLOCK) {
                 if (ev.getPlayer().getLevel() != 100) {
                     ev.getPlayer().sendMessage(ChatColor.RED + L.m("Voce precisa estar no nivel 100 !"));
@@ -976,27 +964,74 @@ public class InteractEvents implements Listener {
 
     @EventHandler
     public void usaBalde(PlayerBucketEmptyEvent ev) {
-        if (ev.getPlayer().isOp()) {
-            return;
-        }
+        if (ev.getPlayer().isOp()) return;
+
         Location bp = ev.getBlockClicked().getLocation();
-        if (bp.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
-            ev.setCancelled(true);
-            return;
+        if (bp.getWorld().getName().equalsIgnoreCase(CFG.mundoGuilda) && ClanLand.getTypeAt(bp).equalsIgnoreCase("CLAN")) {
+            ClanPlayer cp = ClanLand.manager.getClanPlayer(ev.getPlayer());
+            if (cp != null && cp.getTag().equalsIgnoreCase(ClanLand.getClanAt(bp).getTag())) return;
         }
-        String type = ClanLand.getTypeAt(bp);
-        if (type.equalsIgnoreCase("SAFE") || type.equalsIgnoreCase("WARZ")) {
-            ev.setCancelled(true);
-            return;
-        }
-        Clan aqui = ClanLand.getClanAt(bp);
-        ClanPlayer cp = ClanLand.manager.getClanPlayer(ev.getPlayer());
-        if (type.equalsIgnoreCase("CLAN") && aqui != null) {
-            if (cp == null || !cp.getTag().equalsIgnoreCase(aqui.getTag())) {
-                ev.setCancelled(true);
-                return;
+
+        ev.setCancelled(true);
+        ev.getPlayer().updateInventory();
+    }
+
+    @EventHandler
+    public void usaBalde(PlayerBucketFillEvent ev) {
+        if (ev.getPlayer().isOp()) return;
+
+        Location bp = ev.getBlockClicked().getLocation();
+        if (bp.getWorld().getName().equalsIgnoreCase(CFG.mundoGuilda)) {
+            if (ClanLand.getTypeAt(bp).equalsIgnoreCase("WILD")) return;
+            if (ClanLand.getTypeAt(bp).equalsIgnoreCase("CLAN")) {
+                ClanPlayer cp = ClanLand.manager.getClanPlayer(ev.getPlayer());
+                if (cp != null && cp.getTag().equalsIgnoreCase(ClanLand.getClanAt(bp).getTag())) return;
             }
         }
+
+        ev.setCancelled(true);
+        ev.getPlayer().updateInventory();
+    }
+
+    @EventHandler
+    public void hanging(HangingBreakByEntityEvent ev) {
+        if (decorationsEntitys.contains(ev.getEntity().getType())) {
+            if (ev.getRemover() instanceof Player) {
+                if (!touchIn((Player) ev.getRemover(), ev.getEntity().getLocation())) ev.setCancelled(true);
+            } else {
+                ev.setCancelled(true);
+            }
+        }
+    }
+
+    public static boolean touchIn(Player toucher, Location where) {
+        if (toucher != null) {
+            boolean can = false;
+
+            if (toucher.isOp()) {
+                can = true;
+            } else if (where.getWorld().getName().equalsIgnoreCase(CFG.mundoGuilda)) {
+                String type = ClanLand.getTypeAt(where);
+                if (type.equals("WILD")) {
+                    can = true;
+                } else if (type.equals("CLAN")) {
+                    ClanPlayer cp = ClanLand.manager.getClanPlayer(toucher);
+                    if (cp != null) {
+                        Clan clan = ClanLand.getClanAt(where);
+                        if (clan != null && cp.getTag().equalsIgnoreCase(clan.getTag())) {
+                            can = true;
+                        }
+                    }
+                }
+            }
+
+            if (can) KoM.debug("touchIn " + toucher.getName() + " true " + LocUtils.loc2str(where));
+            else KoM.debug("touchIn " + toucher.getName() + " false " + LocUtils.loc2str(where));
+
+            return can;
+        }
+        KoM.debug("touchIn INDENTIFICAVEL " + where);
+        return false;
     }
 
 }

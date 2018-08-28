@@ -17,6 +17,7 @@ package nativelevel.Custom.Items;
 import nativelevel.Custom.CustomItem;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
+import nativelevel.utils.GeneralUtils;
 import nativelevel.utils.LocUtils;
 import nativelevel.utils.MetaUtils;
 import net.md_5.bungee.api.ChatColor;
@@ -105,9 +106,9 @@ public class BussolaMagica extends CustomItem {
         public Material getIcone() {
             if (icone == null) {
                 Location l = LocUtils.str2loc(local);
-                icone = l.getWorld().getHighestBlockAt(l).getType();
+                icone = GeneralUtils.getHighestBlockAt(l).getType();
                 if (icone == Material.AIR)
-                    icone = l.getWorld().getHighestBlockAt(l).getRelative(BlockFace.DOWN).getType();
+                    icone = GeneralUtils.getHighestBlockAt(l).getRelative(BlockFace.DOWN).getType();
                 KoM.debug("MAIS ALTO = " + icone);
             }
             return icone;

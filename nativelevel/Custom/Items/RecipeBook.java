@@ -93,6 +93,14 @@ public class RecipeBook extends CustomItem {
         ss.setItemMeta(meta);
     }
 
+    public static boolean isRecipeBook(ItemStack ss) {
+        if (ss != null && ss.getType() == Material.WRITTEN_BOOK && ss.getItemMeta() != null && ss.getItemMeta().getLore() != null) {
+            int lastLine =  (ss.getItemMeta().getLore().size() - 1);
+            if (ss.getItemMeta().getLore().get(lastLine).contains(":Livro de Receitas")) return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean onItemInteract(Player p) {
         return true;

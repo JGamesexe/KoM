@@ -29,8 +29,8 @@ public class DocumentoBancario extends CustomItem {
 
     @Override
     public boolean onItemInteract(Player p) {
-        int slots = KoM.database.getSlotsBanco(p.getUniqueId().toString());
-        if (slots > 4) {
+        int slots = KoM.database.getSlotsBanco(p.getUniqueId());
+        if (slots >= 23) {
             p.sendMessage(ChatColor.RED + L.m("Voce ja tem o máximo de slots !!!"));
             return true;
         }

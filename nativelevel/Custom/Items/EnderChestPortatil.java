@@ -17,6 +17,8 @@ package nativelevel.Custom.Items;
 import nativelevel.ComandosNovos.commands.list.KomSubs.CmdOE;
 import nativelevel.Custom.CustomItem;
 import nativelevel.KoM;
+import nativelevel.guis.BancoGUI;
+import nativelevel.utils.GUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -32,21 +34,7 @@ public class EnderChestPortatil extends CustomItem {
     @Override
     public boolean onItemInteract(Player p) {
 
-        if (CmdOE.xeretando.contains(p.getUniqueId())) {
-            return true;
-        }
-
-        ItemStack[] items = KoM.database.getBanco(p.getUniqueId());
-        int slots = KoM.database.getSlotsBanco(p.getUniqueId().toString());
-        int linhas = slots + 1;
-        if (linhas > 5) {
-            linhas = 5;
-        }
-        Inventory banco = Bukkit.createInventory(p, 9 * linhas, "Banco");
-        if (items != null) {
-            banco.setContents(items);
-        }
-        p.openInventory(banco);
+        BancoGUI.openBanco(p, p.getPlayer().getUniqueId());
 
         return true;
     }

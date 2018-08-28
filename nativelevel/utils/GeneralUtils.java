@@ -11,7 +11,9 @@ import net.minecraft.server.v1_12_R1.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_12_R1.PacketPlayOutChat;
 import net.minecraft.server.v1_12_R1.PlayerConnection;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -157,4 +159,27 @@ public class GeneralUtils {
         item.setItemMeta(metaItem);
         return item;
     }
+
+    public static Block getHighestBlockAt(Location loc) {
+        short y = 255;
+        while (y >= 0) {
+            loc.setY(y);
+            if (loc.getBlock().getType() != Material.AIR && loc.getBlock().getType().isSolid()) return loc.getBlock();
+            y--;
+        }
+        loc.setY(0);
+        return loc.getBlock();
+    }
+
+    public static int getHighestBlockYAt(Location loc) {
+        short y = 255;
+        while (y >= 0) {
+            loc.setY(y);
+            if (loc.getBlock().getType() != Material.AIR && loc.getBlock().getType().isSolid()) return ++y;
+            y--;
+        }
+        loc.setY(0);
+        return 0;
+    }
+
 }

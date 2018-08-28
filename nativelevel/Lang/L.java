@@ -1,7 +1,7 @@
 package nativelevel.Lang;
 
 import nativelevel.KoM;
-import nativelevel.utils.ConfigManager;
+import pixelmc.utils.ConfigManager;
 
 /**
  * @author Gabriel
@@ -54,7 +54,7 @@ public class L {
          node = msg.replace(":", "");
          if (!Lang.getConfig().contains(node)) {
          Lang.getConfig().set(node, msg);
-         Lang.SaveConfig();
+         Lang.saveConfig();
          }
          return L.Lang.getConfig().getString(node);
          
@@ -67,7 +67,7 @@ public class L {
         node = msg.replace(":", "");
         if (!Lang.getConfig().contains(node)) {
             Lang.getConfig().set(node, msg);
-            Lang.SaveConfig();
+            Lang.saveConfig();
         }
         return L.Lang.getConfig().getString(node).replace("%", parm);
     }
@@ -78,7 +78,7 @@ public class L {
          node = msg.replace(":", "");
         if (!Lang.getConfig().contains(node)) {
             Lang.getConfig().set(node, msg);
-            Lang.SaveConfig();
+            Lang.saveConfig();
         }
         return L.Lang.getConfig().getString(node).replace("%", ""+parm);
     }
@@ -89,7 +89,7 @@ public class L {
         node = msg.replace(":", "");
         if (!Lang.getConfig().contains(node)) {
             Lang.getConfig().set(node, msg);
-            Lang.SaveConfig();
+            Lang.saveConfig();
         }
         return L.Lang.getConfig().getString(node).replace("%", ""+parm);
     }
@@ -100,13 +100,13 @@ public class L {
         if (!Lang.getConfig().contains(node)) {
             Lang.getConfig().set(node, value);
         }
-        Lang.SaveConfig();
+        Lang.saveConfig();
     }
 
     public static void init(String node, Object value) {
         if (!ConfLanguage.getConfig().contains(node)) {
             ConfLanguage.getConfig().set(node, value);
         }
-        ConfLanguage.SaveConfig();
+        ConfLanguage.saveConfig();
     }
 }

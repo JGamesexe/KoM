@@ -20,6 +20,7 @@ import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.MetaShit;
+import nativelevel.skills.Skill;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,18 +28,27 @@ import org.bukkit.entity.Bat;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class Engineer {
 
-
     public static HashMap<UUID, UUID> leashed = new HashMap<UUID, UUID>();
+
+    public static final Jobs.Classe classe = Jobs.Classe.Engenheiro;
+    public static final String name = "Engenheiro";
+
+    public static void onDamaged(EntityDamageEvent ev) {
+        if (ev.getCause().equals(EntityDamageEvent.DamageCause.LIGHTNING)) ev.setCancelled(true);
+    }
 
     public static boolean validaPrisao(PlayerInteractEvent ev) {
         if (ev.getPlayer().hasMetadata("prendeu")) {
@@ -136,5 +146,40 @@ public class Engineer {
             }
         }
     }
+
+// !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=!
+
+    public static final List<Skill> skillList = Arrays.asList(
+            new Skill(classe, "Bonka Boom", 2, false, new String[]{"§9Permite atirar com a pistola 'Bonka Boom'."}),
+            new Skill(classe, "Criar Items com Redstone", 3, false, new String[]{"§9Aumenta chances de sucesso ao craftar items com redstone.", "§9Quanto maior seu nivel, maior a chance"}, true),
+            new Skill(classe, "Resistência Elétrica", 5, true, new String[]{"§9Se torna resistente a eletrecidade"}),
+            new Skill(classe, "Para Raios", 7, true, new String[]{"§9Permite usar um Para Raio para absorver relampagos."}),
+            new Skill(classe, "Auto Dispenser", 9, true, new String[]{"§9Cria um auto dispenser que atira em inimigos"}),
+            new Skill(classe, "Coleira Elétrica", 10, true, new String[]{"§9Permite usar uma coleira eletrica em inimigos."}),
+            new Skill(classe, "Implantar Mecanicas", 13, true, new String[]{"§9Permite colocar mecanismos de redstone.", "§9Quanto maior seu nivel, maior a chance"}),
+            new Skill(classe, "Mina Explosiva", 18, true, new String[]{"§9Pode colocar uma mina explosiva e criar um detonador"}),
+            new Skill(classe, "Mega Bomba C4", 20, true, new String[]{"§9Pode explodir guildas com C4"})
+    );
+
+    public enum Skills {
+        Bonka_Boom(skillList.get(0)),
+        Criar_Items_com_Redstone(skillList.get(1)),
+        Resistencia_Eletrica(skillList.get(2)),
+        Para_Raios(skillList.get(3)),
+        Auto_Dispenser(skillList.get(4)),
+        Coleira_Eletrica(skillList.get(5)),
+        Implantar_Mecanicas(skillList.get(6)),
+        Mina_Explosiva(skillList.get(7)),
+        Mega_Bomba_C4(skillList.get(8));
+
+        public Skill skill;
+
+        Skills(Skill skill) {
+            this.skill = skill;
+        }
+
+    }
+
+// !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=!
 
 }

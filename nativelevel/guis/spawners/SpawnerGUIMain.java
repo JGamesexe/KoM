@@ -334,16 +334,16 @@ public class SpawnerGUIMain extends GUI {
 
         if (newValor < valorMin | newValor > valorMax) {
 
-            player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_LAND, SoundCategory.MASTER, 10f, 1.5f);
+            player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_LAND, 10f, 1.5f);
             return;
 
         } else if (newValor > valor) {
 
-            player.playSound(player.getLocation(), Sound.UI_TOAST_IN, SoundCategory.MASTER, 0.65f, 1.6f);
+            player.playSound(player.getLocation(), Sound.UI_TOAST_IN, 0.65f, 1.6f);
 
         } else {
 
-            player.playSound(player.getLocation(), Sound.UI_TOAST_IN, SoundCategory.MASTER, 0.65f, 1f);
+            player.playSound(player.getLocation(), Sound.UI_TOAST_IN, 0.65f, 1f);
 
         }
 
@@ -358,7 +358,7 @@ public class SpawnerGUIMain extends GUI {
 
         if (data.equals("generic.attackDamage") && !EntityHelp.mobs[1].contains(spawner.getSpawnedType())) {
 
-            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMEN_SCREAM, SoundCategory.MASTER, 1f, 2f);
+            player.playSound(player.getLocation(), Sound.ENTITY_ENDERMEN_SCREAM, 1f, 2f);
             player.sendMessage("§c§oCara, se a entidade não for monstro procura o JG pra botar dano nesse bixo ai");
             return;
 
@@ -382,22 +382,22 @@ public class SpawnerGUIMain extends GUI {
 
         if (valor == 0) {
 
-            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, SoundCategory.MASTER, 1f, 1.5f);
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1.5f);
             newValor = valorMin;
 
         } else if (newValor < valorMin | newValor > valorMax) {
 
-            player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_LAND, SoundCategory.MASTER, 1f, 1.5f);
+            player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_LAND, 1f, 1.5f);
             player.sendMessage("§c§oTem que variar de " + format.format(valorMin) + "~" + format.format(valorMax));
             return;
 
         } else if (newValor > valor) {
 
-            player.playSound(player.getLocation(), Sound.UI_TOAST_IN, SoundCategory.MASTER, 0.65f, 1.6f);
+            player.playSound(player.getLocation(), Sound.UI_TOAST_IN, 0.65f, 1.6f);
 
         } else {
 
-            player.playSound(player.getLocation(), Sound.UI_TOAST_IN, SoundCategory.MASTER, 0.65f, 1f);
+            player.playSound(player.getLocation(), Sound.UI_TOAST_IN, 0.65f, 1f);
 
         }
 

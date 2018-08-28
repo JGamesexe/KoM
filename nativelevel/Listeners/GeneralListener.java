@@ -24,6 +24,7 @@ import nativelevel.Classes.Thief;
 import nativelevel.Comandos.Terreno;
 import nativelevel.Custom.Buildings.Construcao;
 import nativelevel.Custom.Items.SuperBomba;
+import nativelevel.Custom.Mobs.IncursionIronTotem;
 import nativelevel.Equipment.Generator.EquipGenerator;
 import nativelevel.Jobs;
 import nativelevel.KoM;
@@ -43,10 +44,7 @@ import nativelevel.sisteminhas.Mobs.EfeitoMobs;
 import nativelevel.sisteminhas.XP;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.events.DisbandClanEvent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.block.Dropper;
@@ -83,7 +81,7 @@ public class GeneralListener implements Listener {
 
     @EventHandler
     public void adv(PlayerAdvancementDoneEvent ev) {
-        KoM.log.info(ev.getAdvancement().toString());
+        KoM.debug(ev.getAdvancement().toString());
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -191,7 +189,7 @@ public class GeneralListener implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    //  @EventHandler(priority = EventPriority.HIGHEST)
     public void onProjectileHit(ProjectileHitEvent ev) {
 
         if (ev.getEntity().getType() == EntityType.FIREBALL) {
@@ -249,18 +247,15 @@ public class GeneralListener implements Listener {
     public void onDispense(BlockDispenseEvent ev) {
         ItemStack stack = ev.getItem();
 
-        if (stack == null || stack.getType() == Material.AIR) {
-            return;
-        }
+        if (stack == null || stack.getType() == Material.AIR) return;
+
 
         if (ev.getItem().getType().name().contains("MINECART")) {
             ev.setCancelled(true);
             return;
         }
 
-        if (stack.getType() == Material.LAVA || stack.getType() == Material.LAVA_BUCKET) {
-            ev.setCancelled(true);
-        }
+        if (stack.getType() == Material.LAVA || stack.getType() == Material.LAVA_BUCKET) ev.setCancelled(true);
 
         if (ev.getBlock().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
 
@@ -338,89 +333,89 @@ public class GeneralListener implements Listener {
                     }
                 }
                 ev.setCancelled(true);
-                for (ItemStack i : inventory.getContents()) {
-                    if (i != null) {
-                        if (i.getType() == Material.MONSTER_EGG || i.getType() == Material.MONSTER_EGGS) {
-                            if (KoM.debugMode) {
-                                KoM.log.info("found 1 mob");
-                            }
-                            int qtd = i.getAmount();
-                            ItemMeta m = i.getItemMeta();
-                            int life = -1;
-                            int level = 0;
-                            int extraStrength = -1;
-                            HashSet<EfeitoMobs> effects = new HashSet<EfeitoMobs>();
-                            String nomeMob = null;
-                            if (m != null) {
-                                nomeMob = m.getDisplayName();
-                                if (m.getLore() != null && m.getLore().size() > 0) {
-                                    for (String l : m.getLore()) {
-                                        String[] split = l.split(":");
-                                        if (split.length == 2) {
-                                            if (split[0].equalsIgnoreCase("vida")) { // life
-                                                life = Integer.valueOf(split[1]);
-                                            } else if (split[0].equalsIgnoreCase("dano")) { // strength
-                                                extraStrength = Integer.valueOf(split[1]);
-                                            } else if (split[0].equalsIgnoreCase("nivel")) { // level
-                                                level = Integer.valueOf(split[1]);
-                                            } else if (split[0].equalsIgnoreCase("efeitos")) { // effects
-                                                String[] efs = split[1].split(" ");
-                                                for (String ef : efs) {
-                                                    EfeitoMobs efeito = Mobs.getEfeito(ef);
-                                                    if (efeito != null) {
-                                                        effects.add(efeito);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            if (KoM.debugMode) {
-                                KoM.log.info(qtd + " mobs with " + effects.size() + " level effects " + level + " with life " + life);
-                            }
-
-                            for (int x = 0; x < qtd; x++) {
-                                SpawnEggMeta meta = (SpawnEggMeta) i.getItemMeta();
-                                EntityType tipoMob = meta.getSpawnedType();
-                                Location l = alvo.getLocation();
-                                l.setX(l.getX() + 0.5);
-                                l.setZ(l.getZ() + 0.5);
-                                final LivingEntity mob = (LivingEntity) alvo.getWorld().spawnEntity(l, tipoMob);
-
-                                if (KoM.debugMode) {
-                                    KoM.log.info("spawning a " + tipoMob.toString());
-                                }
-
-                                if (nomeMob != null) {
-                                    mob.setCustomName(nomeMob);
-                                    mob.setCustomNameVisible(true);
-                                }
-
-                                if (life != -1) {
-                                    life = life;
-                                    final double mxLife = life;
-                                    Runnable r = new Runnable() {
-                                        public void run() {
-                                            mob.setMaxHealth(mxLife);
-                                            mob.setHealth(mob.getMaxHealth());
-                                        }
-                                    };
-                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plug, r, 20 * 3);
-                                    mob.setMaxHealth(mxLife);
-                                    mob.setHealth(mob.getMaxHealth());
-                                    mob.setMetadata("vidaCustom", new FixedMetadataValue(KoM._instance, life));
-                                }
-                                if (extraStrength != -1) {
-                                    MetaShit.setMetaObject("bonusDano", mob, extraStrength);
-                                }
-                                MetaShit.setMetaObject("nivel", mob, level);
-                                MetaShit.setMetaObject("efeitos", mob, effects);
-                                mob.setMetadata("mobCustom", new FixedMetadataValue(KoM._instance, "vida"));
-                            }
-                        }
-                    }
-                }
+//                for (ItemStack i : inventory.getContents()) {
+//                    if (i != null) {
+//                        if (i.getType() == Material.MONSTER_EGG || i.getType() == Material.MONSTER_EGGS) {
+//                            if (KoM.debugMode) {
+//                                KoM.log.info("found 1 mob");
+//                            }
+//                            int qtd = i.getAmount();
+//                            ItemMeta m = i.getItemMeta();
+//                            int life = -1;
+//                            int level = 0;
+//                            int extraStrength = -1;
+//                            HashSet<EfeitoMobs> effects = new HashSet<EfeitoMobs>();
+//                            String nomeMob = null;
+//                            if (m != null) {
+//                                nomeMob = m.getDisplayName();
+//                                if (m.getLore() != null && m.getLore().size() > 0) {
+//                                    for (String l : m.getLore()) {
+//                                        String[] split = l.split(":");
+//                                        if (split.length == 2) {
+//                                            if (split[0].equalsIgnoreCase("vida")) { // life
+//                                                life = Integer.valueOf(split[1]);
+//                                            } else if (split[0].equalsIgnoreCase("dano")) { // strength
+//                                                extraStrength = Integer.valueOf(split[1]);
+//                                            } else if (split[0].equalsIgnoreCase("nivel")) { // level
+//                                                level = Integer.valueOf(split[1]);
+//                                            } else if (split[0].equalsIgnoreCase("efeitos")) { // effects
+//                                                String[] efs = split[1].split(" ");
+//                                                for (String ef : efs) {
+//                                                    EfeitoMobs efeito = Mobs.getEfeito(ef);
+//                                                    if (efeito != null) {
+//                                                        effects.add(efeito);
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                            if (KoM.debugMode) {
+//                                KoM.log.info(qtd + " mobs with " + effects.size() + " level effects " + level + " with life " + life);
+//                            }
+//
+//                            for (int x = 0; x < qtd; x++) {
+//                                SpawnEggMeta meta = (SpawnEggMeta) i.getItemMeta();
+//                                EntityType tipoMob = meta.getSpawnedType();
+//                                Location l = alvo.getLocation();
+//                                l.setX(l.getX() + 0.5);
+//                                l.setZ(l.getZ() + 0.5);
+//                                final LivingEntity mob = (LivingEntity) alvo.getWorld().spawnEntity(l, tipoMob);
+//
+//                                if (KoM.debugMode) {
+//                                    KoM.log.info("spawning a " + tipoMob.toString());
+//                                }
+//
+//                                if (nomeMob != null) {
+//                                    mob.setCustomName(nomeMob);
+//                                    mob.setCustomNameVisible(true);
+//                                }
+//
+//                                if (life != -1) {
+//                                    life = life;
+//                                    final double mxLife = life;
+//                                    Runnable r = new Runnable() {
+//                                        public void run() {
+//                                            mob.setMaxHealth(mxLife);
+//                                            mob.setHealth(mob.getMaxHealth());
+//                                        }
+//                                    };
+//                                    Bukkit.getScheduler().scheduleSyncDelayedTask(plug, r, 20 * 3);
+//                                    mob.setMaxHealth(mxLife);
+//                                    mob.setHealth(mob.getMaxHealth());
+//                                    mob.setMetadata("vidaCustom", new FixedMetadataValue(KoM._instance, life));
+//                                }
+//                                if (extraStrength != -1) {
+//                                    MetaShit.setMetaObject("bonusDano", mob, extraStrength);
+//                                }
+//                                MetaShit.setMetaObject("nivel", mob, level);
+//                                MetaShit.setMetaObject("efeitos", mob, effects);
+//                                mob.setMetadata("mobCustom", new FixedMetadataValue(KoM._instance, "vida"));
+//                            }
+//                        }
+//                    }
+//                }
             }
 
         }
@@ -436,8 +431,7 @@ public class GeneralListener implements Listener {
     public static Minerador miner = new Minerador();
     private KoM plug;
     public static List<Material> pistaoNaoEmpurra = Arrays.asList(new Material[]{Material.SUGAR_CANE_BLOCK, Material.SUGAR_CANE, Material.CACTUS, Material.PUMPKIN, Material.NETHER_WARTS, Material.CAULDRON, Material.ANVIL, Material.FURNACE, Material.DISPENSER, Material.DROPPER, Material.SAND, Material.GRAVEL, Material.OBSERVER});
-    public static HashMap<UUID, UUID> ultimoDano = new HashMap<UUID, UUID>();
-    public static HashMap<UUID, List<ItemStack>> loots = new HashMap<UUID, List<ItemStack>>();
+    public static HashMap<UUID, List<ItemStack>> loots = new HashMap<>();
     public static Material gambiarra = Material.REDSTONE_BLOCK;
 
     public GeneralListener(KoM plugin) {
@@ -624,6 +618,7 @@ public class GeneralListener implements Listener {
         if (ev.getEntity() instanceof Player && ev.getProjectile() instanceof Arrow && !ev.getProjectile().hasMetadata("zaraba")) {
             Player p = (Player) ev.getEntity();
             MetaShit.setMetaObject("modDano", ev.getProjectile(), 1d);
+            MetaShit.setMetaObject("exitLocation", ev.getProjectile(), ev.getEntity().getLocation());
             Thief.atiraFlecha(p, (Projectile) ev.getProjectile());
         }
     }
@@ -688,11 +683,6 @@ public class GeneralListener implements Listener {
         Farmer.tameWolf(event);
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void estouraPotion(PotionSplashEvent event) {
-        Alchemist.splashPotion(event);
-    }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void fire(BlockIgniteEvent ev) {
         if (ev.getCause() == IgniteCause.FIREBALL || ev.getCause() == IgniteCause.SPREAD) {
@@ -709,6 +699,19 @@ public class GeneralListener implements Listener {
     public void DisbandClan(final DisbandClanEvent event) {
         ClanLand.limpaGuildaEDesfaz(event.getClan().getTag(), false);
         ClanLand.setPoder(event.getClan().getTag(), 0);
+        for (IncursionIronTotem totem : IncursionIronTotem.totens.values()) {
+            if (!totem.clan.equalsIgnoreCase(event.getClan().getTag())) continue;
+
+            Bukkit.getScheduler().cancelTask(totem.defeatRunnableId);
+            for (Entity ne : totem.getBukkitEntity().getWorld().getNearbyEntities(totem.getBukkitEntity().getLocation(), 36, 108, 36))
+                if (ne instanceof Player) {
+                    ne.sendMessage("§cO Totem que estava protegendo a guilda " + totem.clan.toUpperCase() + " foi derrotado porque já não ha mais a guilda para ele defender...");
+                    for (int x = 0; x < 7; x++) ((Player) ne).playSound(ne.getLocation(), Sound.BLOCK_GRASS_BREAK, 1f, 0.75f);
+                }
+            totem.getBukkitEntity().remove();
+            IncursionIronTotem.remove(totem.getUniqueID());
+        }
+
     }
 
     @EventHandler
@@ -809,7 +812,7 @@ public class GeneralListener implements Listener {
 
         if (ev.getPhatLoot().name.equalsIgnoreCase("lvl3") || ev.getPhatLoot().name.equalsIgnoreCase("lvl4") || ev.getPhatLoot().name.equalsIgnoreCase("lvl5")) {
             for (Player p : Bukkit.getOnlinePlayers()) {
-                p.sendMessage(ChatColor.BLUE + L.m("[Dungeon]" + ChatColor.GREEN + " O JogadorDAO " + ChatColor.YELLOW + "%" + ChatColor.GREEN + " acaba de pegar um tesouro raro ! ", ev.getLooter().getName()));
+                p.sendMessage(ChatColor.BLUE + L.m("[Dungeon]" + ChatColor.GREEN + " O Jogador " + ChatColor.YELLOW + "%" + ChatColor.GREEN + " acaba de pegar um tesouro raro ! ", ev.getLooter().getName()));
             }
         }
 

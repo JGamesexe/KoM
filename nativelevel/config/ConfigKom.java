@@ -83,7 +83,7 @@ public class ConfigKom {
                     }
                 }
             }
-            cfg.SaveConfig();
+            cfg.saveConfig();
             temDados = true;
             KnightsOfMania.log.info("CONFIG DE ITEMS LOADED");
         } catch (Exception ex) {
@@ -95,7 +95,7 @@ public class ConfigKom {
         cfg.getConfig().set(mat+".diff", diff);
         cfg.getConfig().set(mat+".job", job.toLowerCase());
         cfg.getConfig().set(mat+".xp", xp);
-        cfg.SaveConfig();
+        cfg.saveConfig();
         ItemJob itemJob = new ItemJob();
         itemJob.dificuldade = diff;
         itemJob.xp = xp;

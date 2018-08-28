@@ -1,38 +1,20 @@
-/*    */
 package genericos.komzin.libzinha;
-/*    */ 
-/*    */
 
 import org.bukkit.Location;
 
 import java.util.HashSet;
 
-/*    */
-
-/*    */
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ 
-/*    */ public class PlayerInfo
-/*    */ {
-    /* 18 */   public long TempoTexto = 0L;
-    /* 19 */   public HashSet<Location> MsgJaLida = new HashSet();
-    /* 20 */   public long TempoFoguete = 0L;
-    /* 21 */   public long TempoAnunciar = 0L;
+public class PlayerInfo {
+    public long TempoTexto = 0L;
+    public HashSet<Location> MsgJaLida = new HashSet();
+    public long TempoFoguete = 0L;
+    public long TempoAnunciar = 0L;
     public boolean ignoreTell = false;
     public String inChannel = null;
     public String lastPlayerMessage = null;
     public String talkingTo = null;
     public boolean recebelocal = true;
     public boolean recebeglobal = true;
-/*    */
 }
 
 

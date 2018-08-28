@@ -33,13 +33,13 @@ public class Arena2x2 {
         sql = new ArenaDB();
         Bukkit.getServer().getPluginManager().registerEvents(new Eventos(), instancia);
 
-        if (!KoM.serverTestes) {
+//        if (!KoM.serverTestes) {
 
             sql.inicializa();
             match.start();
             sql.limpaTudo();
 
-        }
+//        }
 
         log.info("Arena 2x2 LOADED");
     }

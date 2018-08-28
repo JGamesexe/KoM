@@ -24,7 +24,7 @@ public class FireBomba extends MageSpell {
 
     @Override
     public void cast(Player p) {
-        double magia = EquipManager.getPlayerAttribute(Atributo.Magia, p);
+        double magia = EquipManager.getPlayerAttribute(Atributo.Dano_Magico, p);
         Fireball fb = null;
         fb = p.launchProjectile(Fireball.class);
         fb.getVelocity().multiply(2);

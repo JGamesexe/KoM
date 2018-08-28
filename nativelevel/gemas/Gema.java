@@ -5,6 +5,8 @@
  */
 package nativelevel.gemas;
 
+import nativelevel.Equipment.Atributo;
+import nativelevel.Equipment.ItemAttributes;
 import nativelevel.Jobs;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,25 +20,45 @@ import java.util.List;
 public enum Gema {
 
     // Amarela(4, "§E", new String[]{"+1 Regeneracao"}, new String[]{"+2 Regeneracao"}),
-    Laranja(1, "§6", new String[]{"+3% Chance Critico", "+1 Dano Critico"}, new String[]{"+7% Chance Critico", "+5% Dano Critico"}),
-    // Rosa(6, "§D", new String[]{"+1 Dano Magico"}, new String[]{"+3 Dano Magico"}),
-    Aqua(3, "§B", new String[]{"+3% Dano Distancia"}, new String[]{"+8% Dano Distancia"}),
-    Preta(15, "§1", new String[]{"+1 Tempo Stun"}, new String[]{"+4 Tempo Stun"}),
-    Vermelha(14, "§C", new String[]{"+2% Dano Fisico"}, new String[]{"+8% Dano Fisico"}),
-    Roxa(2, "§5", new String[]{"+1 Penetracao Armadura"}, new String[]{"+4 Penetracao Armadura"}),
-    Branca(0, "§f", new String[]{"+1 Vida"}, new String[]{"+2 Vida"}),
-    Verde(5, "§A", new String[]{"+1 Armadura"}, new String[]{"+4 Armadura"});
 
-    public static String iconeSlot = "⁤"; // só aparece na resource pack
+    Branca(0, "§f",
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Vida, 1)},
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Vida, 2)}),
+    Laranja(1, "§6",
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Chance_Critico, 3), new ItemAttributes.QuantoAtributo(Atributo.Dano_Critico, 1)},
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Chance_Critico, 7), new ItemAttributes.QuantoAtributo(Atributo.Dano_Critico, 5)}),
+    Magenta(2, "§d",
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Dano_Magico, 2)},
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Dano_Magico, 8)}),
+    Aqua(3, "§b",
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Dano_Distancia, 3)},
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Dano_Distancia, 8)}),
+    Cinza(8, "§8",
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Penetr_Armadura, 1)},
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Penetr_Armadura, 4)}),
+    Ciana(9, "§3",
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Armadura, 1)},
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Armadura, 4)}),
+    Azul(11, "§1",
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Tempo_Stun, 1)},
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Tempo_Stun, 4)}),
+    Vermelha(14, "§c",
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Dano_Fisico, 2)},
+            new ItemAttributes.QuantoAtributo[]{new ItemAttributes.QuantoAtributo(Atributo.Dano_Fisico, 8)});
+
+
+    private int loreIndex = 1;
+
+    public static String iconeSlot = "[+]"; // só aparece na resource pack
     public int id;
     public String cor;
-    public String[] loreNormal;
-    public String[] loreRara;
+    public ItemAttributes.QuantoAtributo[] buffNormal;
+    public ItemAttributes.QuantoAtributo[] buffRaro;
 
-    private Gema(int idCor, String cor, String[] loreNormal, String[] loreRara) {
+    Gema(int idCor, String cor, ItemAttributes.QuantoAtributo[] buffNormal, ItemAttributes.QuantoAtributo[] buffRaro) {
         this.id = idCor;
-        this.loreNormal = loreNormal;
-        this.loreRara = loreRara;
+        this.buffNormal = buffNormal;
+        this.buffRaro = buffRaro;
         this.cor = cor;
     }
 
@@ -103,54 +125,67 @@ public enum Gema {
     public static void addGemaToItem(ItemStack ss, Gema g, ItemStack gemaItem) {
         ItemMeta meta = ss.getItemMeta();
         List<String> lore = meta.getLore();
+
         Raridade rar = getRaridade(gemaItem);
-        String novaLore = "§9[X] Gema " + g.cor + g.name() + rar.cor + " " + rar.name() + "§9";
-        int indexSlot = -1;
-        if (lore != null) {
-            for (String s : lore) {
-                if (s.contains(iconeSlot)) {
-                    String[] split = s.split("~");
-                    String ultimo = split[split.length - 1].replace("]", "").trim();
-                    Gema cor = Gema.valueOf(ultimo);
-                    // achei o socket
-                    if (cor == g) {
-                        indexSlot = lore.indexOf(s);
-                        break;
-                    }
-                }
-            }
-            // tirando o slot
-            if (indexSlot != -1) {
-                lore.set(indexSlot, novaLore);
-            }
-            meta.setLore(lore);
-            ss.setItemMeta(meta);
-            // adicionando os stats
-            lore.add(ChatColor.GREEN + "~");
-            if (rar == Raridade.Epico) {
-                lore.addAll(Arrays.asList(g.loreRara));
-            } else {
-                lore.addAll(Arrays.asList(g.loreNormal));
-            }
-            meta.setLore(lore);
-            ss.setItemMeta(meta);
-        }
+        String novaLore = rar.cor + "[*] " + g.cor + "Gema " + g.name();
+        lore.set(g.loreIndex, novaLore);
+        meta.setLore(lore);
+        ss.setItemMeta(meta);
+
+        ItemAttributes.QuantoAtributo[] attrs;
+        if (rar == Raridade.Epico) attrs = g.buffRaro;
+        else attrs = g.buffNormal;
+
+        for (ItemAttributes.QuantoAtributo attr : attrs) ItemAttributes.addAttribute(ss, attr);
+
     }
 
-    public static boolean temSockets(ItemStack ss) {
+    public static int quantosSockets(ItemStack ss) {
+        int quantosSockets = 0;
         ItemMeta meta = ss.getItemMeta();
-        if (meta == null) {
-            return false;
-        }
+        if (meta == null) return quantosSockets;
+
         List<String> lore = meta.getLore();
-        if (lore != null) {
-            for (String s : lore) {
-                if (s.contains(iconeSlot) || s.contains("[X]")) {
-                    return true;
-                }
-            }
+        if (lore == null) return quantosSockets;
+
+        for (String s : lore) {
+            s = ChatColor.stripColor(s);
+            if (s.contains(iconeSlot) || s.contains("[*]")) quantosSockets++;
         }
+
+        return quantosSockets;
+    }
+
+    public static boolean temSocketUsado(ItemStack ss) {
+        ItemMeta meta = ss.getItemMeta();
+        if (meta == null) return false;
+
+        List<String> lore = meta.getLore();
+        if (lore == null) return false;
+
+        for (String s : lore) {
+            if (s.contains("[*]"))
+                return true;
+        }
+
         return false;
+    }
+
+    public static int getLastSocketsSlot(ItemStack ss) {
+        int lastSlot = -666;
+        ItemMeta meta = ss.getItemMeta();
+        if (meta == null) return lastSlot;
+
+        List<String> lore = meta.getLore();
+        if (lore == null) return lastSlot;
+
+        int slot = 0;
+        for (String s : lore) {
+            if (s.contains(iconeSlot) || s.contains("[*]")) lastSlot = slot;
+            slot++;
+        }
+
+        return lastSlot;
     }
 
     public static List<Gema> getSocketsLivres(ItemStack ss) {
@@ -160,27 +195,37 @@ public enum Gema {
             return sockets;
         }
         List<String> lore = meta.getLore();
-        if (lore != null) {
+        int index = 0;
+        if (lore != null)
             for (String s : lore) {
                 if (s.contains(iconeSlot)) {
-                    String[] split = s.split("~");
-                    String ultimo = split[split.length - 1].replace("]", "").trim();
+                    String[] split = s.split(" ");
+                    String ultimo = split[split.length - 1];
                     Gema cor = Gema.valueOf(ultimo);
+                    cor.loreIndex = index;
                     sockets.add(cor);
                 }
+                index++;
             }
-        }
+
         return sockets;
     }
 
     public static void addSocket(ItemStack item, Gema g) {
         ItemMeta meta = item.getItemMeta();
         List<String> lore = meta.getLore();
-        if (lore == null)
-            lore = new ArrayList<String>();
-        int index = lore.indexOf("      ");
-        lore.add(index + 1, g.cor + "§l" + iconeSlot + " [Encaixe~" + g.name() + "]");
-        lore.add(index + 2, "     ");
+        if (lore == null) lore = new ArrayList<>();
+
+        Gema gema;
+
+        int slotSocket = getLastSocketsSlot(item);
+        if (slotSocket >= 0) {
+            lore.add(slotSocket + 1, g.cor + iconeSlot + " Encaixe " + g.name());
+        } else {
+            lore.add(ItemAttributes.lastSlot(lore), "");
+            lore.add(ItemAttributes.lastSlot(lore), g.cor + iconeSlot + " Encaixe " + g.name());
+        }
+
         meta.setLore(lore);
         item.setItemMeta(meta);
     }

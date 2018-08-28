@@ -74,7 +74,7 @@ public class EscolheSexo implements Listener {
                             p.sendMessage("§a§lVocê alterou seu gênero para " + name);
                             p.closeInventory();
                             String title = data.getTitulo();
-                            Titulos.update(p, title, data.getCortitulo());
+                            Titulos.update(p);
                         }
 
                     }

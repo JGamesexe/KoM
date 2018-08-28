@@ -14,14 +14,21 @@
  */
 package nativelevel.sisteminhas;
 
+import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import nativelevel.CFG;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.MetaShit;
+import nativelevel.integration.SimpleClanKom;
 import nativelevel.utils.BookUtil;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -32,8 +39,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Dungeon extends KomSystem {
@@ -46,13 +55,11 @@ public class Dungeon extends KomSystem {
     }
 
     public static void blockBreak(BlockBreakEvent event) {
-        if (!event.getPlayer().isOp()) {
+        if (!event.getPlayer().isOp() && !event.getPlayer().hasPermission("kom.build")) {
 
             Location l = event.getBlock().getLocation();
             l.setY(0);
-            if (l.getBlock().getType() == Material.DIAMOND_BLOCK) {
-                return;
-            }
+            if (l.getBlock().getType() == Material.DIAMOND_BLOCK) return;
 
             event.setCancelled(true);
         }
@@ -294,54 +301,82 @@ public class Dungeon extends KomSystem {
         }
     }
 
+    public static boolean canBuild(Player player, Block block, boolean placing) {
+        if (player.isOp() || player.hasPermission("kom.build")) return true;
+        else if (lorerBuild(player, block)) return true;
 
-    public static void interact(PlayerInteractEvent ev) {
-        if (ev.getPlayer().isOp()) {
-            return;
-        }
-        if (ev.getPlayer().getInventory().getItemInMainHand() != null && ev.getPlayer().getInventory().getItemInMainHand().getType() == Material.WATER_BUCKET) {
-            ev.setCancelled(true);
-        }
-    }
+        if (placing && block.getType() == Material.TORCH) {
 
+            Material oldBlock = block.getLocation().getBlock().getType();
+            if (oldBlock == Material.VINE || oldBlock == Material.STATIONARY_WATER || oldBlock == Material.WATER || oldBlock == Material.STATIONARY_LAVA || oldBlock == Material.LAVA) return false;
+            if (block.getWorld().getBlockAt(block.getLocation().add(0, 1, 0)).getType().name().contains("MUSHROOM") ||
+                    block.getWorld().getBlockAt(block.getLocation().add(1, 0, 0)).getType().name().contains("MUSHROOM") ||
+                    block.getWorld().getBlockAt(block.getLocation().add(-1, 0, 0)).getType().name().contains("MUSHROOM") ||
+                    block.getWorld().getBlockAt(block.getLocation().add(0, 0, 1)).getType().name().contains("MUSHROOM") ||
+                    block.getWorld().getBlockAt(block.getLocation().add(0, 0, -1)).getType().name().contains("MUSHROOM") ||
+                    block.getWorld().getBlockAt(block.getLocation().add(0, -1, 0)).getType().name().contains("MUSHROOM")) {
+                return false;
+            }
 
-    public static void blockPlace(BlockPlaceEvent event) {
-        if (event.getPlayer().isOp()) {
-            return;
-        }
+            player.sendMessage(ChatColor.GREEN + L.m("Você colocou uma tocha temporária."));
+            KoM.rewind.put(block, Material.AIR);
 
-        Location l = event.getBlock().getLocation();
-        l.setY(0); // 1910 4 998
-        if (l.getBlock().getType() == Material.DIAMOND_BLOCK) {
-            return;
-        }
+            Bukkit.getScheduler().runTaskLater(KoM._instance, () -> {
 
-        if (event.getBlockReplacedState().getType() == Material.VINE || event.getBlockReplacedState().getType() == Material.STATIONARY_WATER || event.getBlockReplacedState().getType() == Material.WATER || event.getBlockReplacedState().getType() == Material.LAVA) {
-            event.setCancelled(true);
-            return;
-        }
-        if (event.getBlock().getType() == Material.TORCH) {
-            event.getPlayer().sendMessage(ChatColor.GREEN + L.m("Você colocou uma tocha temporária."));
-            final Block b = event.getBlock();
-            KoM.rewind.put(b, Material.AIR);
-            Runnable r = new Runnable() {
+                Block bloco = block.getLocation().getBlock();
+                if (!block.getChunk().isLoaded()) {
 
-                @Override
-                public void run() {
-                    Block bloco = b.getLocation().getBlock();
-                    if (bloco.getType() == Material.TORCH) {
-                        bloco.setType(Material.AIR);
-                        KoM.rewind.remove(bloco);
+                    bloco.getChunk().load();
+                    bloco.setType(Material.AIR);
+                    KoM.rewind.remove(bloco);
+
+                } else {
+
+                    bloco.setType(Material.REDSTONE_TORCH_ON);
+
+                    Bukkit.getScheduler().runTaskLater(KoM._instance, () -> {
+                        Block bloco1 = block.getLocation().getBlock();
+                        if (!bloco1.getChunk().isLoaded()) bloco1.getChunk().load();
+                        bloco1.setType(Material.AIR);
+                        KoM.rewind.remove(bloco1);
+
+                    }, 20 * 25);
+
+                }
+
+            }, 20 * 60);
+
+            for (Entity e : block.getWorld().getNearbyEntities(block.getLocation(), 8, 8, 8))
+                if (e.getType() == EntityType.PLAYER) {
+                    Player nego = (Player) e;
+                    if (nego.hasPotionEffect(PotionEffectType.BLINDNESS)) {
+                        nego.removePotionEffect(PotionEffectType.BLINDNESS);
+                        nego.sendMessage(ChatColor.GREEN + "Voce pode ver novamente");
                     }
                 }
-            };
-            Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, r, 20 * 120);
-            // NativeLevel.rewind.put(event.getBlock(), Material.AIR);
-        } else {
-            // foi pro SimpleClanKom.java
-            // event.setCancelled(true);
-            // event.getPlayer().sendMessage(ChatColor.RED + "Nada de tentar colocar blocos aqui !");
-            // event.getPlayer().damage(5D);
+
         }
+
+        if (placing) {
+            player.sendMessage("§CEm dungeons não é permitda a construção!");
+            player.damage(2);
+        } else if (!SimpleClanKom.easyToBreak.contains(block.getType())) {
+            player.sendMessage("§CEm dungeons você não pode quebrar blocos!");
+            player.damage(4);
+        }
+
+        return false;
     }
+
+    private static boolean lorerBuild(Player player, Block block) {
+        if (player.getWorld().getName().equalsIgnoreCase(CFG.mundoDungeon)) return false;
+        if (player.hasPermission("kom.lorer")) return false;
+        ApplicableRegionSet set = KoM.worldGuard.getRegionManager(block.getWorld()).getApplicableRegions(block.getLocation());
+        while (set.iterator().hasNext()) {
+            ProtectedRegion region = set.iterator().next();
+            if (region.getId().equalsIgnoreCase("lorers")) return true;
+        }
+        return false;
+    }
+
 }

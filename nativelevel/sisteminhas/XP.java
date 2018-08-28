@@ -14,9 +14,10 @@ package nativelevel.sisteminhas;
 
 import nativelevel.Custom.Items.DoubleXP;
 import nativelevel.KoM;
+import nativelevel.MetaShit;
+import nativelevel.Planting.PlantCache;
 import nativelevel.utils.TitleAPI;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -25,13 +26,13 @@ import java.text.DecimalFormat;
 
 public class XP {
 
-    public static int[] tabelaNiveis = new int[100];
+    private static int[] tabelaNiveis = new int[100];
 
-    public static int acoesParaUpar = 35;
+    private static int acoesParaUpar = 35;
 
-    public static double expoenteNivel = 2;
+    private static double expoenteNivel = 2;
 
-    public static double maisAcoesPorNivel = 1.5; // cada nivel, +25% ações pra upar
+    private static double maisAcoesPorNivel = 1.5; // cada nivel, +25% ações pra upar
 
     public static boolean debug = true;
 
@@ -69,6 +70,7 @@ public class XP {
     }
 
     public static int getExpProximoNivel(int nivel) {
+        if (nivel < 1) nivel = 1;
         return tabelaNiveis[nivel - 1];
     }
 
@@ -107,12 +109,29 @@ public class XP {
         return ct;
     }
 
-
     public static void changeExp(Player p, double exp) {
         changeExp(p, exp, 1);
     }
 
     public static void changeExp(Player p, double exp, double ratioBonus) {
+        changeExp(p, exp, ratioBonus, true, true);
+    }
+
+    public static void changeExp(Player p, double exp, boolean useMods) {
+        changeExp(p, exp, 1, useMods, true);
+    }
+
+    public static void changeExp(Player p, double exp, boolean useMods, boolean nerfExp) {
+        changeExp(p, exp, 1, useMods, nerfExp);
+    }
+
+    public static void changeExp(Player p, double exp, double ratioBonus, boolean useMods) {
+        changeExp(p, exp, ratioBonus, useMods, true);
+    }
+
+    public static void changeExp(Player p, double exp, double ratioBonus, boolean useMods, boolean nerfExp) {
+
+        if (nerfExp) exp = exp * 0.045; //QUALQUER OUTRO XP ANTIGO FICA NA MERDA.
 
         KoM.debug(p.getName() + " ganhando " + exp + " com ratio " + ratioBonus);
 
@@ -120,45 +139,16 @@ public class XP {
             ratioBonus = 1;
 
         double modAliados = 1;
+
         int aliados = getAliadosPerto(p);
         aliados--;
-        if (aliados == 1) {
-            modAliados = 0.3;
-        } else if (aliados <= 3) {
-            modAliados = 0.5;
-        } else if (aliados <= 5) {
-            modAliados = 1;
-        } else if (aliados > 5) {
-            modAliados = 2;
-        }
 
-        if (ClanLand.permission.has(p, "kom.lord")) {
-            ratioBonus += 0.8;
-        } else if (ClanLand.permission.has(p, "kom.templario")) {
-            ratioBonus += 0.5;
-        } else if (ClanLand.permission.has(p, "kom.vip")) {
-            ratioBonus += 0.3;
-        }
+        if (aliados == 1) modAliados = 0.1;
+        else if (aliados <= 3) modAliados = 0.25;
+        else if (aliados <= 5) modAliados = 0.5;
+        else modAliados = 1;
 
         ratioBonus += modAliados;
-
-        int level = p.getLevel();
-
-        if (level == 0) {
-            level = 1;
-        }
-
-        if (DoubleXP.ativo) {
-            ratioBonus *= 2;
-        }
-
-        float xpNecessariaPraUpar = tabelaNiveis[level - 1];
-
-        KoM.debug("xp pra up " + xpNecessariaPraUpar);
-
-        float expAtual = p.getTotalExperience();
-
-        KoM.debug("xp atual " + expAtual);
 
         double xpFinalComBonus = exp * ratioBonus;
 
@@ -168,42 +158,69 @@ public class XP {
 
         KoM.debug("Ou seja, da original to dando " + extra + " extra de XP");
 
-        expAtual += xpFinalComBonus;
+        bruteChangeExp(p, xpFinalComBonus, useMods);
+
+    }
+
+    public static void bruteChangeExp(Player p, double exp) {
+        bruteChangeExp(p, exp, false);
+    }
+
+    public static void bruteChangeExp(Player p, double exp, boolean useMods) {
+
+        if (useMods) {
+
+            if (DoubleXP.ativo) exp *= 2;
+
+            if (p.hasPermission("kom.lord")) exp *= 2;
+            else if (p.hasPermission("kom.templario")) exp *= 1.6;
+            else if (p.hasPermission("kom.cavaleiro")) exp *= 1.3;
+
+        }
+
+        KoM.debug(p.getName() + " ganhando " + exp);
+
+        int level = p.getLevel();
+
+        if (level == 0) level = 1;
+
+        float xpNecessariaPraUpar = tabelaNiveis[level - 1];
+
+        KoM.debug("xp pra up " + xpNecessariaPraUpar);
+
+        float expAtual = p.getTotalExperience();
+        if (p.hasMetadata("expAtual")) expAtual = (float) MetaShit.getMetaObject("expAtual", p);
+
+        KoM.debug("xp atual " + expAtual);
+
+        expAtual += exp;
 
         KoM.debug("xp final " + expAtual);
 
-        p.setTotalExperience((int) expAtual);
+        while (expAtual >= xpNecessariaPraUpar) {
+            expAtual -= xpNecessariaPraUpar;
+            p.setLevel(p.getLevel() + 1);
+            xpNecessariaPraUpar = tabelaNiveis[p.getLevel() - 1];
+            KoM.debug("upou");
+        }
 
         float ratioBarra = expAtual / xpNecessariaPraUpar;
 
-        if (p.hasMetadata("mostraXp")) {
+        if (p.hasMetadata("mostraXP")) {
             double pct = ratioBarra * 100;
-            if (extra > 0) {
-                TitleAPI.sendActionBar(p, ChatColor.GREEN + "+" + exp + " exp " + ChatColor.YELLOW + "+" + extra + ChatColor.GREEN + " (" + df.format(pct) + "%)");
-            } else {
-                TitleAPI.sendActionBar(p, ChatColor.GREEN + "+" + exp + " exp " + ChatColor.RED + "" + extra + ChatColor.GREEN + " (" + df.format(pct) + "%)");
-            }
-
-            if (p.isOp()) {
-                p.sendMessage(ChatColor.GREEN + "+" + exp + " exp " + ChatColor.YELLOW + "+" + extra + ChatColor.GREEN + " (" + df.format(pct) + "%)");
-            }
+            TitleAPI.sendActionBar(p, "§a+" + exp + " exp (" + df.format(pct) + "%)");
         }
 
         KoM.debug("ratio barra " + ratioBarra);
 
-        if (ratioBarra <= 1) {
-            p.setExp(ratioBarra);
-        } else {
-            p.setExp(0f);
-            p.setTotalExperience(0);
-            p.setLevel(p.getLevel() + 1);
-        }
+        MetaShit.setMetaObject("expAtual", p, expAtual);
+        p.setTotalExperience((int) expAtual);
+        p.setExp(ratioBarra);
 
     }
 
     public static void debugLevel(Player p, int nivel) {
-        double lvl = nivel;
-        double tier = (lvl / 10) + 1;
+        double tier = (nivel / 10) + 1;
 
         double expPorItem = Math.pow(2, tier);
 
@@ -214,7 +231,7 @@ public class XP {
 
         double xpPraUpar = expPorItem * qtdAcoesParaUpar;
 
-        p.sendMessage("LVL " + (lvl + 1) + " - TIER " + tier);
+        p.sendMessage("LVL " + (nivel + 1) + " - TIER " + tier);
         p.sendMessage("Media de XP por ação ou craft: " + (int) expPorItem);
         p.sendMessage("Quantidade de ações médias para upar com exp do tier: " + (int) qtdAcoesParaUpar);
         p.sendMessage("Exp total para upar (qtd ações X xp média da ação) = " + (int) xpPraUpar);

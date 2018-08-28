@@ -25,11 +25,12 @@ import nativelevel.Lang.L;
 import nativelevel.MetaShit;
 import nativelevel.spec.PlayerSpec;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -101,17 +102,17 @@ public class Pistola extends CustomItem {
             player.sendMessage(ChatColor.RED + "*boonka*");
             player.playSound(player.getLocation(), Sound.ENTITY_ARROW_SHOOT, 10, 2);
             player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 5, 1));
-            Vector dir = player.getLocation().getDirection().multiply(10);
-            Location loc = player.getLocation();
+//          Vector dir = player.getLocation().getDirection().multiply(10);
+//          Location loc = player.getLocation();
 
-            Location inicio = new Location(player.getWorld(), loc.getX() + (dir.getX() / 5.0), loc.getY() + player.getEyeHeight() - 0.1, loc.getZ() + (dir.getZ() / 5.0));
-            //Snowball snowball = (Snowball)player.getWorld().spawnEntity(inicio, EntityType.SNOWBALL);
+//          Location inicio = new Location(player.getWorld(), loc.getX() + (dir.getX() / 5.0), loc.getY() + player.getEyeHeight() - 0.1, loc.getZ() + (dir.getZ() / 5.0));
+//          Snowball snowball = (Snowball)player.getWorld().spawnEntity(inicio, EntityType.SNOWBALL);
 
-            Snowball snowball = (Snowball) player.launchProjectile(Snowball.class);
+            Snowball snowball = player.launchProjectile(Snowball.class);
 
             if (!player.isSneaking()) {
                 Vector destino = snowball.getVelocity();
-                destino.add(new Vector(Jobs.rnd.nextInt(1) - (1 / 2) / 20, Jobs.rnd.nextInt(1) - (1 / 2) / 20, Jobs.rnd.nextInt(1) - (1 / 2) / 20));
+                destino.add(new Vector(((Math.random() - 0.5) / 3), ((Math.random() - 0.5) / 5), ((Math.random() - 0.5) / 3)));
                 snowball.setVelocity(destino);
             }
 
@@ -129,6 +130,34 @@ public class Pistola extends CustomItem {
             MetaShit.setMetaObject("modDano", snowball, 1.2);
         }
         return false;
+    }
+
+    public static void onHit(EntityDamageByEntityEvent ev) {
+
+        Projectile projectile = (Projectile) ev.getDamager();
+        Player atirador = (Player) projectile.getShooter();
+
+        double alturaflecha = projectile.getLocation().getY();
+        double diferenca = alturaflecha - ev.getEntity().getLocation().getY();
+
+        double pode = 1.5;
+        if (atirador.isSneaking()) pode = 1.35;
+
+        //BOOM PERANHA
+        if (diferenca > pode) {
+            atirador.sendMessage("§c*!BooM!*");
+            ev.setDamage(ev.getDamage() * 3.5);
+            if (ev.getEntity() instanceof Player) {
+                Player tomou = (Player) ev.getEntity();
+                if (tomou.getInventory().getHelmet() != null && tomou.getInventory().getHelmet().getType() == Material.GOLD_HELMET) {
+                    ev.setDamage(ev.getDamage() * 0.5);
+                    tomou.getInventory().getHelmet().setDurability((short) (tomou.getInventory().getHelmet().getDurability() + 5));
+                    if (tomou.getInventory().getHelmet().getDurability() >= tomou.getInventory().getHelmet().getType().getMaxDurability())
+                        tomou.getInventory().setHelmet(null);
+                }
+            }
+        }
+
     }
 
 }

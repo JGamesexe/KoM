@@ -7,6 +7,7 @@ package nativelevel.gemas;
 
 import nativelevel.Jobs;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -50,19 +51,20 @@ public class SocketListener implements Listener {
                     for (Gema possivel : sockets) {
                         if (possivel == gema) {
 
-                            if (Jobs.hasSuccess(80, "Mago", p)) {
-                                ev.setCursor(new ItemStack(Material.GLASS));
+                            if (!Jobs.hasSuccess(80, "Mago", p)) {
+                                ev.getWhoClicked().setItemOnCursor(new ItemStack(Material.GLASS));
+                                ((Player) ev.getWhoClicked()).playSound(ev.getWhoClicked().getLocation(), Sound.BLOCK_GLASS_BREAK, 0.2f, 1.5f);
+
                                 ev.getCurrentItem().setDurability((short) (ev.getCurrentItem().getDurability() + 20));
-                                if (ev.getCurrentItem().getDurability() > ev.getCurrentItem().getType().getMaxDurability()) {
-                                    ev.setCurrentItem(null);
-                                }
+                                if (ev.getCurrentItem().getDurability() > ev.getCurrentItem().getType().getMaxDurability()) ev.setCurrentItem(null);
+
                                 p.sendMessage("§4Você não conseguiu colocar a gema magica no equipamento, danificando ambos.");
+                                ev.setCancelled(true);
                                 return;
                             }
 
                             Gema.addGemaToItem(ev.getCurrentItem(), gema, ev.getCursor());
-                            ev.setCursor(null);
-                            ev.setCancelled(true);
+                            ev.getWhoClicked().setItemOnCursor(null);
                             p.sendMessage("§aVoce adicionou a gema no encaixe !");
                             pois = true;
                             break;

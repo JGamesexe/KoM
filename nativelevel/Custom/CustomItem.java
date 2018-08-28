@@ -22,6 +22,7 @@ import nativelevel.Equipment.WeaponDamage;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
+import nativelevel.Listeners.DeathEvents;
 import nativelevel.Listeners.GeneralListener;
 import nativelevel.MetaShit;
 import nativelevel.sisteminhas.ClanLand;
@@ -44,10 +45,10 @@ import java.util.List;
 
 public abstract class CustomItem {
 
-    Material m;
-    List<String> lore;
-    String name;
-    int raridade;
+    protected Material m;
+    protected List<String> lore;
+    protected String name;
+    protected int raridade;
 
     public static int COMUM = 0;
     public static int INCOMUM = 1;
@@ -56,7 +57,9 @@ public abstract class CustomItem {
     public static int LENDARIO = 4;
     public static int LIMITADO = 5;
 
-    private ChatColor pegaCorPelaRaridade(int raridade) {
+    public boolean cancelaInteract = false;
+
+    public ChatColor pegaCorPelaRaridade(int raridade) {
         if (raridade == INCOMUM) {
             return ChatColor.GREEN;
         }
@@ -82,7 +85,8 @@ public abstract class CustomItem {
         this.lore = new ArrayList<String>();
         this.name = name;
         this.raridade = raridade;
-        this.lore.add(ChatColor.GRAY + "-" + descEffect);
+        this.lore.add("§7 " + descEffect);
+        this.lore.add("");
         this.lore.add(ChatColor.BLACK + ":" + this.name);
     }
 
@@ -107,7 +111,7 @@ public abstract class CustomItem {
                 l = ChatColor.stripColor(l);
                 String[] split = l.split(":");
                 if (split.length > 1 && split[0].trim().equalsIgnoreCase("Classe")) {
-                    int job = Jobs.getJobLevel(split[1].trim(), p);
+                        int job = Jobs.getJobLevel(split[1].trim(), p);
                     if (KoM.debugMode) {
                         KoM.log.info("vendo se pode equipar coisa de " + split[1].trim());
                     }
@@ -120,123 +124,119 @@ public abstract class CustomItem {
         return true;
     }
 
-    public static void hitWithCustomItem(String customItem, EntityDamageByEntityEvent event, Player bateu, Player tomou) {
-        if (customItem.equalsIgnoreCase("Logout Trap")
-                && !ClanLand.getTypeAt(event.getEntity().getLocation()).equalsIgnoreCase("SAFE")) {
-
-            String nome = ((Player) event.getEntity()).getName();
-            if (!LogoutTrap.trapeados.contains(nome)) {
-                LogoutTrap.trapeados.add(nome);
-                tomou.sendMessage(ChatColor.GREEN + L.m("Uma armadilha de logout foi colocada em voce !"));
-                bateu.sendMessage(ChatColor.GOLD + L.m("Voce ativou a armadilha de logou !"));
-                tomou.sendMessage(ChatColor.GREEN + L.m("Se voce deslogar agora, voce MORRE !!"));
-                tomou.playSound(tomou.getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, 10, 0);
-                Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, CustomItem.getItem(LogoutTrap.class).getLimpaTrap(nome), 20 * 20L);
-            }
-            return;
-        } else if (customItem.equalsIgnoreCase("Adaga da Ponta Diamantada")) {
-            try {
-                if (Thief.taInvisivel(bateu) && event.getDamage() > 0) {
-
-                    if (!Mana.spendMana(bateu, 35)) {
-                        return;
-                    }
-
-                    double angle = Tralhas.getAngle(tomou.getLocation().getDirection(), bateu.getLocation().getDirection());
-                    Thief.revela(bateu);
-                    if (angle > 70) {
-                        bateu.sendMessage(L.m("Voce errou o backstab pois precisa estar por traz do alvo !"));
-                        event.setDamage(1D);
-                        return;
-                    }
-                    // bateu.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 1));
-                    event.setDamage(15);
-                    //tomou.damage(15 + Jobs.rnd.nextInt(10), bateu);
-                    if (tomou.getLocation().getBlock().getLightLevel() < 6) {
-                        bateu.sendMessage(ChatColor.GOLD + L.m("Voce acertou um backstab na escuridão!"));
-                        tomou.sendMessage(ChatColor.RED + L.m("Voce foi pego com um backstab no escurinho !"));
-                        event.setDamage(event.getDamage() * 2);
-                    } else {
-                        bateu.sendMessage(ChatColor.GOLD + L.m("Voce acertou um backstab !"));
-                        tomou.sendMessage(ChatColor.RED + L.m("Voce levou um backstab !"));
-                    }
-
-                    tomou.playSound(tomou.getLocation(), Sound.ENTITY_IRONGOLEM_ATTACK, 10, 0);
-                    bateu.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20 * 5, 0));
-                    tomou.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20 * 5, 0));
-                    tomou.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 20 * 20, 0));
-                    MetaShit.setMetaObject("wither", tomou, bateu.getUniqueId());
-                    //tomou.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 10, 1));
-                    if (Jobs.getJobLevel("Mago", tomou) == 1) {
-                        event.setDamage(event.getDamage() * 1.4);
-                    }
-
-                }
-
-            } catch (Throwable ex) {
-                KoM.log.info(ex.getMessage());
-            }
-        } else if (customItem.equalsIgnoreCase("Cajado Elemental") && (event.getCause() == DamageCause.ENTITY_ATTACK || event.getCause() == DamageCause.CONTACT)) {
-
-            if (Thief.taInvisivel(bateu)) {
-                Thief.revela(bateu);
-            }
-
-            if (!Mana.spendMana(bateu, 15)) {
-                return;
-            }
-
-            if (Jobs.getJobLevel("Mago", bateu) == 1) {
-                String elemento = CajadoElemental.getElemento(bateu.getInventory().getItemInMainHand()).trim();
-                if (elemento == null) {
-                    return;
-                }
-                if (elemento != null) {
-                    if (KoM.debugMode) {
-                        KoM.log.info("Batendo com elemento " + elemento);
-                    }
-                    DamageCause cause = null;
-                    if (elemento.equalsIgnoreCase("Fogo")) {
-                        cause = DamageCause.FIRE;
-                    } else if (elemento.equalsIgnoreCase("Agua")) {
-                        cause = DamageCause.MAGIC;
-                    } else if (elemento.equalsIgnoreCase("Raio")) {
-                        cause = DamageCause.LIGHTNING;
-                    } else if (elemento.equalsIgnoreCase("Veneno")) {
-                        cause = DamageCause.POISON;
-                    }
-                    if (cause != null) {
-                        if (KoM.debugMode) {
-                            KoM.log.info("Batendo com cause " + cause.name());
-                        }
-                        tomou.setNoDamageTicks(0);
-                        EntityDamageByEntityEvent ev = new EntityDamageByEntityEvent(bateu, tomou, cause, event.getDamage());
-                        Bukkit.getPluginManager().callEvent(ev);
-                        bateu.getInventory().getItemInMainHand().setDurability((short) (bateu.getInventory().getItemInMainHand().getDurability() + 1));
-                        tomou.playEffect(EntityEffect.HURT);
-                        //if(!ev.isCancelled()) {
-                        double dano = ev.getDamage() * 0.6;
-                        if (tomou.getHealth() <= dano) {
-                            GeneralListener.ultimoDano.put(tomou.getUniqueId(), bateu.getUniqueId());
-                        }
-                        KoM.dealTrueDamage(tomou, ev.getDamage() * 0.4);
-                        GeneralListener.ultimoDano.remove(tomou.getUniqueId());
-                        tomou.setNoDamageTicks(20);
-                        if (cause == DamageCause.POISON) {
-                            tomou.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * 10, 0));
-                        } else if (cause == DamageCause.FIRE) {
-                            tomou.setFireTicks(20 * 10);
-                        }
-                        // } else if(KnightsOfMania.debugMode) {
-                        //     KnightsOfMania.log.info("evento dano elemental cancelado");
-                        // }
-                        event.setCancelled(true);
-                        event.setDamage(0D);
-                    }
-                }
-            }
-        }
-    }
+//    public static void hitWithCustomItem(String customItem, EntityDamageByEntityEvent event, Player bateu, Player tomou) {
+//        if (customItem.equalsIgnoreCase("Logout Trap")
+//                && !ClanLand.getTypeAt(event.getEntity().getLocation()).equalsIgnoreCase("SAFE")) {
+//
+//            String nome = ((Player) event.getEntity()).getName();
+//            if (!LogoutTrap.trapeados.contains(nome)) {
+//                LogoutTrap.trapeados.add(nome);
+//                tomou.sendMessage(ChatColor.GREEN + L.m("Uma armadilha de logout foi colocada em voce !"));
+//                bateu.sendMessage(ChatColor.GOLD + L.m("Voce ativou a armadilha de logou !"));
+//                tomou.sendMessage(ChatColor.GREEN + L.m("Se voce deslogar agora, voce MORRE !!"));
+//                tomou.playSound(tomou.getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, 10, 0);
+//                Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, CustomItem.getItem(LogoutTrap.class).getLimpaTrap(nome), 20 * 20L);
+//            }
+//            return;
+//        } else if (customItem.equalsIgnoreCase("Adaga da Ponta Diamantada")) {
+//            try {
+//                if (Thief.taInvisivel(bateu) && event.getDamage() > 0) {
+//
+//                    if (!Mana.spendMana(bateu, 35)) {
+//                        return;
+//                    }
+//
+//                    double angle = Tralhas.getAngle(tomou.getLocation().getDirection(), bateu.getLocation().getDirection());
+//                    Thief.revela(bateu);
+//                    if (angle > 70) {
+//                        bateu.sendMessage(L.m("Voce errou o backstab pois precisa estar por traz do alvo !"));
+//                        event.setDamage(1D);
+//                        return;
+//                    }
+//                    // bateu.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 1));
+//                    event.setDamage(15);
+//                    //tomou.damage(15 + Jobs.rnd.nextInt(10), bateu);
+//                    if (tomou.getLocation().getBlock().getLightLevel() < 6) {
+//                        bateu.sendMessage(ChatColor.GOLD + L.m("Voce acertou um backstab na escuridão!"));
+//                        tomou.sendMessage(ChatColor.RED + L.m("Voce foi pego com um backstab no escurinho !"));
+//                        event.setDamage(event.getDamage() * 2);
+//                    } else {
+//                        bateu.sendMessage(ChatColor.GOLD + L.m("Voce acertou um backstab !"));
+//                        tomou.sendMessage(ChatColor.RED + L.m("Voce levou um backstab !"));
+//                    }
+//
+//                    tomou.playSound(tomou.getLocation(), Sound.ENTITY_IRONGOLEM_ATTACK, 10, 0);
+//                    bateu.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20 * 5, 0));
+//                    tomou.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20 * 5, 0));
+//                    tomou.addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 20 * 20, 0));
+//                    MetaShit.setMetaObject("wither", tomou, bateu.getUniqueId());
+//                    //tomou.addPotionEffect(new PotionEffect(PotionEffectType.WEAKNESS, 20 * 10, 1));
+//                    if (Jobs.getJobLevel("Mago", tomou) == 1) {
+//                        event.setDamage(event.getDamage() * 1.4);
+//                    }
+//
+//                }
+//
+//            } catch (Throwable ex) {
+//                KoM.log.info(ex.getMessage());
+//            }
+//        } else if (customItem.equalsIgnoreCase("Cajado Elemental") && (event.getCause() == DamageCause.ENTITY_ATTACK || event.getCause() == DamageCause.CONTACT)) {
+//
+//            if (Thief.taInvisivel(bateu)) {
+//                Thief.revela(bateu);
+//            }
+//
+//            if (!Mana.spendMana(bateu, 15)) {
+//                return;
+//            }
+//
+//            if (Jobs.getJobLevel("Mago", bateu) == 1) {
+//                String elemento = CajadoElemental.getElemento(bateu.getInventory().getItemInMainHand()).trim();
+//                if (elemento == null) {
+//                    return;
+//                }
+//                if (elemento != null) {
+//                    if (KoM.debugMode) {
+//                        KoM.log.info("Batendo com elemento " + elemento);
+//                    }
+//                    DamageCause cause = null;
+//                    if (elemento.equalsIgnoreCase("Fogo")) {
+//                        cause = DamageCause.FIRE;
+//                    } else if (elemento.equalsIgnoreCase("Agua")) {
+//                        cause = DamageCause.MAGIC;
+//                    } else if (elemento.equalsIgnoreCase("Raio")) {
+//                        cause = DamageCause.LIGHTNING;
+//                    } else if (elemento.equalsIgnoreCase("Veneno")) {
+//                        cause = DamageCause.POISON;
+//                    }
+//                    if (cause != null) {
+//                        if (KoM.debugMode) {
+//                            KoM.log.info("Batendo com cause " + cause.name());
+//                        }
+//                        tomou.setNoDamageTicks(0);
+//                        EntityDamageByEntityEvent ev = new EntityDamageByEntityEvent(bateu, tomou, cause, event.getDamage());
+//                        Bukkit.getPluginManager().callEvent(ev);
+//                        bateu.getInventory().getItemInMainHand().setDurability((short) (bateu.getInventory().getItemInMainHand().getDurability() + 1));
+//                        tomou.playEffect(EntityEffect.HURT);
+//                        //if(!ev.isCancelled()) {
+//                        double dano = ev.getDamage() * 0.4;
+//                        DamageListener.darDano(tomou, dano, bateu);
+//                        tomou.setNoDamageTicks(20);
+//                        if (cause == DamageCause.POISON) {
+//                            tomou.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 20 * 10, 0));
+//                        } else if (cause == DamageCause.FIRE) {
+//                            tomou.setFireTicks(20 * 10);
+//                        }
+//                        // } else if(KnightsOfMania.debugMode) {
+//                        //     KnightsOfMania.log.info("evento dano elemental cancelado");
+//                        // }
+//                        event.setCancelled(true);
+//                        event.setDamage(0D);
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     public static int getRaridadeItem(ItemStack i) {
         ItemMeta meta = i.getItemMeta();

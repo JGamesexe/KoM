@@ -1,10 +1,8 @@
-/*    */
 package genericos.komzin.libzinha.comandos;
-/*    */ 
-/*    */
 
 import genericos.komzin.libzinha.listeners.GeralListener;
 import genericos.komzin.libzinha.utils.Efeitos;
+import nativelevel.utils.GeneralUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
@@ -16,135 +14,59 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 
-/*    */
-/*    */
-/*    */
-/*    */
-/*    */
-/*    */
-/*    */
-/*    */
-/*    */
-/*    */
-/*    */
-/*    */
-/*    */
-/*    */
-/*    */ 
-/*    */
-
-/*    */ 
-/*    */ public class ComandoKomLib
-/*    */ implements CommandExecutor
-/*    */ {
+public class ComandoKomLib
+        implements CommandExecutor {
     HashSet<Material> fodase = new HashSet<Material>();
 
-    /*    */
-    public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args)
-/*    */ {
-/* 26 */
-        if (!cs.hasPermission("manialibkom.komlib"))
-/*    */ {
-/* 28 */
+    public boolean onCommand(CommandSender cs, Command cmnd, String string, String[] args) {
+        if (!cs.hasPermission("manialibkom.komlib")) {
             return true;
-/*    */
         }
-/* 30 */
         Player p = (Player) cs;
-/* 31 */
-        if (args.length == 0)
-/*    */ {
-/* 33 */
+        if (args.length == 0) {
             cs.sendMessage("§cUtilize: §f/komlib efeito");
-/* 34 */
             cs.sendMessage("§cUtilize §f/komlib bauraio <Bau com items do seu inv onde aponta caindo raio>");
-/* 35 */
             return true;
-/*    */
         }
-/* 37 */
-        if (args.length == 1)
-/*    */ {
-/* 39 */
-            if (args[0].equalsIgnoreCase("efeito"))
-/*    */ {
-/* 41 */
-                if (GeralListener.ListaEfeitos.contains(cs.getName()))
-/*    */ {
-/* 43 */
+        if (args.length == 1) {
+            if (args[0].equalsIgnoreCase("efeito")) {
+                if (GeralListener.ListaEfeitos.contains(cs.getName())) {
                     GeralListener.ListaEfeitos.remove(cs.getName());
-/* 44 */
+
                     cs.sendMessage("§cEfeitos desativados!");
-/* 45 */
+
                     return true;
-/*    */
+
                 }
-/*    */         
-/*    */ 
-/* 49 */
                 GeralListener.ListaEfeitos.add(cs.getName());
-/* 50 */
+
                 cs.sendMessage("§cEfeitos ativados!");
-/* 51 */
                 return true;
-/*    */
+
             }
-/*    */       
-/* 54 */
-            if (args[0].equalsIgnoreCase("bauraio"))
-/*    */ {
-/* 56 */
+            if (args[0].equalsIgnoreCase("bauraio")) {
                 Location novloc = p.getTargetBlock(fodase, 600).getLocation().clone();
-/* 57 */
-                novloc.setY(novloc.getWorld().getHighestBlockYAt(novloc));
-/* 58 */
+                novloc.setY(GeneralUtils.getHighestBlockYAt(novloc));
                 novloc.getBlock().setType(Material.CHEST);
-/* 59 */
                 Chest chest = (Chest) novloc.getBlock().getState();
-/*    */         
-/* 61 */
-                for (int i = 0; i < 36; i++)
-/*    */ {
-/* 63 */
-                    if (p.getInventory().getItem(i) != null)
-/*    */ {
-/* 65 */
-                        if (chest.getBlockInventory().firstEmpty() != -1)
-/*    */ {
-/*    */ 
-/*    */ 
-/* 69 */
+                for (int i = 0; i < 36; i++) {
+                    if (p.getInventory().getItem(i) != null) {
+                        if (chest.getBlockInventory().firstEmpty() != -1) {
                             chest.getBlockInventory().addItem(new ItemStack[]{p.getInventory().getItem(i)});
-/*    */
                         }
-/*    */
                     }
-/*    */
                 }
-/* 73 */
                 Efeitos.effectBats(novloc);
-/* 74 */
                 Efeitos.effectExplosion(novloc);
-/* 75 */
                 Efeitos.effectFlames(novloc);
-/* 76 */
                 Efeitos.effectLightning(novloc);
-/* 77 */
                 Efeitos.effectSmoke(novloc);
-/* 78 */
                 cs.sendMessage("§cColocado!");
-/* 79 */
                 return true;
-/*    */
             }
-/*    */
         }
-/*    */     
-/* 83 */
         return true;
-/*    */
     }
-/*    */
 }
 
 

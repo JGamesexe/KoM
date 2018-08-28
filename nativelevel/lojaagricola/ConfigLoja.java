@@ -6,7 +6,7 @@
 package nativelevel.lojaagricola;
 
 import nativelevel.KoM;
-import nativelevel.config.ConfigManager;
+import pixelmc.utils.ConfigManager;
 
 /**
  * @author vntgasl
@@ -27,7 +27,7 @@ public class ConfigLoja {
                     setPreco(v.getNomeTecnico(), 666);
                 }
             }
-            cfg.SaveConfig();
+            cfg.saveConfig();
             KoM.log.info("LOJA AGRICOLA CONFIGURADA");
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -49,17 +49,17 @@ public class ConfigLoja {
 
     public static void setQtdBaixo(String nome, int preco) {
         cfg.getConfig().set(nome + "-baixo", preco);
-        cfg.SaveConfig();
+        cfg.saveConfig();
     }
 
     public static void setQtdAlta(String nome, int preco) {
         cfg.getConfig().set(nome + "-alto", preco);
-        cfg.SaveConfig();
+        cfg.saveConfig();
     }
 
     public static void setQtdNormal(String nome, int preco) {
         cfg.getConfig().set(nome + "-normal", preco);
-        cfg.SaveConfig();
+        cfg.saveConfig();
     }
 
     public static int getPreco(String nome) {
@@ -68,6 +68,6 @@ public class ConfigLoja {
 
     public static void setPreco(String nome, int preco) {
         cfg.getConfig().set(nome, preco);
-        cfg.SaveConfig();
+        cfg.saveConfig();
     }
 }

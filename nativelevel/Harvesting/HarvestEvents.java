@@ -192,7 +192,7 @@ public class HarvestEvents {
                 KoM.debug("Vou dar exp " + exp);
                 if (tipoClasse == TipoClasse.NADA) {
                     exp = exp / 10d;
-                } else if (tipoClasse == TipoClasse.SEGUNDARIA) {
+                } else if (tipoClasse == TipoClasse.SECUNDARIA) {
                     exp = exp / 2d;
                 }
                 KoM.debug("mas ai depois dei " + exp + " exp");

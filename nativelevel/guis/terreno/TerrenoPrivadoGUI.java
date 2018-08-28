@@ -1,7 +1,6 @@
 package nativelevel.guis.terreno;
 
-import nativelevel.KoM;
-import nativelevel.conversations.InternalStringPrompt;
+import nativelevel.conversations.InternalStringPrompts;
 import nativelevel.sisteminhas.ClanLand;
 import nativelevel.utils.GUI;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
@@ -10,7 +9,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.conversations.Conversation;
-import org.bukkit.conversations.InactivityConversationCanceller;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -30,7 +28,7 @@ public class TerrenoPrivadoGUI extends GUI {
     private String[] owner;
 
     public TerrenoPrivadoGUI(Player player) {
-        super(Bukkit.createInventory(null, 54, "§f§l" + ClanLand.manager.getClanPlayer(player).getTag().toUpperCase() + " §3" + ClanLand.tipoTerreno(player.getLocation()) + ", Privado"));
+        super(Bukkit.createInventory(null, 54, "§f§l" + ClanLand.manager.getClanPlayer(player).getTag().toUpperCase() + "§3 " + ClanLand.tipoTerreno(player.getLocation()).text + ", Priv"));
         this.location = player.getLocation();
         this.playerBase = player;
         this.clanPlayer = ClanLand.manager.getClanPlayer(player);
@@ -42,14 +40,19 @@ public class TerrenoPrivadoGUI extends GUI {
 
         botaVidros();
 
-        inventory.setItem(10, new ItemStack(Material.STAINED_GLASS, 1, (short) 3));
-        inventory.setItem(11, new ItemStack(Material.STAINED_GLASS, 1, (short) 3));
-        inventory.setItem(12, new ItemStack(Material.STAINED_GLASS, 1, (short) 9));
-        inventory.setItem(13, donoItem());
-        inventory.setItem(14, new ItemStack(Material.STAINED_GLASS, 1, (short) 9));
-        inventory.setItem(15, new ItemStack(Material.STAINED_GLASS, 1, (short) 3));
-        inventory.setItem(16, new ItemStack(Material.STAINED_GLASS, 1, (short) 3));
+        inventory.setItem(10, geraItem(Material.STAINED_GLASS, (short) 3));
+        inventory.setItem(11, geraItem(Material.STAINED_GLASS, (short) 3));
+        inventory.setItem(12, geraItem(Material.STAINED_GLASS, (short) 9));
 
+        if (ClanLand.isTerrenoPoder(location)) {
+            inventory.setItem(14, donoItem());
+            inventory.setItem(16, new ItemStack(Material.ANVIL));
+        } else {
+            inventory.setItem(13, donoItem());
+            inventory.setItem(14, geraItem(Material.STAINED_GLASS, (short) 9));
+            inventory.setItem(15, geraItem(Material.STAINED_GLASS, (short) 3));
+            inventory.setItem(16, geraItem(Material.STAINED_GLASS, (short) 3));
+        }
         ItemStack[] amigos = amigosItens();
         byte[] slots = new byte[]{28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 40, 41, 42, 43};
 
@@ -78,9 +81,10 @@ public class TerrenoPrivadoGUI extends GUI {
         lore.add("");
 
         if (clanPlayer.isLeader()) {
-            lore.add("§8  Pressione 'Q' para tornar o");
-            lore.add("§8terreno público, ou clique com");
-            lore.add("§8o SHIFT para alterar o dono.");
+            lore.add("§8  Pressione o botão de DROP para tornar o terreno, público");
+            lore.add("§8ou clique com o SHIFT para alterar o dono.");
+            lore.add("");
+            lore.add("§8Para desconquistar pressione o número [9]");
             lore.add("");
         }
 
@@ -158,13 +162,8 @@ public class TerrenoPrivadoGUI extends GUI {
                 SkullMeta skullMeta = (SkullMeta) inventory.getItem(slot).getItemMeta();
                 if (skullMeta.getDisplayName().contains("Sem amigo...")) {
 
-                    Conversation conv = KoM.conversationFactory.
-                            withFirstPrompt(new InternalStringPrompt()).
-                            withLocalEcho(false).
-                            withConversationCanceller(new InactivityConversationCanceller(KoM._instance, 25)).
-                            buildConversation(player);
+                    Conversation conv = InternalStringPrompts.createConversation(player, "addTerrenoAmigo");
 
-                    conv.getContext().setSessionData("id", "addTerrenoAmigo");
                     conv.getContext().setSessionData("location", location);
                     conv.begin();
                     player.closeInventory();
@@ -178,7 +177,7 @@ public class TerrenoPrivadoGUI extends GUI {
         }
 
         if (clanPlayer.isLeader()) {
-            if (slot == 13) {
+            if ((slot == 13 || slot == 14) && inventory.getItem(slot) != null && inventory.getItem(slot).getType().equals(Material.SEA_LANTERN)) {
                 if (inventoryAction.equals(InventoryAction.DROP_ONE_SLOT) || inventoryAction.equals(InventoryAction.DROP_ALL_SLOT)) {
 
                     ClanLand.setOwnerAt(location, null);
@@ -187,13 +186,8 @@ public class TerrenoPrivadoGUI extends GUI {
 
                 } else if (event.isShiftClick()) {
 
-                    Conversation conv = KoM.conversationFactory.
-                            withFirstPrompt(new InternalStringPrompt()).
-                            withLocalEcho(false).
-                            withConversationCanceller(new InactivityConversationCanceller(KoM._instance, 25)).
-                            buildConversation(player);
+                    Conversation conv = InternalStringPrompts.createConversation(player, "setTerrenoOwner");
 
-                    conv.getContext().setSessionData("id", "setTerrenoOwner");
                     conv.getContext().setSessionData("location", location);
                     conv.begin();
                     player.closeInventory();
@@ -201,13 +195,8 @@ public class TerrenoPrivadoGUI extends GUI {
 
                 } else if (event.getClick().isKeyboardClick() && event.getHotbarButton() == 8) {
 
-                    Conversation conv = KoM.conversationFactory.
-                            withFirstPrompt(new InternalStringPrompt()).
-                            withLocalEcho(false).
-                            withConversationCanceller(new InactivityConversationCanceller(KoM._instance, 25)).
-                            buildConversation(player);
+                    Conversation conv = InternalStringPrompts.createConversation(player, "terrenoDesconquistar");
 
-                    conv.getContext().setSessionData("id", "terrenoDesconquistar");
                     conv.getContext().setSessionData("location", location);
                     conv.begin();
                     player.closeInventory();

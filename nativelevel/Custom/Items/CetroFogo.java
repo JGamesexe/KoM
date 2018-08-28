@@ -15,6 +15,7 @@
 package nativelevel.Custom.Items;
 
 import nativelevel.Attributes.Mana;
+import nativelevel.CFG;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
 import nativelevel.KoM;
@@ -48,7 +49,7 @@ public class CetroFogo extends CustomItem {
             return true;
         }
 
-        if (player.getWorld().getName().equalsIgnoreCase("NewDungeon") || player.getWorld().getName().equalsIgnoreCase("vila")) {
+        if (player.getWorld().getName().equalsIgnoreCase(CFG.mundoDungeon) || player.getWorld().getName().equalsIgnoreCase("vila")) {
             player.sendMessage(ChatColor.RED + L.m("Voce nao pode usar isto aqui !"));
             return true;
         }

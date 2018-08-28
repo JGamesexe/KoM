@@ -2,10 +2,12 @@ package nativelevel.komquista.managers;
 
 
 import nativelevel.KoM;
+import nativelevel.Listeners.GeneralListener;
 import nativelevel.komquista.DB;
 import nativelevel.komquista.KomQuista;
 import nativelevel.komquista.utils.ChatUtils;
 import nativelevel.phatloots.PhatLootsAPI;
+import nativelevel.utils.GeneralUtils;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.*;
@@ -41,7 +43,7 @@ public class KomQuistaManager {
         if (signloc != null) {
             for (int x = 0; x < 8; x += 2) {
                 for (int z = 0; z < 8; z += 2) {
-                    int y = signloc.getWorld().getHighestBlockAt(signloc).getY();
+                    int y = GeneralUtils.getHighestBlockAt(signloc).getY();
                     signloc.getWorld().strikeLightningEffect(new Location(signloc.getWorld(), signloc.getX() + x, y, signloc.getZ() + z));
                 }
             }
@@ -261,7 +263,7 @@ public class KomQuistaManager {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "loot give " + cp.getName() + " komquistai");
             }
             if (cl.getHomeLocation() != null) {
-                Block b = cl.getHomeLocation().getWorld().getHighestBlockAt(cl.getHomeLocation().getBlockX(), cl.getHomeLocation().getBlockZ());
+                Block b = GeneralUtils.getHighestBlockAt(cl.getHomeLocation());
                 b.setType(Material.CHEST);
                 if (b.getType() == Material.CHEST) {
                     b.getWorld().strikeLightningEffect(b.getLocation());

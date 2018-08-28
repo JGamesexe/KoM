@@ -21,6 +21,12 @@ public class PlantCache {
     private static HashMap<Jobs.Classe, HashSet<Plantable>> harvestablesBySkill = new HashMap<Jobs.Classe, HashSet<Plantable>>();
     private static HashMap<Integer, HashSet<Plantable>> harvestableByMaterial = new HashMap<Integer, HashSet<Plantable>>();
 
+    public static void reloadCache() {
+        harvestableByMaterial = new HashMap<>();
+        harvestablesBySkill = new HashMap<>();
+        PlantConfig.Load();
+    }
+
     public static void add(Plantable h) {
         if (harvestablesBySkill.containsKey(h.classe)) {
             HashSet<Plantable> harvestables = harvestablesBySkill.get(h.classe);

@@ -7,22 +7,21 @@ import nativelevel.Auras.Aura;
 import nativelevel.CFG;
 import nativelevel.Classes.Blacksmithy.Blacksmith;
 import nativelevel.Classes.Farmer;
+import nativelevel.Classes.Minerador;
 import nativelevel.ComandosNovos.commands.list.KomSubs.CmdOE;
 import nativelevel.ComandosNovos.commands.list.KomSubs.CraftSubs.CmdCraftCheck;
 import nativelevel.ComandosNovos.commands.list.KomSubs.HarvestSubs.CmdHarvestCheck;
 import nativelevel.Crafting.CraftEvents;
 import nativelevel.Custom.Buildings.Portal;
 import nativelevel.Custom.CustomItem;
-import nativelevel.Custom.Items.BussolaMagica;
-import nativelevel.Custom.Items.CapaInvisvel;
-import nativelevel.Custom.Items.Encaixe;
-import nativelevel.Custom.Items.Runa;
+import nativelevel.Custom.Items.*;
 import nativelevel.CustomEvents.BeginCraftEvent;
 import nativelevel.CustomEvents.FinishCraftEvent;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.MetaShit;
+import nativelevel.guis.BancoGUI;
 import nativelevel.guis.GUIsHelp;
 import nativelevel.sisteminhas.ClanLand;
 import nativelevel.skills.SkillMaster;
@@ -46,6 +45,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Ziden
@@ -58,18 +58,13 @@ public class InventoryEvents implements Listener {
     }
 
     @EventHandler
-    public void onInventoryClose(InventoryCloseEvent ev) {
-        if (ev.getInventory().getName().equalsIgnoreCase("Banco") || ev.getInventory().getTitle().equalsIgnoreCase("Banco")) {
-            List<ItemStack> items = new ArrayList<ItemStack>();
-            for (ItemStack ss : ev.getInventory().getContents()) {
-                //if (ss != null) {
-                items.add(ss);
-                //}
-            }
-            KoM.database.setBanco(ev.getPlayer().getUniqueId(), items.toArray(new ItemStack[items.size()]));
-        }
-        CmdOE.invClick(ev);
+    public void abreInventario(InventoryOpenEvent event) {
+        if (event.getPlayer().isInsideVehicle()) event.setCancelled(true);
+    }
 
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent ev) {
+        if (ev.getInventory().getTitle().equalsIgnoreCase("§8Banco") || ev.getInventory().getName().equalsIgnoreCase("§8Banco")) BancoGUI.closeBanco(ev);
         GUIsHelp.fechaInv(ev);
     }
 
@@ -107,18 +102,8 @@ public class InventoryEvents implements Listener {
                 }
 
                 Material armadura = ev.getCursor().getType();
-                if (armadura == null) {
-                    return;
-                }
+                if (armadura == null) return;
 
-                armadura = Blacksmith.getToolLevel(armadura);
-
-                if (armadura != Material.LEATHER && p.getLevel() < 4) {
-                    p.sendMessage(ChatColor.RED + L.m("Voce precisa chegar ao nivel 4 para equipar armaduras melhores"));
-                    ev.setCancelled(true);
-                    p.closeInventory();
-                    return;
-                }
                 if (!CustomItem.podeUsar(p, ev.getCursor())) {
                     p.sendMessage(ChatColor.RED + L.m("Este equipamento não é de sua classe !!"));
                     ev.setCancelled(true);
@@ -145,15 +130,10 @@ public class InventoryEvents implements Listener {
         }
     }
 
-    @EventHandler
-    public void abreInventario(InventoryOpenEvent event) {
-
-        if (event.getPlayer().isInsideVehicle()) event.setCancelled(true);
-
-    }
-
     @EventHandler(priority = EventPriority.NORMAL)
     public void pegaItem(final InventoryClickEvent event) {
+
+        Atadura.para((Player) event.getWhoClicked());
 
         GUIsHelp.clickNoInv(event);
         if (event.isCancelled()) return;
@@ -162,26 +142,19 @@ public class InventoryEvents implements Listener {
         if (event.isCancelled()) return;
 
         CmdCraftCheck.invClick(event);
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
 
         BussolaMagica.incClick(event);
         if (event.isCancelled()) return;
 
-
         CapaInvisvel.aparece((Player) event.getWhoClicked());
 
         if (event.getInventory().getType() == InventoryType.ANVIL) {
-
             if ((event.getAction() == InventoryAction.HOTBAR_SWAP || event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD || event.getAction() == InventoryAction.SWAP_WITH_CURSOR)) {
                 ((Player) event.getWhoClicked()).sendMessage(ChatColor.RED + L.m("Voce nao pode fazer isto"));
                 event.setCancelled(true);
                 return;
-            } else {
-
             }
-
         }
 
         if (event.getInventory().getType() == InventoryType.FURNACE) {
@@ -203,30 +176,21 @@ public class InventoryEvents implements Listener {
             }
         }
 
-        if (!(event.getWhoClicked() instanceof Player)) {
-            return;
-        }
-        if (event.getCurrentItem() == null) {
-            return;
-        }
-        if (event.getSlotType() == null) {
-            return;
-        }
+        if (!(event.getWhoClicked() instanceof Player)) return;
+
+        if (event.getCurrentItem() == null) return;
+
+        if (event.getSlotType() == null) return;
 
         SkillMaster.invClick(event);
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
 
         Aura.clica(event);
 
-        if (event.isCancelled()) {
-            return;
-        }
+        if (event.isCancelled()) return;
 
-        if (event.getInventory().getName().equalsIgnoreCase("mob.villager")) {
-            return;
-        }
+
+        if (event.getInventory().getName().equalsIgnoreCase("mob.villager")) return;
 
         if (KoM.debugMode) {
             KoM.log.info("Acao inventario : " + event.getAction().name());
@@ -316,38 +280,38 @@ public class InventoryEvents implements Listener {
             p.sendMessage(event.getInventory().getName());
         }
 
-        if (p.hasMetadata("click")) {
-            long tempo = (long) MetaShit.getMetaObject("click", p);
-            if (tempo + 30 > System.currentTimeMillis()) {
-                p.sendMessage(ChatColor.RED + L.m("Voce clicou muito rapido !"));
-                if (p.hasMetadata("clicadas")) {
-                    int clicadas = (int) MetaShit.getMetaObject("clicadas", p);
-                    if (clicadas >= 10) {
-                        p.kickPlayer(L.m("Admins foram informados do seu AutoClick !!"));
-                        for (Player p2 : Bukkit.getOnlinePlayers()) {
-                            if (p2.isOp()) {
-                                p2.sendMessage(ChatColor.AQUA + "----- Gambeta Anti AutoClick -------- !!");
-                                p2.sendMessage(ChatColor.AQUA + "ATENCAO: O MANOLO " + p.getName() + " TA TENTANDO AUTOCLICK POSSIVELMENTE !!");
-                                p2.sendMessage(ChatColor.AQUA + "ELE FOI KIKADO DO SERVER POR ISTO ! FICA DE ZOIO NELE !!");
-                            }
-                        }
-                        event.setCancelled(true);
-                        return;
-                    } else {
-                        clicadas++;
-                    }
-                    MetaShit.setMetaObject("clicadas", p, clicadas);
-                } else {
-                    MetaShit.setMetaObject("clicadas", p, 1);
-                }
-                event.setCancelled(true);
-                event.setResult(Event.Result.DENY);
-                MetaShit.setMetaObject("click", p, System.currentTimeMillis());
-                return;
-            }
-        }
-        MetaShit.setMetaObject("click", p, System.currentTimeMillis());
-        p.removeMetadata("clicadas", KoM._instance);
+//        if (p.hasMetadata("click")) {
+//            long tempo = (long) MetaShit.getMetaObject("click", p);
+//            if (tempo + 30 > System.currentTimeMillis()) {
+//                p.sendMessage(ChatColor.RED + L.m("Voce clicou muito rapido !"));
+//                if (p.hasMetadata("clicadas")) {
+//                    int clicadas = (int) MetaShit.getMetaObject("clicadas", p);
+//                    if (clicadas >= 10) {
+//                        p.kickPlayer(L.m("Admins foram informados do seu AutoClick !!"));
+//                        for (Player p2 : Bukkit.getOnlinePlayers()) {
+//                            if (p2.isOp()) {
+//                                p2.sendMessage(ChatColor.AQUA + "----- Gambeta Anti AutoClick -------- !!");
+//                                p2.sendMessage(ChatColor.AQUA + "ATENCAO: O MANOLO " + p.getName() + " TA TENTANDO AUTOCLICK POSSIVELMENTE !!");
+//                                p2.sendMessage(ChatColor.AQUA + "ELE FOI KIKADO DO SERVER POR ISTO ! FICA DE ZOIO NELE !!");
+//                            }
+//                        }
+//                        event.setCancelled(true);
+//                        return;
+//                    } else {
+//                        clicadas++;
+//                    }
+//                    MetaShit.setMetaObject("clicadas", p, clicadas);
+//                } else {
+//                    MetaShit.setMetaObject("clicadas", p, 1);
+//                }
+//                event.setCancelled(true);
+//                event.setResult(Event.Result.DENY);
+//                MetaShit.setMetaObject("click", p, System.currentTimeMillis());
+//                return;
+//            }
+//        }
+//        MetaShit.setMetaObject("click", p, System.currentTimeMillis());
+//        p.removeMetadata("clicadas", KoM._instance);
 
         ItemMeta meta = event.getCurrentItem().getItemMeta();
         if (meta != null && meta.getLore() != null && meta.getLore().size() > 0) {
@@ -458,7 +422,9 @@ public class InventoryEvents implements Listener {
             checkArmorEquippin(event);
             return;
         }
+
         Encaixe.encaixa(event);
+        Minerador.cobrePicareta(event);
     }
 
 }

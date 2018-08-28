@@ -37,8 +37,8 @@ public class Karma {
             player = true;
             karmaMorreu = KoM.database.getKarma(morreu.getUniqueId());
         } else {
-            if (morreu.hasMetadata("nivel")) {
-                int nivelMob = (Integer) MetaShit.getMetaObject("nivel", morreu) + 1;
+            if (morreu.hasMetadata("mobLevel")) {
+                int nivelMob = (Integer) MetaShit.getMetaObject("mobLevel", morreu) + 1;
                 karmaMorreu = karmaMorreu * nivelMob; // recupera o /5
             } else if (KoM.mm.getMobManager().isActiveMob(morreu.getUniqueId())) {
                 karmaMorreu = karmaMorreu * 50000;

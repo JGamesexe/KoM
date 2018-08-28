@@ -2,6 +2,7 @@ package nativelevel.utils;
 
 import nativelevel.MetaShit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -24,10 +25,9 @@ public abstract class GUI {
     }
 
     public static void open(Player player, GUI gui) {
-
         player.openInventory(gui.inventory);
         MetaShit.setMetaObject("guiAberta", player, gui);
-
+        player.updateInventory();
     }
 
     public void interage(InventoryClickEvent event) {
@@ -35,7 +35,6 @@ public abstract class GUI {
     }
 
     protected void botaVidros() {
-
         for (int x = 0; x < this.inventory.getSize(); x++) {
             ItemStack itemStack = new ItemStack(Material.STAINED_GLASS_PANE);
             ItemMeta itemMeta = itemStack.getItemMeta();
@@ -46,5 +45,16 @@ public abstract class GUI {
         }
     }
 
+    protected ItemStack geraItem(Material material) {
+        return geraItem(material, (short) 0);
+    }
+
+    protected ItemStack geraItem(Material material, short data) {
+        ItemStack itemStack = new ItemStack(material, 1, data);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName("§0" + Math.random());
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
 
 }

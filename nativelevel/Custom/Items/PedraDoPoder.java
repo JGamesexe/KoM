@@ -40,12 +40,10 @@ public class PedraDoPoder extends CustomItem {
             int poder = ClanLand.getPoder(cp.getTag());
             ClanLand.setPoder(cp.getClan().getTag(), (poder + 1));
             p.sendMessage(ChatColor.GREEN + L.m("Agora sua guilda tem % de poder !!", (poder + 1)));
-            if (p.getInventory().getItemInMainHand().getAmount() > 1) {
-                p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
-            } else {
-                p.setItemInHand(null);
-                //p.getInventory().removeItem(new ItemStack(Material.LAPIS_BLOCK, 1));
-            }
+
+            if (p.getInventory().getItemInMainHand().getAmount() > 1) p.getInventory().getItemInMainHand().setAmount(p.getInventory().getItemInMainHand().getAmount() - 1);
+            else p.getInventory().setItemInMainHand(null);
+
         }
         return true;
     }

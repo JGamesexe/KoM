@@ -19,15 +19,16 @@ import me.fromgate.playeffect.VisualEffect;
 import nativelevel.Attributes.Mana;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
-import nativelevel.KoM;
 import nativelevel.Lang.L;
-import org.bukkit.Bukkit;
+import nativelevel.Listeners.DamageListener;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
-import org.bukkit.entity.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -41,30 +42,16 @@ public class Detonador extends CustomItem {
     }
 
     public static void explodeTrap(Location l, LivingEntity p, Player causador) {
-        if (p != null && p instanceof Player) {
-            ((Player) p).sendMessage(ChatColor.RED + L.m("Voce disparou uma armadilha !"));
-            p.damage(15D);
-        }
+        if (p != null && p instanceof Player) p.sendMessage(ChatColor.RED + L.m("Voce disparou uma armadilha !"));
         l.setY(l.getY() + 1);
-        PlayEffect.play(VisualEffect.EXPLOSION_LARGE, l, "num:1");
 
-        Entity alvo = (p != null ? p : l.getWorld().spawnEntity(l, EntityType.ARROW));
-        for (Entity e : alvo.getNearbyEntities(3, 3, 3)) {
+        l.getWorld().spawnParticle(Particle.EXPLOSION_LARGE, l, 3);
+
+        for (Entity e : l.getWorld().getNearbyEntities(l, 3, 3, 3)) {
             if (e instanceof LivingEntity) {
-                if (e != p) {
-                    EntityDamageByEntityEvent ev = new EntityDamageByEntityEvent(causador, e, EntityDamageEvent.DamageCause.ENTITY_EXPLOSION, 12D);
-                    Bukkit.getPluginManager().callEvent(ev);
-                    if (!ev.isCancelled()) {
-                        KoM.dealTrueDamage((LivingEntity) e, ev.getDamage());
-                        if (e.getType() == EntityType.PLAYER) {
-                            ((Player) e).sendMessage(ChatColor.RED + "Uma armadilha explodiu !");
-                        }
-                    }
-                }
+                DamageListener.darDano(causador, 12D, (LivingEntity) e, EntityDamageEvent.DamageCause.ENTITY_EXPLOSION);
+                if (e instanceof Player) e.sendMessage(ChatColor.RED + "Uma armadilha explodiu !");
             }
-        }
-        if (alvo instanceof Arrow) {
-            alvo.remove();
         }
     }
 

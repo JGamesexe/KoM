@@ -11,6 +11,7 @@ import nativelevel.Attributes.Health;
 import nativelevel.CFG;
 import nativelevel.Classes.Farmer;
 import nativelevel.Classes.Mage.spelllist.Paralyze;
+import nativelevel.ComandosNovos.commands.list.Kom;
 import nativelevel.Crafting.CraftEvents;
 import nativelevel.Custom.Buildings.Portal;
 import nativelevel.Custom.CustomItem;
@@ -33,18 +34,13 @@ import nativelevel.sisteminhas.XP;
 import nativelevel.skills.Skill;
 import nativelevel.skills.SkillMaster;
 import nativelevel.titulos.Titulos;
-import nativelevel.utils.BungLocation;
-import nativelevel.utils.JotaGUtils;
-import nativelevel.utils.LocUtils;
-import nativelevel.utils.TitleAPI;
+import nativelevel.utils.*;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -72,7 +68,7 @@ public class PlayerEvents implements Listener {
     @EventHandler
     public void swapa(PlayerSwapHandItemsEvent ev) {
         ev.setCancelled(true);
-        ev.getPlayer().sendMessage(ChatColor.RED + "Você não aprendeu sua habilidade ultimate, ainda.");
+//      ev.getPlayer().sendMessage(ChatColor.RED + "Você não aprendeu sua habilidade ultimate, ainda.");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -82,43 +78,39 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void negoVaza(PlayerQuitEvent ev) {
+        Player player = ev.getPlayer();
 
-        if (ev.getPlayer().getVehicle() != null) {
-            ev.getPlayer().getVehicle().eject();
-        }
-        if (ev.getPlayer().getItemOnCursor() != null && ev.getPlayer().getItemOnCursor().getType() != Material.AIR) {
-            ev.getPlayer().setItemOnCursor(new ItemStack(Material.AIR));
-        }
-
-        if (ev.getPlayer().hasPotionEffect(PotionEffectType.BLINDNESS)) {
-            ev.getPlayer().removePotionEffect(PotionEffectType.BLINDNESS);
+        if (player.getItemOnCursor() != null && player.getItemOnCursor().getType() != Material.AIR) {
+            ItemStack item = player.getItemOnCursor();
+            player.setItemOnCursor(null);
+            if (player.getInventory().firstEmpty() != -1) player.getInventory().addItem(item);
+            else player.getWorld().dropItem(player.getLocation(), item);
         }
 
-        if (!ev.getPlayer().getWorld().getName().equalsIgnoreCase("arena") && !ev.getPlayer().getWorld().getName().equalsIgnoreCase("woe") && !ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
-            if (LogoutTrap.trapeados.contains(ev.getPlayer().getName())) {
-                LogoutTrap.trapeados.remove(ev.getPlayer().getName());
-                ev.getPlayer().setHealth(0);
+        if (player.getVehicle() != null) {
+            player.getVehicle().eject();
+        }
+        if (player.getItemOnCursor() != null && player.getItemOnCursor().getType() != Material.AIR) {
+            player.setItemOnCursor(new ItemStack(Material.AIR));
+        }
+
+        if (player.hasPotionEffect(PotionEffectType.BLINDNESS)) {
+            player.removePotionEffect(PotionEffectType.BLINDNESS);
+        }
+
+        if (!player.getWorld().getName().equalsIgnoreCase("arena") && !player.getWorld().getName().equalsIgnoreCase("woe") && !player.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
+            if (LogoutTrap.trapeados.contains(player.getName())) {
+                LogoutTrap.trapeados.remove(player.getName());
+                player.setHealth(0);
             }
-            /*
-             if(SeguroDeItems.segurou(ev.getPlayer())) {
-             ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
-             return;
-             }
-             if (LogoutTrap.trapeados.contains(ev.getPlayer().getName())) {
-             for (int slot = 0; slot < 40; slot++) {
-             if (ev.getPlayer().getInventory().getItem(slot) != null && ev.getPlayer().getInventory().getItem(slot).getType() != Material.AIR) {
-             ev.getPlayer().getLocation().getWorld().dropItemNaturally(ev.getPlayer().getLocation(), new ItemStack(ev.getPlayer().getInventory().getItem(slot)));
-             ev.getPlayer().getInventory().setItem(slot, null);
-             }
-             }
-             ev.getPlayer().teleport(ev.getPlayer().getWorld().getSpawnLocation());
-             }
-             */
         }
+
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void lvlUp(final PlayerLevelChangeEvent ev) {
+
+        KoM.sb.updatePlayer(ev.getPlayer());
 
         if (ev.getPlayer().isDead()) {
             XP.setaLevel(ev.getPlayer(), ev.getOldLevel());
@@ -150,7 +142,6 @@ public class PlayerEvents implements Listener {
         }
 
         if (ev.getNewLevel() > ev.getOldLevel()) {
-            SBCore.setLevelPoints(ev.getPlayer(), ev.getPlayer().getLevel());
             ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Level Up! Voce esta no nivel " + ChatColor.YELLOW + ChatColor.BOLD + "%", ev.getNewLevel()));
             String quests = "";
             for (Quest q : KoM.quests.quests) {
@@ -173,7 +164,7 @@ public class PlayerEvents implements Listener {
             List<String> primarias = Jobs.getPrimarias(ev.getPlayer());
             boolean apr = false;
             for (String primaria : primarias) {
-                Skill aprendeu = SkillMaster.aprendeuSkill(ev.getPlayer(), primaria, ev.getNewLevel());
+                Skill aprendeu = SkillMaster.aprendeuSkill(ev.getPlayer(), Jobs.Classe.valueOf(primaria), ev.getNewLevel());
                 if (aprendeu != null) {
                     apr = true;
                     ev.getPlayer().sendMessage(ChatColor.AQUA + "" + ChatColor.BOLD + "Nova Skill: " + ChatColor.YELLOW + aprendeu.getNome());
@@ -234,73 +225,73 @@ public class PlayerEvents implements Listener {
         }
     }
 
-    @EventHandler
-    public void playerFishEvent(PlayerFishEvent ev) {
-
-        ev.setExpToDrop(0);
-
-        if (ev.getCaught() != null && ev.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
-            Location l = ev.getCaught().getLocation();
-            if (ev.getPlayer().hasMetadata("pescou")) {
-                Location pescou = (Location) MetaShit.getMetaObject("pescou", ev.getPlayer());
-                if (pescou.getBlockX() == l.getBlockX() && pescou.getBlockZ() == l.getBlockZ()) {
-                    ev.setCancelled(true);
-                    return;
-                }
-            }
-
-            MetaShit.setMetaObject("pescou", ev.getPlayer(), l);
-
-            TipoBless ativo = TipoBless.save.getTipo(ev.getPlayer());
-            if (ativo == null || ativo != TipoBless.Pescaria) {
-
-                ApplicableRegionSet set = KoM.worldGuard.getRegionManager(ev.getPlayer().getWorld()).getApplicableRegions(ev.getPlayer().getLocation());
-                Iterator<ProtectedRegion> i = set.iterator();
-                for (int x = 0; x < 2; x++) {
-                    if (i.hasNext()) {
-                        ProtectedRegion r = i.next();
-                        if (!r.getId().contains("pesca")) {
-                            if (Jobs.rnd.nextInt(2) != 1) {
-                                ev.setExpToDrop(0);
-                                ev.getCaught().remove();
-                                ev.getPlayer().sendMessage(ChatColor.RED + "Voce nao conseguiu puxar a linha");
-                            }
-                        }
-                    }
-                }
-            }
-            int random = Jobs.rnd.nextInt(100);
-            if (random == 1) {
-                ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Você encontrou uma pedra brilhosa."));
-                ev.getPlayer().getInventory().addItem(CustomItem.getItem(PedraDoPoder.class).generateItem(1));
-            }
-            if (ativo != null && ativo == TipoBless.Pescaria) {
-                random = Jobs.rnd.nextInt(100);
-                if (random == 1) {
-                    ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Você encontrou uma esponja molhada."));
-                    ItemStack esponja = new ItemStack(Material.SPONGE);
-                    ItemMeta meta = esponja.getItemMeta();
-                    meta.setDisplayName(ChatColor.BLUE + "Esponja Molhada");
-                    List<String> lore = new ArrayList<String>();
-                    lore.add(ChatColor.GREEN + "Se pelo menos pudesse secar ela..");
-                    meta.setLore(lore);
-                    esponja.setItemMeta(meta);
-                    ev.getPlayer().getInventory().addItem(esponja);
-                }
-            }
-            // BukkitListener.givePlayerExperience(10, ev.getPlayer());
-        }
-        if (ev.getCaught() != null && (ev.getCaught() instanceof Item || ev.getCaught() instanceof Entity)) {
-            TipoBless ativo = TipoBless.save.getTipo(ev.getPlayer());
-            int lvl = ev.getPlayer().getLevel();
-            int xp = XP.getExpPorAcao(lvl) * 2;
-            if (ativo != null && ativo == TipoBless.Pescaria) {
-                xp *= 5;
-            }
-            XP.changeExp(ev.getPlayer(), xp);
-        }
-        Farmer.pesca(ev);
-    }
+//    @EventHandler
+//    public void playerFishEvent(PlayerFishEvent ev) {
+//
+//        ev.setExpToDrop(0);
+//
+//        if (ev.getCaught() != null && ev.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
+//            Location l = ev.getCaught().getLocation();
+//            if (ev.getPlayer().hasMetadata("pescou")) {
+//                Location pescou = (Location) MetaShit.getMetaObject("pescou", ev.getPlayer());
+//                if (pescou.getBlockX() == l.getBlockX() && pescou.getBlockZ() == l.getBlockZ()) {
+//                    ev.setCancelled(true);
+//                    return;
+//                }
+//            }
+//
+//            MetaShit.setMetaObject("pescou", ev.getPlayer(), l);
+//
+//            TipoBless ativo = TipoBless.save.getTipo(ev.getPlayer());
+//            if (ativo == null || ativo != TipoBless.Pescaria) {
+//
+//                ApplicableRegionSet set = KoM.worldGuard.getRegionManager(ev.getPlayer().getWorld()).getApplicableRegions(ev.getPlayer().getLocation());
+//                Iterator<ProtectedRegion> i = set.iterator();
+//                for (int x = 0; x < 2; x++) {
+//                    if (i.hasNext()) {
+//                        ProtectedRegion r = i.next();
+//                        if (!r.getId().contains("pesca")) {
+//                            if (Jobs.rnd.nextInt(2) != 1) {
+//                                ev.setExpToDrop(0);
+//                                ev.getCaught().remove();
+//                                ev.getPlayer().sendMessage(ChatColor.RED + "Voce nao conseguiu puxar a linha");
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            int random = Jobs.rnd.nextInt(100);
+//            if (random == 1) {
+//                ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Você encontrou uma pedra brilhosa."));
+//                ev.getPlayer().getInventory().addItem(CustomItem.getItem(PedraDoPoder.class).generateItem(1));
+//            }
+//            if (ativo != null && ativo == TipoBless.Pescaria) {
+//                random = Jobs.rnd.nextInt(100);
+//                if (random == 1) {
+//                    ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Você encontrou uma esponja molhada."));
+//                    ItemStack esponja = new ItemStack(Material.SPONGE);
+//                    ItemMeta meta = esponja.getItemMeta();
+//                    meta.setDisplayName(ChatColor.BLUE + "Esponja Molhada");
+//                    List<String> lore = new ArrayList<String>();
+//                    lore.add(ChatColor.GREEN + "Se pelo menos pudesse secar ela..");
+//                    meta.setLore(lore);
+//                    esponja.setItemMeta(meta);
+//                    ev.getPlayer().getInventory().addItem(esponja);
+//                }
+//            }
+//            // BukkitListener.givePlayerExperience(10, ev.getPlayer());
+//        }
+//        if (ev.getCaught() != null && (ev.getCaught() instanceof Item || ev.getCaught() instanceof Entity)) {
+//            TipoBless ativo = TipoBless.save.getTipo(ev.getPlayer());
+//            int lvl = ev.getPlayer().getLevel();
+//            int xp = XP.getExpPorAcao(lvl) * 2;
+//            if (ativo != null && ativo == TipoBless.Pescaria) {
+//                xp *= 5;
+//            }
+//            XP.changeExp(ev.getPlayer(), xp);
+//        }
+//        Farmer.pesca(ev);
+//    }
 
     private boolean hasChangedBlockCoordinates(final Location fromLoc, final Location toLoc) {
         return !(fromLoc.getWorld().equals(toLoc.getWorld())
@@ -311,6 +302,12 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void move(PlayerMoveEvent event) {
+
+        if (event.getPlayer().hasMetadata("bugandoBloco")) {
+            boolean valido = ((long) MetaShit.getMetaObject("bugandoBloco", event.getPlayer())) > System.currentTimeMillis();
+            event.getPlayer().removeMetadata("bugandoBloco", KoM._instance);
+            if (valido) event.setCancelled(true);
+        }
 
         Material m = event.getPlayer().getLocation().getBlock().getType();
         if (!hasChangedBlockCoordinates(event.getFrom(), event.getTo())) {
@@ -338,7 +335,7 @@ public class PlayerEvents implements Listener {
         }
 
         //afogando o manolo
-        if (m == Material.STATIONARY_WATER || m == Material.WATER && !event.getPlayer().isOp()) {
+        if (m == Material.STATIONARY_WATER || m == Material.WATER && event.getPlayer().getGameMode() != GameMode.CREATIVE && event.getPlayer().getGameMode() != GameMode.SPECTATOR) {
             m = event.getPlayer().getLocation().getBlock().getRelative(BlockFace.DOWN).getType();
             if (m == Material.STATIONARY_WATER || m == Material.WATER) {
                 Block b = event.getPlayer().getWorld().getBlockAt(event.getPlayer().getLocation().getBlockX(), 0, event.getPlayer().getLocation().getBlockZ());
@@ -348,8 +345,7 @@ public class PlayerEvents implements Listener {
                 ItemStack bota = event.getPlayer().getInventory().getBoots();
                 if (bota == null) {
                     Vector vel = event.getPlayer().getVelocity();
-                    vel.setY(-0.18);
-                    event.getPlayer().setVelocity(vel);
+                    event.getPlayer().setVelocity(vel.setY(-0.22));
                 } else {
                     String customItem = CustomItem.getCustomItem(bota);
                     if (customItem == null) {
@@ -359,20 +355,17 @@ public class PlayerEvents implements Listener {
                             }
                         }
                         Vector vel = event.getPlayer().getVelocity();
-                        vel.setY(-0.18);
-                        event.getPlayer().setVelocity(vel);
+                        event.getPlayer().setVelocity(vel.setY(-0.38));
                     } else if (!customItem.equalsIgnoreCase(L.m("Pe de Pato"))) {
                         Vector vel = event.getPlayer().getVelocity();
-                        vel.setY(-0.18);
-                        event.getPlayer().setVelocity(vel);
+                        event.getPlayer().setVelocity(vel.setY(-0.38));
                     }
                 }
 
             }
         } else if (m == Material.VINE) {
-            if (event.getPlayer().isOp()) {
-                return;
-            }
+            if (event.getPlayer().getGameMode() == GameMode.CREATIVE && event.getPlayer().getGameMode() == GameMode.SPECTATOR) return;
+
             boolean podeEscalar = false;
             if (event.getPlayer().getInventory().getLeggings() != null) {
                 String customItem = CustomItem.getCustomItem(event.getPlayer().getInventory().getLeggings());
@@ -601,9 +594,8 @@ public class PlayerEvents implements Listener {
 
     @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent ev) {
-        if (ev.getPlayer().hasMetadata("NPC")) {
+        if (ev.getPlayer().hasMetadata("NPC"))
             return;
-        }
 
         VanishConfig cfg = SimplyVanish.getVanishConfig(ev.getPlayer().getName(), true);
         //if (cfg.see.state) {
@@ -617,33 +609,33 @@ public class PlayerEvents implements Listener {
                 SimplyVanish.updateVanishState(ev.getPlayer());
             }
         }
-        //}
 
         // Check if player has completed tutorial
         if (!KoM.database.hasRegisteredClass(ev.getPlayer().getUniqueId().toString())) {
             //player.message(ChatColor.RED, MSG.REQUIRE_TUTORIAL);
             ev.getPlayer().sendMessage(ChatColor.RED + L.m("Voce precisa terminar o tutorial !"));
-            if (Bukkit.getWorld("NewDungeon") == null) {
-                BungeeCordKom.tp(ev.getPlayer(), CFG.localTutorial);
-            } else {
-                ev.setRespawnLocation(CFG.localTutorial.toLocation());
-            }
+            ev.setRespawnLocation(CFG.localTutorial.toLocation());
         }
 
+        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase(CFG.mundoGuilda))
+            ev.getPlayer().teleport(DeathEvents.pertenceAVila(ev.getPlayer()));
+
         // Award extra loot?
-        if (loots.containsKey(ev.getPlayer().getUniqueId())) {
+        if (loots.containsKey(ev.getPlayer().getUniqueId()))
             devolveLoot(ev.getPlayer());
-        }
     }
 
     @EventHandler
     public void mudaItem(PlayerItemHeldEvent ev) {
-        if (ev.getPlayer().hasMetadata("epichax") || ev.getPlayer().hasMetadata("epichaxpronta")) {
-            ev.setCancelled(true);
+        if (ev.getPlayer().hasMetadata("machadadaEpica")) {
+            long dife = (System.currentTimeMillis() - ((long) MetaShit.getMetaObject("machadadaEpica", ev.getPlayer())));
+            if (dife < 5750) ev.getPlayer().sendMessage("§cVocê retira seu machado da posição e cancela sua Machadada Épica.");
+            ev.getPlayer().removeMetadata("machadadaEpica", KoM._instance);
         }
         if (Paralyze.isParalizado(ev.getPlayer())) {
             ev.setCancelled(true);
         }
+        Atadura.para(ev.getPlayer());
 
     }
 
@@ -652,7 +644,7 @@ public class PlayerEvents implements Listener {
         handlePlayerJoin(ev.getPlayer());
     }
 
-    public void handlePlayerJoin(Player p) {
+    private void handlePlayerJoin(Player p) {
         if (p.hasMetadata("NPC")) {
             return;
         }
@@ -663,6 +655,20 @@ public class PlayerEvents implements Listener {
 
         if (KoM.safeMode && !p.isOp()) {
             p.kickPlayer("Servidor em Manutenção");
+            return;
+        }
+
+        // Check if completed tutorial.
+        if (!KoM.database.hasRegisteredClass(p.getUniqueId().toString())) {
+            p.setLevel(1);
+            MetaShit.setMetaObject("tutorial", p, true);
+            if (p.getBedSpawnLocation() == null) {
+                p.setBedSpawnLocation(CFG.localTutorial.toLocation());
+                p.teleport(CFG.localTutorial.toLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                TitleAPI.sendTitle(p, 20, 50, 10, "§a§l!=- Tutorial -=!", "§ePreste Atenção !");
+            } else {
+                TitleAPI.sendTitle(p, 20, 50, 10, "§aVocê continuou o tutorial de onde parou...", "§aNão desista!");
+            }
             return;
         }
 
@@ -679,11 +685,9 @@ public class PlayerEvents implements Listener {
         if (p.getWorld().getName().equalsIgnoreCase("eventos") || p.getWorld().getName().equalsIgnoreCase("NewDungeon") || p.getWorld().getName().equalsIgnoreCase("arena")) {
             if (p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                 long agora = System.currentTimeMillis() / 1000;
-                if (agora > KoM.ENABLE_TIME + 60) {
-                    BungeeCordKom.tp(p, new BungLocation(p.getBedSpawnLocation()));
-                }
-            } else {
-                BungeeCordKom.tp(p, new BungLocation(p.getBedSpawnLocation()));
+                if (agora > KoM.ENABLE_TIME + 60)
+                    if (p.getBedSpawnLocation() != null) p.teleport(p.getBedSpawnLocation());
+                    else p.teleport(DeathEvents.pertenceAVila(p));
             }
         }
 
@@ -692,20 +696,6 @@ public class PlayerEvents implements Listener {
         ApplicableRegionSet set = KoM.worldGuard.getRegionManager(p.getWorld()).getApplicableRegions(p.getLocation());
         if (set.queryState(null, DefaultFlag.GHAST_FIREBALL) == StateFlag.State.DENY) {
             BungeeCordKom.tp(p, CFG.spawnTree);
-        }
-
-        // Check if completed tutorial.
-        if (!KoM.database.hasRegisteredClass(p.getUniqueId().toString())) {
-            p.setLevel(1);
-            MetaShit.setMetaObject("tutorial", p, true);
-            if (p.getBedSpawnLocation() == null) {
-                p.setBedSpawnLocation(CFG.localTutorial.toLocation());
-                p.sendMessage(ChatColor.GREEN + "" + ChatColor.BOLD + "[Tutorial]" + ChatColor.YELLOW + "Preste ATENÇÃO !");
-            } else {
-                p.sendMessage(ChatColor.GREEN + "Você continuou o tutorial de onde parou...");
-                p.sendMessage(ChatColor.GREEN + "Não desista !");
-                p.teleport(p.getBedSpawnLocation());
-            }
         }
 
         if (!KarmaFameTables.cacheTitulos.containsKey(p.getUniqueId())) {
@@ -733,43 +723,44 @@ public class PlayerEvents implements Listener {
             }
 
         }
+
     }
 
     public static HashSet<UUID> jaAvisou = new HashSet<UUID>();
 
-    @EventHandler
-    public void usaBalde(PlayerBucketFillEvent ev) {
-        Location bp = ev.getBlockClicked().getLocation();
-        if (bp.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
-            ev.setCancelled(true);
-            return;
-        }
-        String type = ClanLand.getTypeAt(bp);
-        if (type.equalsIgnoreCase("SAFE") || type.equalsIgnoreCase("WARZ")) {
-            ev.setCancelled(true);
-            return;
-        }
-        if (ev.getPlayer().isOp()) {
-            return;
-        }
-    }
-
-    @EventHandler
-    public void usaBalde(PlayerBucketEmptyEvent ev) {
-        if (ev.getPlayer().isOp()) {
-            return;
-        }
-        Location bp = ev.getBlockClicked().getLocation();
-        if (bp.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
-            ev.setCancelled(true);
-            return;
-        }
-        String type = ClanLand.getTypeAt(bp);
-        if (type.equalsIgnoreCase("SAFE") || type.equalsIgnoreCase("WARZ")) {
-            ev.setCancelled(true);
-            return;
-        }
-    }
+//    @EventHandler
+//    public void usaBalde(PlayerBucketFillEvent ev) {
+//        Location bp = ev.getBlockClicked().getLocation();
+//        if (bp.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
+//            ev.setCancelled(true);
+//            return;
+//        }
+//        String type = ClanLand.getTypeAt(bp);
+//        if (type.equalsIgnoreCase("SAFE") || type.equalsIgnoreCase("WARZ")) {
+//            ev.setCancelled(true);
+//            return;
+//        }
+//        if (ev.getPlayer().isOp()) {
+//            return;
+//        }
+//    }
+//
+//    @EventHandler
+//    public void usaBalde(PlayerBucketEmptyEvent ev) {
+//        if (ev.getPlayer().isOp()) {
+//            return;
+//        }
+//        Location bp = ev.getBlockClicked().getLocation();
+//        if (bp.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
+//            ev.setCancelled(true);
+//            return;
+//        }
+//        String type = ClanLand.getTypeAt(bp);
+//        if (type.equalsIgnoreCase("SAFE") || type.equalsIgnoreCase("WARZ")) {
+//            ev.setCancelled(true);
+//            return;
+//        }
+//    }
 
     @EventHandler
     public void onEntityPortal(PlayerPortalEvent ev) {
@@ -822,15 +813,67 @@ public class PlayerEvents implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void cmd(PlayerCommandPreprocessEvent ev) {
-        if (ev.getPlayer().isConversing()) {
-            ev.getPlayer().playSound(ev.getPlayer().getLocation(), Sound.BLOCK_ANVIL_LAND, 1, 1);
+        if (ev.getPlayer().isConversing() && !ev.getPlayer().isOp()) {
+            ev.getPlayer().playSound(ev.getPlayer().getLocation(), Sound.BLOCK_ANVIL_LAND, 0.4f, 1);
             TitleAPI.sendActionBar(ev.getPlayer(), "§c§lAlgo está esperando sua resposta, digite no chat !");
             ev.setCancelled(true);
         }
         if (ev.getMessage().startsWith("/quests top")) {
             ev.getPlayer().sendMessage(ChatColor.RED + L.m("Deus Jabu não gosta deste comando..."));
             ev.setCancelled(true);
+            return;
         }
+
+        if (ev.getPlayer().isOp()) return;
+
+        boolean onlySingle = true;
+        if (ev.getMessage().contains(" ")) onlySingle = false;
+        boolean canceled = false;
+
+        if (onlySingle) {
+            if (!ev.getMessage().equalsIgnoreCase("/kom") &&
+                    !ev.getMessage().equalsIgnoreCase("/g") &&
+                    !ev.getMessage().equalsIgnoreCase("/.") &&
+                    !ev.getMessage().equalsIgnoreCase("/tell") &&
+                    !ev.getMessage().equalsIgnoreCase("/r") &&
+                    !ev.getMessage().equalsIgnoreCase("/ally") &&
+                    !ev.getMessage().equalsIgnoreCase("/guilda") &&
+                    !ev.getMessage().equalsIgnoreCase("/quest") &&
+                    !ev.getMessage().equalsIgnoreCase("/quests") &&
+                    !ev.getMessage().equalsIgnoreCase("/spawn") &&
+                    !ev.getMessage().equalsIgnoreCase("/lobby") &&
+                    !ev.getMessage().equalsIgnoreCase("/titulos") &&
+                    !ev.getMessage().equalsIgnoreCase("/aceitar") &&
+                    !ev.getMessage().equalsIgnoreCase("/negar") &&
+                    !ev.getMessage().equalsIgnoreCase("/terreno") &&
+                    !ev.getMessage().equalsIgnoreCase("/reinicio") &&
+                    !ev.getMessage().equalsIgnoreCase("/cash") &&
+                    !ev.getMessage().equalsIgnoreCase("/ativar")) canceled = true;
+        } else {
+            if (!ev.getMessage().startsWith("/kom ") &&
+                    !ev.getMessage().startsWith("/g ") &&
+                    !ev.getMessage().startsWith("/. ") &&
+                    !ev.getMessage().startsWith("/tell ") &&
+                    !ev.getMessage().startsWith("/r ") &&
+                    !ev.getMessage().startsWith("/ally ") &&
+                    !ev.getMessage().startsWith("/guilda ") &&
+                    !ev.getMessage().startsWith("/quest ") &&
+                    !ev.getMessage().startsWith("/quests ") &&
+                    !ev.getMessage().startsWith("/spawn ") &&
+                    !ev.getMessage().startsWith("/lobby ") &&
+                    !ev.getMessage().startsWith("/titulos ") &&
+                    !ev.getMessage().startsWith("/aceitar ") &&
+                    !ev.getMessage().startsWith("/negar ") &&
+                    !ev.getMessage().startsWith("/terreno ") &&
+                    !ev.getMessage().startsWith("/reinicio") &&
+                    !ev.getMessage().startsWith("/cash ") &&
+                    !ev.getMessage().startsWith("/ativar ")) canceled = true;
+        }
+        if (canceled) {
+            ev.setCancelled(true);
+            ev.getPlayer().sendMessage("§cHey Beta Tester, se realmente precisa desse comando? se precisar fala com o JotaG");
+        }
+
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -985,6 +1028,15 @@ public class PlayerEvents implements Listener {
             ev.getPlayer().removePotionEffect(PotionEffectType.WEAKNESS);
             ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("A sopa lhe curou de fraquezas"));
         }
+    }
+
+    @EventHandler
+    public void damageItem(PlayerItemDamageEvent ev) {
+        if (ev.getItem().getType().equals(Material.BOW) || !CategoriaUtils.getCategoria(ev.getItem().getType()).equals(CategoriaUtils.CategoriaItem.Arma)) return;
+
+        if (ev.getPlayer().hasMetadata("hitOnMob") && ((long) MetaShit.getMetaObject("hitOnMob", ev.getPlayer())) > System.currentTimeMillis()) ev.setCancelled(true);
+        else ev.setDamage(1);
+
     }
 
 }

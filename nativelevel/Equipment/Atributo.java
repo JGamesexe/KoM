@@ -5,6 +5,8 @@
  */
 package nativelevel.Equipment;
 
+import org.bukkit.inventory.ItemStack;
+
 /**
  * @author vntgasl
  */
@@ -36,7 +38,7 @@ public enum Atributo {
 
     Stamina(false, 5, 50), //
 
-    Magia(true, 1, 20),//
+    Dano_Magico(true, 1, 20),//
 
     Dano_Distancia(true, 1, 20);
 
@@ -44,7 +46,7 @@ public enum Atributo {
     public int min;
     public int max;
 
-    private Atributo(boolean pct, int min, int max) {
+    Atributo(boolean pct, int min, int max) {
         this.pct = pct;
         this.min = min;
         this.max = max;
@@ -52,6 +54,12 @@ public enum Atributo {
 
     public String getName() {
         return name().replaceAll("\\_", " ");
+    }
+
+    public static boolean hasSense(Atributo attr,ItemStack ss) {
+
+
+        return false;
     }
 
 }

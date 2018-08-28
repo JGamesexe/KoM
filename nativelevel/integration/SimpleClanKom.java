@@ -22,12 +22,15 @@ import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Chest;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.material.Wool;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -98,12 +101,14 @@ public class SimpleClanKom {
     public static List<Material> liberados = Arrays.asList(
             Material.SUGAR_CANE_BLOCK,
             Material.PUMPKIN,
+            Material.MELON_BLOCK,
             Material.DEAD_BUSH,
             Material.LONG_GRASS,
             Material.CACTUS,
             Material.RED_MUSHROOM,
             Material.BROWN_MUSHROOM,
             Material.SUGAR_CANE,
+            Material.VINE,
             Material.RED_ROSE,
             Material.YELLOW_FLOWER,
             Material.LOG,
@@ -116,6 +121,38 @@ public class SimpleClanKom {
             Material.PUMPKIN,
             Material.COCOA,
             Material.DOUBLE_PLANT);
+
+    private static List<Material> comInvetario = Arrays.asList(Material.CHEST,
+            Material.TRAPPED_CHEST,
+            Material.FURNACE,
+            Material.BURNING_FURNACE,
+            Material.DROPPER,
+            Material.DISPENSER);
+
+    public static List<Material> easyToBreak = Arrays.asList(Material.RED_MUSHROOM,
+            Material.BROWN_MUSHROOM,
+            Material.TORCH,
+            Material.GRASS,
+            Material.LONG_GRASS,
+            Material.YELLOW_FLOWER,
+            Material.RED_ROSE,
+            Material.DOUBLE_PLANT,
+            Material.SAPLING,
+            Material.WATER_LILY,
+            Material.REDSTONE_WIRE,
+            Material.REDSTONE_COMPARATOR_ON,
+            Material.REDSTONE_COMPARATOR_OFF,
+            Material.DIODE_BLOCK_ON,
+            Material.DIODE_BLOCK_OFF,
+            Material.REDSTONE_TORCH_ON,
+            Material.REDSTONE_TORCH_OFF,
+            Material.SUGAR_CANE_BLOCK,
+            Material.CROPS,
+            Material.POTATO,
+            Material.CARROT,
+            Material.BEETROOT_BLOCK,
+            Material.MELON_STEM,
+            Material.PUMPKIN_STEM);
 
     public static void interact(PlayerInteractEvent ev) {
         if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
@@ -130,6 +167,10 @@ public class SimpleClanKom {
             }
         }
         if (!ev.getPlayer().isOp() && !ClanLand.permission.has(ev.getPlayer(), "kom.build") && ev.getClickedBlock() != null && ev.getClickedBlock().getType() != Material.AIR) {
+            if (ev.getClickedBlock().getType().equals(Material.CHEST) &&
+                    (ev.getClickedBlock().getLocation().add(0, -1, 0).getBlock().getType().equals(Material.SPONGE) ||
+                            ev.getClickedBlock().getLocation().add(0, 1, 0).getBlock().getType().equals(Material.SPONGE)))
+                ev.setCancelled(true);
             if (!podeMexer(ev.getPlayer(), ev.getClickedBlock().getLocation(), ev.getClickedBlock())) {
                 ev.setCancelled(true);
                 KoM.debug("parei o interact com simpleclans");
@@ -165,7 +206,7 @@ public class SimpleClanKom {
 
         if (type.equalsIgnoreCase("CLAN")) {
             Clan aqui = ClanLand.getClanAt(l);
-            Clan meu = ClanLand.manager.getClanByPlayerName(p.getName());
+            ClanPlayer meu = ClanLand.manager.getClanPlayer(p);
             if (b != null && b.getType() == Material.CHEST) {
                 Location origem = b.getLocation().getChunk().getBlock(0, 0, 0).getLocation();
                 //Terrenos.getClanAt(l);
@@ -201,7 +242,7 @@ public class SimpleClanKom {
                             && !p.getInventory().getItemInMainHand().getType().equals(Material.AIR))
                             || b.getType().name().contains("DOOR")
                             || b.getType().name().contains("FENCE_GATE")) p.damage(5);
-                    else p.damage(1);
+                    else if (!easyToBreak.contains(b.getType())) p.damage(1);
 
                     return false;
                 } else if (b.getType() == Material.CHEST) {
@@ -225,9 +266,12 @@ public class SimpleClanKom {
                     }
                     return false;
                 }
+                return false;
+
                 /////// SE ELE EH DO CLAN
             } else if (meu != null && aqui != null && meu.getTag().equalsIgnoreCase(aqui.getTag())) {
-                ClanPlayer cp = ClanLand.manager.getClanPlayer(p);
+                if (meu.isLeader()) return true; //lider mexe em tudo
+
                 String[] owner = ClanLand.getOwnerAt(l);
                 if (owner.length != 0 && owner[0].equalsIgnoreCase("none")) {
 
@@ -239,13 +283,13 @@ public class SimpleClanKom {
                         default:
                             return false;
                         case 1:
-                            return cp.isTrusted()
+                            return meu.isTrusted()
                                     && (b.getType().toString().contains("DOOR")
                                     || b.getType().toString().contains("BUTTON")
                                     || b.getType().toString().contains("PLATE")
                                     || b.getType().toString().contains("LEVER"));
                         case 2:
-                            return (cp.isTrusted()
+                            return (meu.isTrusted()
                                     && (b.getType().toString().contains("DOOR")
                                     || b.getType().toString().contains("BUTTON")
                                     || b.getType().toString().contains("PLATE")
@@ -256,7 +300,7 @@ public class SimpleClanKom {
                                     || b.getType().toString().contains("PLATE")
                                     || b.getType().toString().contains("LEVER")));
                         case 3:
-                            return (cp.isTrusted())
+                            return (meu.isTrusted())
 
                                     || (b.getType().toString().contains("DOOR")
                                     || b.getType().toString().contains("BUTTON")
@@ -321,48 +365,10 @@ public class SimpleClanKom {
     }
 
     public static boolean canBuild(Player p, Location l, Block b, boolean placing) {
-        if (l.getWorld().getEnvironment() == Environment.THE_END) {
-            return true;
-        }
-        if (p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
-            if (placing && b.getType() == Material.TORCH && l.getBlock().getType() != Material.STATIONARY_WATER) {
-                return true;
-            }
-            ApplicableRegionSet set = KoM.worldGuard.getRegionManager(Bukkit.getWorld("NewDungeon")).getApplicableRegions(b.getLocation());
-            if (set.size() >= 1) {
-                Iterator<ProtectedRegion> i = set.iterator();
-                while (i.hasNext()) {
-                    ProtectedRegion regiao = i.next();
-                    //if (regiao.getId().contains("tutorial")) {
-                    // return true;
-                    if (!p.isOp() && !ClanLand.permission.has(p, "kom.build")) {
-                        p.damage(5D);
-                        p.sendMessage(ChatColor.RED + L.m("Voce apenas pode mecher em dungeons em locais específicos !!"));
-                        return false;
-                    }
-                }
-            }
-            if ((!p.isOp() && !ClanLand.permission.has(p, "kom.build")) && b.getType() != Material.TORCH) {
-                p.damage(5D);
-                p.sendMessage(ChatColor.RED + L.m("Voce apenas pode mecher em dungeons em locais específicos !!"));
-                return false;
-            }
-            return p.isOp() || ClanLand.permission.has(p, "kom.build");
-        } else if (p.getWorld().getName().equalsIgnoreCase("woe")) {
-            ApplicableRegionSet set = KoM.worldGuard.getRegionManager(l.getWorld()).getApplicableRegions(l);
-            if (set.size() > 0) {
-                return true;
-            }
-            if (p.isOp() && ClanLand.permission.has(p, "kom.build")) {
-                return true;
-            }
-            p.sendMessage(ChatColor.RED + L.m("Voce apenas pode construir/destruir as areas marcadas !"));
-            return false;
-        }
         String type = ClanLand.getTypeAt(l);
-        if (KoM.debugMode) {
-            KoM.log.info("tentando construir em " + type);
-        }
+
+        KoM.debug("tentando construir em " + type);
+
         // building in wilderness
         if (type.equalsIgnoreCase("WILD")) {
 
@@ -379,8 +385,10 @@ public class SimpleClanKom {
 
             if (l.getBlockY() >= 50) {
                 if (b.getType().equals(Material.SAPLING) || !placing && liberados.contains(b.getType())) return true;
-                else
+                else {
                     p.sendMessage("§cEm terras sem dono você só pode plantar mudas de árvores e quebrar arvores e recursos naturais");
+                    return false;
+                }
             } else {
                 return true;
             }
@@ -398,48 +406,19 @@ public class SimpleClanKom {
 //                }
 //            }
 
-            /*
-             if (l.getBlockY() > 50) {
-             if (b != null && !placing && liberados.contains(b.getType()) || b.getType() == Material.SAPLING) {
-             if (placing && b != null && b.getType() == Material.SAPLING) {
-             if (p.hasPotionEffect(PotionEffectType.WATER_BREATHING)) {
-             return false;
-             }
-             p.addPotionEffect(new PotionEffect(PotionEffectType.WATER_BREATHING, 20 * 10, 0));
-             ClanPlayer cp = ClanLand.manager.getClanPlayer(p);
-             if (cp == null) {
-             p.sendMessage(ChatColor.RED + L.m("Voce precisa de uma guilda para poder colocar arvores !"));
-             return false;
-             } else {
-             if (Terreno.temGuildaPerto(p, cp, b.getLocation())) {
-             p.sendMessage(L.m("Voce nao pode plantar arvores colada em outras guildas que nao sejam a sua !"));
-             return false;
-             }
-             }
-             }
-             return true;
-             }
-             if (!p.isOp() && !ClanLand.permission.has(p, "kom.build")) {
-             p.sendMessage(ChatColor.RED + L.m("Voce nao sabe mecher em terras sem dono !"));
-             return false;
-             }
-             }
-             if (b.getType() == Material.LONG_GRASS && Jobs.rnd.nextInt(2000) == 1) {
-             b.getWorld().dropItemNaturally(l, new ItemStack(Material.EMERALD, 1));
-             p.playSound(l, Sound.ITEM_PICKUP, 10, 10);
-             }
-             */
         } else if (!p.isOp() && !ClanLand.permission.has(p, "kom.build") && type.equalsIgnoreCase("SAFE")) {
             // regions have privileges!!!
             ApplicableRegionSet set = KoM.worldGuard.getRegionManager(l.getWorld()).getApplicableRegions(l);
-            if (set.size() > 0 && set.canBuild(KoM.worldGuard.wrapPlayer(p))) {
-                return true;
-            }
+            if (set.size() > 0 && set.canBuild(KoM.worldGuard.wrapPlayer(p))) return true;
+
             p.sendMessage(ChatColor.RED + L.m("Voce nao pode fazer isto em vilas !"));
             return false;
         } else if (type.equalsIgnoreCase("WARZ")) {
             p.sendMessage(ChatColor.RED + L.m("Voce nao pode mecher em uma zona de guerra !"));
             return p.isOp() || ClanLand.permission.has(p, "kom.build");
+        } else if (type.equalsIgnoreCase("RUIN")) {
+            if (placing) p.sendMessage("Você só pode quebrar blocos em terrenos em ruínas");
+            return p.hasPermission("kom.build") || !placing;
         } else if (type.equalsIgnoreCase("CLAN") && !p.isOp()) {
             Clan aqui = ClanLand.getClanAt(l);
 

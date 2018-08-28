@@ -116,7 +116,7 @@ public enum Particles {
      */
     SMOKE_NORMAL("smoke", 11, -1, ParticleProperty.DIRECTIONAL),
     /**
-     * A particle effect which is displayed by fire, minecarts with furnace and blazes:
+     * A particle effect which is displayed by fire, minecartsEntitys with furnace and blazes:
      * <ul>
      * <li>It looks like a large gray cloud
      * <li>The speed value influences the velocity at which the particle flies off

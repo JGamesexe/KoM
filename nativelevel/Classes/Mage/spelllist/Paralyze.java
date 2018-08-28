@@ -47,10 +47,12 @@ public class Paralyze extends MageSpell {
     }
 
     public static void removeParalize(LivingEntity e) {
-        KoM.debug("Removendo para");
-        paralizados.remove(e.getUniqueId());
-        SpellParticleEffects.ativos.remove(e);
-        KoM.efeitoBlocos(e, Material.WEB);
+        if (isParalizado(e)) {
+            KoM.debug("Removendo para");
+            paralizados.remove(e.getUniqueId());
+            SpellParticleEffects.ativos.remove(e);
+            KoM.efeitoBlocos(e, Material.WEB);
+        }
     }
 
     @Override

@@ -58,16 +58,7 @@ public class AlchemyCauldron extends KomSystem {
     public static HashSet<Item> flutuando = new HashSet<Item>();
     public static HashMap<String, List<Item>> quemFlutua = new HashMap<String, List<Item>>();
 
-    public HashSet<Material> reagentes = new HashSet<Material>();
-
-    @Override
-    public void onEnable() {
-        for (CustomPotion pot : PotionLoader.customItems.values()) {
-            for (ItemStack ss : pot.getRecipe()) {
-                reagentes.add(ss.getType());
-            }
-        }
-    }
+    public static HashSet<Material> reagentes = new HashSet<Material>();
 
     @EventHandler
     public void itemSome(ItemDespawnEvent ev) {
@@ -381,7 +372,7 @@ public class AlchemyCauldron extends KomSystem {
                             int xp = XP.getExpPorAcao(minSkill) * 3;
                             xp *= expRatio;
 
-                            if (tipoClasse == TipoClasse.SEGUNDARIA)
+                            if (tipoClasse == TipoClasse.SECUNDARIA)
                                 xp = xp / 3;
 
                             XP.changeExp(ev.getPlayer(), xp, 1);

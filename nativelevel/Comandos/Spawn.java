@@ -14,13 +14,14 @@
  */
 package nativelevel.Comandos;
 
-import me.fromgate.playeffect.PlayEffect;
-import me.fromgate.playeffect.VisualEffect;
+import nativelevel.CFG;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
+import nativelevel.Listeners.DeathEvents;
 import nativelevel.sisteminhas.ClanLand;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -40,18 +41,20 @@ public class Spawn implements CommandExecutor {
                 Location l = p.getLocation();
                 p.getWorld().setSpawnLocation(l.getBlockX(), l.getBlockY(), l.getBlockZ());
             } else {
-                if (p.getWorld().getName().equalsIgnoreCase("arena") || p.getWorld().getName().equalsIgnoreCase("vila") || p.getWorld().getName().equalsIgnoreCase("NewDungeon") || p.isOp() || p.getWorld().getName().equalsIgnoreCase("eventos")) {
-                    p.teleport(p.getWorld().getSpawnLocation());
-                    PlayEffect.play(VisualEffect.FIREWORKS_SPARK, p.getLocation(), "color:purple type:burst");
-                } else {
-                    String type = ClanLand.getTypeAt(p.getLocation());
-                    if (!type.equalsIgnoreCase("safe"))
-                        p.sendMessage(ChatColor.RED + L.m("Voce pode apenas fazer isto em aventuras !"));
-                    else
-                        p.teleport(p.getWorld().getSpawnLocation());
+                if (p.isOp()) p.teleport(DeathEvents.nearbyVila(p));
+                if (p.isOp()) return true;
+                if (p.getWorld().getName().equalsIgnoreCase(CFG.mundoGuilda)) {
+                    if (ClanLand.isSafeZone(p.getLocation())) {
+                        p.teleport(DeathEvents.nearbyVila(p));
+                        p.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, p.getLocation().add(0, 1.7, 0), 3);
+                    } else {
+                        p.sendMessage("§cVocê só pode fazer isso em cidades, se ficou preso o unico jeito de sair é morrendo, você pode utilizar §o/kom suicidio§c para morrer...");
+                    }
+                } else if (p.getWorld().getName().equalsIgnoreCase(CFG.mundoDungeon)) {
+                    p.sendMessage("§cO único modo de você sair de uma dungeon é encontrando o final ou voltando para o inicio...");
+                    p.sendMessage("§cAo morrer em uma dungeon você volta para o inicio dela, você pode utilizar §o/kom suicidio§c para morrer...");
                 }
             }
-
         }
         return false;
     }

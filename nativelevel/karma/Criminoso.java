@@ -46,21 +46,16 @@ public class Criminoso {
         final UUID u = p.getUniqueId();
         criminosos.add(p.getUniqueId());
 
-        SBCoreListener.AdicionarMudancaMeuScore(p);
-        SBCore.AtualizaObjetivos(p);
+        KoM.sb.updatePlayer(p);
 
-        Runnable r = new Runnable() {
-            public void run() {
-                KoM.debug("Rodando task acabando criminal");
-                if (criminosos.contains(u)) {
-                    criminosos.remove(u);
-                }
-                Player p = Bukkit.getPlayer(u);
-                if (p != null) {
-                    SBCoreListener.AdicionarMudancaMeuScore(p);
-                    SBCore.AtualizaObjetivos(p);
-                    p.sendMessage("§2Voce não é mais um criminoso");
-                }
+        Runnable r = () -> {
+            KoM.debug("Rodando task acabando criminal");
+            if (criminosos.contains(u)) criminosos.remove(u);
+
+            Player p1 = Bukkit.getPlayer(u);
+            if (p1 != null) {
+                KoM.sb.updatePlayer(p1);
+                p1.sendMessage("§2Voce não é mais um criminoso");
             }
         };
         int idTask = Bukkit.getScheduler().scheduleSyncDelayedTask(KoM._instance, r, 20 * 60 * 3);

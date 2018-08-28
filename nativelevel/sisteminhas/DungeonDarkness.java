@@ -22,7 +22,7 @@ public class DungeonDarkness extends KomSystem {
     Runnable verEscuro = new Runnable() {
         public void run() {
             for (Player p : Bukkit.getOnlinePlayers()) {
-                if (p.getGameMode() == GameMode.CREATIVE)
+                if (p.getGameMode() == GameMode.CREATIVE || p.getGameMode() == GameMode.SPECTATOR)
                     continue;
                 if (p.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
                     if (p.hasPotionEffect(PotionEffectType.NIGHT_VISION)) {

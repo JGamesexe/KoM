@@ -12,17 +12,22 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class GUIsHelp {
 
-    public static void clickNoInv(InventoryClickEvent event) {
+    private static final PotionEffect slowClick = new PotionEffect(PotionEffectType.SLOW_DIGGING, 8, 2, false, false);
 
+    public static void clickNoInv(InventoryClickEvent event) {
         Player p = (Player) event.getWhoClicked();
 
         if (event.getClickedInventory() != null) {
             if (MetaShit.getMetaObject("guiAberta", p) != null) {
                 if (event.getClickedInventory().getName().equals(((GUI) (MetaShit.getMetaObject("guiAberta", p))).inventory.getName())) {
                     event.setCancelled(true);
+                    if (p.hasPotionEffect(PotionEffectType.SLOW_DIGGING) && !p.isOp()) return;
+                    p.addPotionEffect(slowClick);
                     GUI gui = (GUI) MetaShit.getMetaObject("guiAberta", p);
                     gui.interage(event);
                     event.setCancelled(gui.cancelaInteract);

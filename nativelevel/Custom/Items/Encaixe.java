@@ -35,44 +35,38 @@ public class Encaixe extends CustomItem {
     }
 
     public static void encaixa(InventoryClickEvent ev) {
-        if (ev.isCancelled()) {
-            return;
-        }
-        if (ev.getCursor() == null) {
-            return;
-        }
+        if (ev.isCancelled()) return;
+
+        if (ev.getCursor() == null) return;
+
         String ci = CustomItem.getCustomItem(ev.getCursor());
-        if (ci == null) {
-            return;
-        }
-        if (ev.getCurrentItem() == null) {
-            return;
-        }
+
+        if (ci == null) return;
+
+        if (ev.getCurrentItem() == null) return;
+
         if (ci.equalsIgnoreCase("Encaixe")) {
-            if (ev.getCurrentItem() == null || ev.getCurrentItem().getType() == Material.AIR)
-                return;
+            if (ev.getCurrentItem() == null || ev.getCurrentItem().getType() == Material.AIR) return;
+
             if (!podeTerEncaixe(ev.getCurrentItem())) {
-                ((Player) ev.getWhoClicked()).sendMessage(ChatColor.RED + "Apenas equipamentos podem ter encaixes.");
-                return;
-            }
-            if (Gema.temSockets(ev.getCurrentItem())) {
-                ((Player) ev.getWhoClicked()).sendMessage(ChatColor.RED + "Item item ja tem um encaixe.");
+                ev.getWhoClicked().sendMessage(ChatColor.RED + "Apenas equipamentos podem ter encaixes.");
                 return;
             }
             int jobLevel = Jobs.getJobLevel("Ferreiro", ((Player) ev.getWhoClicked()));
             if (jobLevel != 1) {
-                ((Player) ev.getWhoClicked()).sendMessage(ChatColor.RED + "Apenas bons ferreiros sabem fazer isto.");
+                ev.getWhoClicked().sendMessage(ChatColor.RED + "Apenas bons ferreiros sabem fazer isto.");
                 return;
             }
             ev.setCancelled(true);
-            if (Jobs.hasSuccess(50, "Ferreiro", ((Player) ev.getWhoClicked()))) {
+            int diff = (60 + (10 * Gema.quantosSockets(ev.getCurrentItem())));
+            if (Jobs.hasSuccess(diff, "Ferreiro", ((Player) ev.getWhoClicked()))) {
                 Gema.addSocket(ev.getCurrentItem(), Gema.values()[Jobs.rnd.nextInt(Gema.values().length)]);
-                ev.setCursor(new ItemStack(Material.COAL));
-                ((Player) ev.getWhoClicked()).sendMessage(ChatColor.RED + "Voce adicionou um encaixe ao item.");
+                ev.getWhoClicked().setItemOnCursor(new ItemStack(Material.COAL));
+                ev.getWhoClicked().sendMessage(ChatColor.RED + "Voce adicionou um encaixe ao item.");
             } else {
-                ev.setCursor(null);
+                ev.getWhoClicked().setItemOnCursor(null);
                 ev.setCurrentItem(new ItemStack(Material.COAL));
-                ((Player) ev.getWhoClicked()).sendMessage(ChatColor.RED + "Voce falhou em adicionar um encaixe ao item e o quebrou.");
+                ev.getWhoClicked().sendMessage(ChatColor.RED + "Voce falhou em adicionar um encaixe ao item e o quebrou.");
             }
         }
     }

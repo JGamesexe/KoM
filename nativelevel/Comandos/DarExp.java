@@ -44,9 +44,8 @@ public class DarExp implements CommandExecutor {
 
             } else {
 
-                level = Integer.valueOf(args[1]);
-                exp = (XP.getExpPorAcao(level) * QuestsIntegracao.XP_MOD);
-                KoM.debug("Tentando dar XP de ação do " + level + " pro " + player);
+                exp = Integer.valueOf(args[1]);
+                KoM.debug("Tentando dar " + exp + "XP pro " + player);
 
             }
 
@@ -54,8 +53,8 @@ public class DarExp implements CommandExecutor {
 
             if (p != null) {
 
-                p.sendMessage(ChatColor.GREEN + "Voce ganhou " + exp + " EXP por fazer a quest");
-                GeneralListener.givePlayerExperience(exp, p);
+                p.sendMessage(ChatColor.GREEN + "§f- §b" + exp + " EXP");
+                XP.bruteChangeExp(p, exp);
                 KoM.debug("Dei XP pro " + player);
 
             }

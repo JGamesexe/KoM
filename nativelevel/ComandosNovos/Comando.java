@@ -60,7 +60,7 @@ public abstract class Comando extends Command {
 
     private CommandExecutor exe = null;
 
-    protected Comando(String name, ExecutorType c) {
+    public Comando(String name, ExecutorType c) {
         super(name);
         this.cmd = name;
         tipo = c;

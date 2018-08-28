@@ -25,8 +25,8 @@ import java.util.TreeMap;
  */
 @SerializableAs("Experience")
 public class Experience extends Loot {
-    private int lowerAmount;
-    private int upperAmount;
+    public int lowerAmount;
+    public int upperAmount;
 
     /**
      * Adds Experience as Loot

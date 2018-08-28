@@ -41,17 +41,23 @@ import java.util.logging.Logger;
 
 public class SQL {
 
+    private String dbName = "kom";
+    private static String connStr = "jdbc:mysql://localhost:3306/kom?autoReconnect=true";
+
     private Connection connection;
 
-    public static WeakHashMap<String, int[]> bufferDeNiveis = new WeakHashMap<String, int[]>();
+    public static WeakHashMap<String, int[]> bufferDeNiveis = new WeakHashMap<>();
 
-    public static WeakHashMap<String, int[]> bufferSpecs = new WeakHashMap<String, int[]>();
+    public static WeakHashMap<String, int[]> bufferSpecs = new WeakHashMap<>();
+
+    public static WeakHashMap<UUID, Integer> bufferDisposicao = new WeakHashMap<>();
 
     public static WeakHashMap<UUID, HashSet<Aura>> auras = new WeakHashMap<UUID, HashSet<Aura>>();
 
     private Statement est;
 
     public KoM plug;
+
 
     public SQL(KoM plug) {
         this.plug = plug;
@@ -78,9 +84,6 @@ public class SQL {
             KoM.log.log(Level.SEVERE, "[KoMLevel]", e);
         }
     }
-
-    public String dbName = "kom";
-    public static String connStr = "jdbc:mysql://localhost:3306/kom?autoReconnect=true";
 
     private Connection createConnection() {
         try {
@@ -140,6 +143,10 @@ public class SQL {
             st.close();
 
             st = conn.createStatement();
+            st.executeUpdate("CREATE TABLE IF NOT EXISTS Disposicao (jogador VARCHAR(36) PRIMARY KEY, quanto INT)");
+            st.close();
+
+            st = conn.createStatement();
             st.executeUpdate("CREATE TABLE IF NOT EXISTS Atributo (jogador VARCHAR(200) PRIMARY KEY, pontos INT, nivelMax int, str INT, dex INT, inte INT, cons INT, vit INT,agi INT, luck INT,wis INT, pres INT);");
             st.close();
 
@@ -169,14 +176,6 @@ public class SQL {
                     + "nick varchar(100), "
                     + "balance int, "
                     + "lastLogin bigint)");
-            st.close();
-
-            st = conn.createStatement();
-            st.executeUpdate("CREATE TABLE IF NOT EXISTS Jogador (uuid VARCHAR(36) PRIMARY KEY, nick VARCHAR(20), nicksOlds TEXT(2200), tempoOnline BIGINT(20), ultimaVezVisto BIGINT(20))");
-            st.close();
-
-            st = conn.createStatement();
-            st.executeUpdate("CREATE TABLE IF NOT EXISTS IPlog (id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, uuid VARCHAR(36), ip VARCHAR(45), quando BIGINT(20), CONSTRAINT uq UNIQUE(uuid, ip))");
             st.close();
 
             conn.commit();
@@ -326,7 +325,7 @@ public class SQL {
     }
 
     public ItemStack[] getBanco(UUID u) {
-        ResultSet rs = null;
+        ResultSet rs;
         try {
             est = connection.createStatement();
             rs = est.executeQuery("select items from banco where uuid = '" + u.toString() + "'");
@@ -353,6 +352,20 @@ public class SQL {
         return null;
     }
 
+    public void setBanco(UUID u, ItemStack[] items) {
+        try {
+            PreparedStatement pst = connection.prepareStatement("update banco set items = ? where uuid = '" + u.toString() + "'");
+            pst.setBlob(1, new SerialBlob(InventarioSerial.serializeItemStacks(items)));
+            pst.execute();
+            pst.close();
+            connection.commit();
+        } catch (SQLException ex) {
+            KoM.log.info("ZUOU BANCO:" + ex.getMessage());
+            ex.printStackTrace();
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "stop Reiniciando rapidamente !");
+        }
+    }
+
     public void loadLOOTS() {
 
         ResultSet rs = null;
@@ -377,35 +390,6 @@ public class SQL {
         } catch (SQLException ex) {
             KoM.log.info("ZUOU BANCO:" + ex.getMessage());
             ex.printStackTrace();
-        }
-    }
-
-    public void setBanco(UUID u, ItemStack[] items) {
-        try {
-            Player pl = Bukkit.getPlayer(u);
-            if (pl != null) {
-                for (ItemStack ss : items) {
-                    if (ss == null) {
-                        continue;
-                    }
-                    if (ss.getType() == Material.BONE) {
-                        ItemMeta meta = ss.getItemMeta();
-                        if (meta.getDisplayName() != null && meta.getDisplayName().equalsIgnoreCase(ChatColor.GOLD + "Osso de Lobo")) {
-                            pl.getEnderChest().setItem(0, ss);
-                        }
-                    }
-                }
-            }
-
-            PreparedStatement pst = connection.prepareStatement("update banco set items = ? where uuid = '" + u.toString() + "'");
-            pst.setBlob(1, new SerialBlob(InventarioSerial.serializeItemStacks(items)));
-            pst.execute();
-            pst.close();
-            connection.commit();
-        } catch (SQLException ex) {
-            KoM.log.info("ZUOU BANCO:" + ex.getMessage());
-            ex.printStackTrace();
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "stop Reiniciando rapidamente !");
         }
     }
 
@@ -746,6 +730,10 @@ public class SQL {
         ResultSet rs = null;
         UUID uuid = null;
 
+        Player player = Bukkit.getPlayer(nome);
+
+        if (player != null) return player.getUniqueId();
+
         try {
             Connection conn;
             conn = pegaConexao();
@@ -772,6 +760,23 @@ public class SQL {
         }
 
         return uuid;
+    }
+
+    public String pegaNick(UUID uuid) {
+        String nick = "";
+        try (PreparedStatement ps = pegaConexao().prepareStatement("SELECT nome FROM CLASSES WHERE jogador=?")) {
+
+            ps.setString(1, uuid.toString());
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) nick = rs.getString("nome");
+
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return nick;
     }
 
     public void changeMaxLevel(Player p, int qto) {
@@ -922,16 +927,16 @@ public class SQL {
         }
     }
 
-    public int getAlmas(String jogador) {
+    public int getAlmas(UUID uuid) {
         int ptos = 0;
         try {
             est = connection.createStatement();
-            ResultSet rs = est.executeQuery("select tem from Almas where jogador='" + jogador + "'");
+            ResultSet rs = est.executeQuery("select tem from Almas where jogador='" + uuid + "'");
             if (rs.next()) {
                 return rs.getInt("tem");
             } else {
                 est = connection.createStatement();
-                est.executeUpdate("insert into Almas (jogador, max, tem) values('" + jogador + "', 5, 5);");
+                est.executeUpdate("insert into Almas (jogador, max, tem) values('" + uuid + "', 5, 5);");
                 connection.commit();
                 return 5;
             }
@@ -1003,30 +1008,21 @@ public class SQL {
         }
     }
 
-    public int getSlotsBanco(String jogador) {
-        int ptos = 0;
-        ResultSet rs = null;
-        try {
-            est = connection.createStatement();
-            rs = est.executeQuery("select slotsbanco from CLASSES where jogador='" + jogador + "'");
+    public int getSlotsBanco(UUID jogador) {
+        int slots = 0;
+        try (PreparedStatement ps = connection.prepareStatement("SELECT slotsbanco FROM CLASSES where jogador=?")) {
+            ps.setString(1, jogador.toString());
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return rs.getInt("slotsbanco");
+                slots = rs.getInt("slotsbanco");
             }
+            rs.close();
         } catch (SQLException ex) {
             KoM.log.info("ZUOU BANCO:" + ex.getMessage());
             ex.printStackTrace();
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "stop Reiniciando rapidamente !");
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                est.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
-        return ptos;
+        return slots;
     }
 
     public int[] getSkills(String name) {
@@ -1272,4 +1268,98 @@ public class SQL {
             }
         }
     }
+
+    public void setDisposicao(UUID uuid, int quanto, boolean forceBanco) {
+
+        KoM.debug("Colocando " + quanto + " disposição em " + uuid);
+
+        if (!forceBanco) bufferDisposicao.put(uuid, quanto);
+        if (!forceBanco) return;
+
+        try (PreparedStatement ps = pegaConexao().prepareStatement("INSERT INTO Disposicao(jogador, quanto) VALUES(?, ?) ON DUPLICATE KEY UPDATE quanto=?")) {
+
+            ps.setString(1, uuid.toString());
+            ps.setInt(2, quanto);
+            ps.setInt(3, quanto);
+
+            ps.executeUpdate();
+            KoM.debug("Colocando " + uuid + " com " + quanto + " no banco de Disposição");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void addDisposicao(UUID uuid, int quanto, boolean forceBanco) {
+        quanto = (getDisposicao(uuid) + quanto);
+        setDisposicao(uuid, quanto, forceBanco);
+    }
+
+    public int getDisposicao(UUID uuid) {
+
+        if (bufferDisposicao.containsKey(uuid)) return bufferDisposicao.get(uuid);
+
+        try (PreparedStatement ps = pegaConexao().prepareStatement("SELECT quanto FROM Disposicao WHERE jogador=?")) {
+
+            ps.setString(1, uuid.toString());
+
+            ResultSet rs = ps.executeQuery();
+
+            int quanto = 100;
+
+            if (rs.next()) quanto = rs.getInt("quanto");
+
+            rs.close();
+            bufferDisposicao.put(uuid, quanto);
+            return quanto;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    //TODO RESETAR TODO DOMINGO? PRA ALIVAR O BANCO VAI ACABAR UM DIA TENDO 5000 MIL DISPOSIÇÃO...
+    public void disposicaoToBanco() {
+
+        for (Map.Entry<UUID, Integer> entry : bufferDisposicao.entrySet()) {
+            addDisposicao(entry.getKey(), 0, true);
+        }
+
+        try {
+            pegaConexao().commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        HashMap<UUID, Integer> newDisposicao = new HashMap<>();
+
+        try (PreparedStatement ps = KoM.database.pegaConexao().prepareStatement("SELECT * FROM Disposicao")) {
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) newDisposicao.put(UUID.fromString(rs.getString("jogador")), rs.getInt("quanto"));
+
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        for (Map.Entry<UUID, Integer> disposicao : newDisposicao.entrySet()) {
+            int quanto = disposicao.getValue();
+            if (quanto < 100) {
+                quanto += 20;
+                if (quanto > 100) quanto = 100;
+                setDisposicao(disposicao.getKey(), quanto, true);
+            }
+        }
+
+        try {
+            pegaConexao().commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

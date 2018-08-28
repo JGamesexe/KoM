@@ -17,10 +17,10 @@ package nativelevel.Classes;
 import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
 import nativelevel.Attributes.Mana;
-import nativelevel.Attributes.Stamina;
 import nativelevel.Classes.Blacksmithy.Blacksmith;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.FolhaDeMana;
+import nativelevel.Custom.Items.PedraDoPoder;
 import nativelevel.CustomEvents.BlockHarvestEvent;
 import nativelevel.CustomEvents.FinishCraftEvent;
 import nativelevel.Equipment.Generator.EquipGenerator;
@@ -30,23 +30,25 @@ import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.Lang.LangMinecraft;
 import nativelevel.Lang.PT;
+import nativelevel.Listeners.DamageListener;
 import nativelevel.Listeners.GeneralListener;
+import nativelevel.Listeners.InteractEvents;
 import nativelevel.Menu.Menu;
 import nativelevel.MetaShit;
 import nativelevel.gemas.Raridade;
-import nativelevel.integration.WorldGuardKom;
 import nativelevel.sisteminhas.*;
-import nativelevel.spec.PlayerSpec;
+import nativelevel.skills.Skill;
+import nativelevel.skills.SkillMaster;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityBreedEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTameEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -62,10 +64,10 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class Farmer extends KomSystem {
 
+    public static final Jobs.Classe classe = Jobs.Classe.Fazendeiro;
     public static final String name = "Fazendeiro";
 
     public static void onHit(EntityDamageByEntityEvent ev) {
@@ -73,7 +75,9 @@ public class Farmer extends KomSystem {
         Player attacker = (Player) ev.getDamager();
         ItemStack weapon = attacker.getInventory().getItemInMainHand();
 
-        if (weapon.getType().toString().contains("HOE")) {
+        if (weapon.getType().equals(Material.SHEARS) && ev.getEntity() instanceof Animals) {
+            hitAnimal(ev, (Animals) ev.getEntity(), TipoClasse.PRIMARIA);
+        } else if (weapon.getType().toString().contains("HOE")) {
 
             if (weapon.getType().name().contains("GOLD")) ev.setDamage(ev.getDamage() + 0.5);
 
@@ -89,6 +93,17 @@ public class Farmer extends KomSystem {
 
         if (ev.getCause().equals(EntityDamageEvent.DamageCause.FIRE) || ev.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK)) {
             if (!((ev.getDamage() * 1.5) >= damaged.getHealth())) ev.setDamage(ev.getDamage() * 1.5);
+        }
+
+    }
+
+    private static void hitAnimal(EntityDamageByEntityEvent ev, Animals animal, TipoClasse tipoClasse) {
+        if (!animal.isAdult()) {
+            DamageListener.darDano(null, (double) 7, (Player) ev.getDamager(), EntityDamageEvent.DamageCause.CUSTOM);
+            ((Player) ev.getDamager()).playSound(ev.getDamager().getLocation(), Sound.ENTITY_ENDERDRAGON_GROWL, 0.1f, 1.5f);
+        } else if (SkillMaster.temSkill((Player) ev.getDamager(), Skills.Recursos_Extras_de_Animais.skill)) {
+            ev.setDamage(4);
+            recursosExtras(tipoClasse, (Player) ev.getDamager(), animal);
         }
 
     }
@@ -177,11 +192,7 @@ public class Farmer extends KomSystem {
         }
     }
 
-    /*
-    
-     FAZER COLHEITA
-     
-     */
+    //  FAZER COLHEIT
     public static void depoisCraft(FinishCraftEvent ev) {
         Player p = ev.getPlayer();
         Material feitoDe = Blacksmith.getToolLevel(ev.getResult().getType());
@@ -317,133 +328,92 @@ public class Farmer extends KomSystem {
 
     }
 
+    private static final PotionEffect slow = new PotionEffect(PotionEffectType.SLOW, 175, 2);
+
+    @EventHandler
     public static void pesca(PlayerFishEvent ev) {
-        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
-            return;
-        }
 
-        if (Jobs.getJobLevel("Fazendeiro", ev.getPlayer()) != 1) {
-            return;
-        }
+        if (ev.getState().equals(PlayerFishEvent.State.FISHING) || ev.getState().equals(PlayerFishEvent.State.BITE) || ev.getState().equals(PlayerFishEvent.State.FAILED_ATTEMPT)) {
 
-        if (ev.getCaught() != null) {
-            if (!ev.getCaught().getWorld().getName().equalsIgnoreCase(ev.getPlayer().getWorld().getName())) {
+            ItemStack hand = ev.getPlayer().getInventory().getItemInMainHand();
+            short durability = hand.getDurability();
+
+            if (durability >= hand.getType().getMaxDurability()) ev.getPlayer().getInventory().setItemInMainHand(null);
+            else ev.getPlayer().getInventory().getItemInMainHand().setDurability(++durability);
+
+        } else if (ev.getState().equals(PlayerFishEvent.State.CAUGHT_FISH)) {
+
+            if (ev.getCaught() == null || !(ev.getCaught() instanceof Item)) return;
+
+            XP.changeExp(ev.getPlayer(), XP.getExpPorAcao(ev.getPlayer().getLevel()), 3, true);
+
+            Item item = (Item) ev.getCaught();
+
+            KoM.announce("called");
+            if (Jobs.dado(2) == 1) {
+                item.setItemStack(Tesouros.geraTesouro());
                 return;
             }
 
-            if (ev.getCaught().getLocation().distance(ev.getPlayer().getLocation()) > 20) {
+            if (Jobs.dado(2) == 1) {
+                item.setItemStack(CustomItem.getItem(PedraDoPoder.class).generateItem());
                 return;
             }
-            if (Stamina.spendStamina(ev.getPlayer(), 50)) {
-                if (ev.getCaught() instanceof Player) {
-                    ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Voce puxou a linha da vara"));
-                }
-                ev.getCaught().teleport(ev.getPlayer());
-            }
+
+            ItemStack itemStack = item.getItemStack();
+
+            if (!itemStack.getType().equals(Material.RAW_FISH)) item.setItemStack(new ItemStack(Material.RAW_FISH, 1, (short) (Jobs.dado(4) - 1)));
+
         } else {
 
-            if (ev.getPlayer().hasMetadata("hook")) {
-
-                KoM.log.info("HOOK");
-
-                UUID hookado = (UUID) MetaShit.getMetaObject("hook", ev.getPlayer());
-                ev.getPlayer().removeMetadata("hook", KoM._instance);
-
-                ev.getPlayer().sendMessage(ChatColor.RED + L.m("Voce puxou a linha da vara"));
-
+            if (!SkillMaster.temSkill(ev.getPlayer(), Skills.Vara_de_Pescar.skill) || ClanLand.isSafeZone(ev.getHook().getLocation())) {
+                ev.getHook().remove();
                 ev.setCancelled(true);
+                return;
+            }
 
-                Player hooked = Bukkit.getPlayer(hookado);
-                if (hooked == null) {
-                    ev.getPlayer().sendMessage(ChatColor.RED + L.m("Nada havia no gancho"));
-                    return;
-                }
+            if (ev.getState().equals(PlayerFishEvent.State.CAUGHT_ENTITY)) {
 
-                if (!Stamina.spendStamina(ev.getPlayer(), 50)) {
-                    return;
-                }
+                Entity hooked = ev.getHook();
 
-                if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon") || WorldGuardKom.ehSafeZone(hooked.getLocation())) {
-                    ev.getPlayer().removeMetadata("hook", KoM._instance);
-                    return;
-                }
+                if (hooked == null || hooked.isDead()) return;
 
-                if (!hooked.getWorld().getName().equalsIgnoreCase(ev.getPlayer().getWorld().getName())) {
-                    ev.getPlayer().sendMessage(ChatColor.RED + L.m("O que voce tinha pego esta muito longe"));
-                    return;
-                }
-
-                if (hooked.getLocation().distance(ev.getPlayer().getLocation()) > 20) {
-                    ev.getPlayer().sendMessage(ChatColor.RED + L.m("O que voce tinha pego esta muito longe"));
-                    return;
-                }
+                if ((hooked instanceof ArmorStand || hooked instanceof ItemFrame || hooked instanceof Painting) && InteractEvents.touchIn(ev.getPlayer(), ev.getHook().getLocation()))
+                    if (InteractEvents.touchIn(ev.getPlayer(), ev.getHook().getLocation())) {
+                        ev.getHook().remove();
+                        ev.setCancelled(true);
+                        return;
+                    }
 
                 hooked.teleport(ev.getPlayer());
-                KoM.act(hooked, hooked.getName() + " foi pescado");
-                KoM.act(ev.getPlayer(), ev.getPlayer().getName() + " pescou um(a) " + hooked.getName());
-                return;
+
+//              Vector toDamager = ev.getPlayer().getLocation().toVector().subtract(hooked.getLocation().toVector());
+//              hooked.setVelocity(toDamager.normalize().multiply(1.5));
+
+            } else if (ev.getState().equals(PlayerFishEvent.State.IN_GROUND)) {
+
+                for (Entity nearby : ev.getHook().getNearbyEntities(2, 2, 2)) {
+                    if (!(nearby instanceof Player)) continue;
+                    if (Jobs.dado(3) != 3) continue;
+
+//                  Vector toDamager = ev.getPlayer().getLocation().toVector().subtract(nearby.getLocation().toVector());
+//                  nearby.setVelocity(toDamager.normalize().multiply(0.75));
+                    ((Player) nearby).addPotionEffect(slow, true);
+
+                    nearby.sendMessage("§cUm ganho puxa seu pé!");
+                    ev.getPlayer().sendMessage("§aVocê puxa pelo o alvo pelo pé!");
+                    break;
+                }
+
             }
 
-            if (ev.getPlayer().hasPotionEffect(PotionEffectType.SLOW)) {
-                ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Aguarde para fazer isto novamente"));
-                ev.setCancelled(true);
-                return;
-            }
-            ev.getPlayer().sendMessage(ChatColor.GREEN + L.m("Voce arremeca o gancho da vara de pescar"));
-            int cd = 120;
-            if (PlayerSpec.temSpec(ev.getPlayer(), PlayerSpec.Pescador)) {
-                cd = 20;
-            }
-            ev.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, cd, 1));
         }
+
     }
 
     @EventHandler
-    public void onRodLand(ProjectileHitEvent e) {
-        if (!(e.getEntityType() == EntityType.FISHING_HOOK)) {
-            return;
-        }
-        if (e.getEntity().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
-            return;
-        }
-
-
-        Player atirador = null;
-        if (e.getEntity().getShooter() instanceof Player) {
-            atirador = (Player) e.getEntity().getShooter();
-        }
-
-        if (atirador == null) {
-            return;
-        }
-
-        if (Thief.taInvisivel(atirador))
-            Thief.revela(atirador);
-
-        if (e.getHitBlock().getType().name().contains("DOOR"))
-            return;
-
-        for (Entity entity : Bukkit.getWorld(e.getEntity().getLocation().getWorld().getName()).getNearbyEntities(e.getEntity().getLocation(), 2, 2, 2)) {
-            if (!(entity instanceof Player)) {
-                continue;
-            }
-            FishHook hook = (FishHook) e.getEntity();
-            Player rodder = (Player) hook.getShooter();
-            Player player = (Player) entity;
-            if (player.getName().equalsIgnoreCase(rodder.getName())) {
-                continue;
-            }
-
-            MetaShit.setMetaObject("hook", atirador, player.getUniqueId());
-            atirador.sendMessage(ChatColor.GREEN + "Fiscou um " + player.getName() + " de agua doce.");
-            Location loc = player.getLocation().add(0, 0.5, 0);
-            player.teleport(loc);
-            player.setVelocity(rodder.getLocation().getDirection().multiply(+0.4));
-            hook.remove();
-            player.sendMessage(ChatColor.RED + "Voce sentiu um anzol grudando em vc");
-            rodder.updateInventory();
-            return;
-        }
+    public static void nasceFilhote(EntityBreedEvent ev) {
+        ev.setCancelled(true);
     }
 
     public static Horse.Color pegaCor(String s) {
@@ -509,50 +479,35 @@ public class Farmer extends KomSystem {
 
     }
 
-    public static boolean coletaDropExtraDeAnimal(Player p, Entity animal) {
+    private static void recursosExtras(TipoClasse classe, Player player, Animals animal) {
+        int manyDrop;
+        if (classe.equals(TipoClasse.PRIMARIA)) manyDrop = 3;
+        else if (classe.equals(TipoClasse.SECUNDARIA)) manyDrop = 1;
+        else return;
 
-        Material mat = null;
+        int diff = 20;
+        if (animal.hasMetadata("recursosExtras")) diff = 70;
+        if (!Jobs.hasSuccess(diff, name, player)) return;
 
-        if (animal instanceof Chicken) {
+        MetaShit.setMetaObject("recursosExtras", animal, true);
 
-            mat = Material.EGG;
-        } else if (animal instanceof Sheep) {
+        ItemStack[] dropsExtras;
+        if (animal instanceof Chicken) dropsExtras = new ItemStack[]{new ItemStack(Material.FEATHER, Jobs.dado(manyDrop + 2)), new ItemStack(Material.RAW_CHICKEN, Jobs.dado(manyDrop))};
+        else if (animal instanceof Cow) dropsExtras = new ItemStack[]{new ItemStack(Material.LEATHER, Jobs.dado(manyDrop + 2)), new ItemStack(Material.RAW_BEEF, Jobs.dado(manyDrop))};
+        else if (animal instanceof Pig) dropsExtras = new ItemStack[]{new ItemStack(Material.PORK, Jobs.dado(manyDrop + 1))};
+        else if (animal instanceof Sheep) dropsExtras = new ItemStack[]{new ItemStack(Material.MUTTON, Jobs.dado(manyDrop))};
+        else if (animal instanceof Rabbit) dropsExtras = new ItemStack[]{new ItemStack(Material.RABBIT_FOOT), new ItemStack(Material.RABBIT_HIDE, Jobs.dado(manyDrop)), new ItemStack(Material.RABBIT)};
+        else if (animal instanceof Parrot) dropsExtras = new ItemStack[]{new ItemStack(Material.FEATHER, Jobs.dado(manyDrop + 4))};
+        else if (animal instanceof PolarBear) dropsExtras = new ItemStack[]{new ItemStack(Material.RAW_FISH, Jobs.dado(manyDrop + 2)), new ItemStack(Material.SNOW_BALL, Jobs.dado(manyDrop + 5))};
+        else return;
 
-            mat = Material.WOOL;
-        } else if (animal instanceof Cow) {
+        animal.getWorld().playSound(animal.getLocation(), Sound.BLOCK_NOTE_BELL, 0.4f, 1f);
 
-            mat = Material.LEATHER;
+        for (ItemStack drop : dropsExtras) {
+            animal.getWorld().dropItemNaturally(animal.getLocation(), drop);
         }
 
-        if (mat == null) {
-            return false;
-        }
-
-        if (!animal.hasMetadata("recurso")) {
-            if (p.getInventory().getItemInMainHand().getType() != Material.SHEARS) {
-                KoM.msgUnica(p, ChatColor.GREEN + L.m("Bata no animal com uma tesoura para obter recursos extras !"));
-                return false;
-            }
-        }
-
-        if (animal.hasMetadata("recurso")) {
-            long recurso = Long.valueOf(MetaShit.getMetaString("recurso", animal));
-            long agora = System.currentTimeMillis() / 1000;
-            if (recurso + 60 * 20 > agora) {
-                return false;
-            }
-        }
-        int exp = XP.getExpPorAcao(p.getLevel());
-        int dificuldade = 35;
-        if (Jobs.hasSuccess(dificuldade, "Fazendeiro", p)) {
-            p.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Fazendeiro") + " " + ChatColor.GOLD + L.m("Voce extraiu recursos extras do animal !"));
-            MetaShit.setMetaString("recurso", animal, "" + System.currentTimeMillis() / 1000);
-            p.getWorld().dropItemNaturally(animal.getLocation(), new ItemStack(mat, 1));
-            GeneralListener.givePlayerExperience(5 + (p.getLevel() / 10), p);
-
-        }
-        ((LivingEntity) animal).damage(4D);
-        return true;
+        player.sendMessage("§aVocê coletou recursos extras do Animal");
 
     }
 
@@ -698,4 +653,41 @@ public class Farmer extends KomSystem {
         }
         return false;
     }
+
+// !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=!
+
+    public static final List<Skill> skillList = Arrays.asList(
+            new Skill(classe, "Plantador", 2, false, new String[]{"§9Aumenta chances de sucesso ao plantar e colher.", "§9Quanto maior seu nivel, maior a chance"}),
+            new Skill(classe, "Pescador", 5, false, new String[]{"§9Aumenta chances de sucesso ao pescar.", "§9Quanto maior seu nivel, maior a chance e mais raridades"}),
+            new Skill(classe, "Slimeball Envenenada", 9, true, new String[]{"§9Permite craftar e usar slimeballs envenenadas"}),
+            new Skill(classe, "Vara de Pescar", 10, true, new String[]{"§9Permite puxar inimigos com vara de pescar."}),
+            new Skill(classe, "Recursos Extras de Animais", 13, true, new String[]{"§9Permite coletar recursos extras de animais usando uma tesoura"}),
+            new Skill(classe, "Mestre das Enxadas", 15, true, new String[]{"§9Bonus ao bater com enxadas"}),
+            new Skill(classe, "Folhas de Mana", 16, true, new String[]{"§9Encontra folhas de mana pegando folhas normais"}),
+            new Skill(classe, "Domador de Lobos", 17, true, new String[]{"§9Pode ter um lobo usando um osso magico"}),
+            new Skill(classe, "Expert em Couro", 22, true, new String[]{"§9Permite criar armaduras de couro muito melhores"}, true),
+            new Skill(classe, "Pokeovos", 30, true, new String[]{"§9Permite guardar animais em ovos"})
+    );
+
+    public enum Skills {
+        Plantador(skillList.get(0)),
+        Pescador(skillList.get(1)),
+        Slimeball_Envenenada(skillList.get(2)),
+        Vara_de_Pescar(skillList.get(3)),
+        Recursos_Extras_de_Animais(skillList.get(4)),
+        Mestre_das_Enxadas(skillList.get(5)),
+        Folhas_de_Mana(skillList.get(6)),
+        Domador_de_Lobos(skillList.get(7)),
+        Expert_em_Couro(skillList.get(8)),
+        Pokeovos(skillList.get(9));
+
+        public Skill skill;
+
+        Skills(Skill skill) {
+            this.skill = skill;
+        }
+    }
+
+// !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=!
+
 }

@@ -117,7 +117,7 @@ public class Jobs {
         if (lvl == 1) {
             return TipoClasse.PRIMARIA;
         } else if (lvl == 2) {
-            return TipoClasse.SEGUNDARIA;
+            return TipoClasse.SECUNDARIA;
         } else {
             return TipoClasse.NADA;
         }
@@ -157,7 +157,7 @@ public class Jobs {
             System.out.println("RATIO " + ratio);
             chance += (SORTE_PRIMARIA * ratio);
 
-        } else if (jobLevel == TipoClasse.SEGUNDARIA) // skill secundaria
+        } else if (jobLevel == TipoClasse.SECUNDARIA) // skill secundaria
         {
             chance += SORTE_SECUNDARIA;
             KoM.debug("Chance secundaria: +" + SORTE_SECUNDARIA + "%");
@@ -207,7 +207,7 @@ public class Jobs {
         if (jobLevel == TipoClasse.PRIMARIA) { // skill primaria
             chance += (SORTE_PRIMARIA * (0.5 + (level / 200d)));
             KoM.debug("Chance primaria: +" + SORTE_PRIMARIA + "%");
-        } else if (jobLevel == TipoClasse.SEGUNDARIA) { // skill secundaria
+        } else if (jobLevel == TipoClasse.SECUNDARIA) { // skill secundaria
             chance += (SORTE_SECUNDARIA * ((100 - level) / 100d));
             KoM.debug("Chance secundaria: +" + SORTE_SECUNDARIA + "%");
         } else {
@@ -219,11 +219,11 @@ public class Jobs {
         if (dif == 1) {
             if (level < 25) {
                 if (jobLevel == TipoClasse.PRIMARIA) chance = 75;
-                else if (jobLevel == TipoClasse.SEGUNDARIA) chance = 40;
+                else if (jobLevel == TipoClasse.SECUNDARIA) chance = 40;
                 else chance = 30;
             } else {
                 if (jobLevel == TipoClasse.PRIMARIA) chance = 100;
-                else if (jobLevel == TipoClasse.SEGUNDARIA) chance = 75;
+                else if (jobLevel == TipoClasse.SECUNDARIA) chance = 75;
                 else chance = 30;
             }
         }
@@ -238,7 +238,7 @@ public class Jobs {
 
     public static enum TipoClasse {
 
-        PRIMARIA, SEGUNDARIA, NADA;
+        PRIMARIA, SECUNDARIA, NADA;
     }
 
     public static enum Classe {
@@ -299,6 +299,10 @@ public class Jobs {
 
         return sucesso.acertou;
 
+    }
+
+    public static int dado(int faces) {
+        return (rnd.nextInt(faces) + 1);
     }
 
 }

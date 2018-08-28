@@ -24,18 +24,18 @@ import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.Adaga;
 import nativelevel.Custom.Items.Lock;
 import nativelevel.Lang.L;
+import nativelevel.Listeners.DamageListener;
 import nativelevel.Listeners.GeneralListener;
 import nativelevel.Menu.Menu;
 import nativelevel.sisteminhas.ChaveCadiado;
 import nativelevel.sisteminhas.ClanLand;
 import nativelevel.sisteminhas.KomSystem;
 import nativelevel.sisteminhas.Tralhas;
+import nativelevel.skills.Skill;
 import nativelevel.skills.SkillMaster;
-import nativelevel.spec.PlayerSpec;
 import nativelevel.utils.MetaUtils;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import org.bukkit.*;
-import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.*;
@@ -57,6 +57,7 @@ import java.util.UUID;
 
 public class Thief extends KomSystem {
 
+    public static final Jobs.Classe classe = Jobs.Classe.Ladino;
     public static final String name = "Ladino";
 
     public static void onHit(EntityDamageByEntityEvent ev) {
@@ -66,15 +67,15 @@ public class Thief extends KomSystem {
 
         if (!Adaga.isAdaga(weapon)) return;
 
-        if (SkillMaster.temSkill(attacker, name, "Backstab")) {
+        if (SkillMaster.temSkill(attacker, Skills.Backstab.skill)) {
             if (taInvisivel(attacker) && Mana.spendMana(attacker, 35) && Tralhas.getAngle(ev.getEntity().getLocation().getDirection(), attacker.getLocation().getDirection()) <= 65) {
-                ev.setDamage(ev.getDamage() + 15);
+                ev.setDamage(ev.getDamage() + 5 + (attacker.getLevel() / 10));
                 attacker.getWorld().playSound(ev.getEntity().getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1, 0.9f);
                 ((LivingEntity) ev.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 30, 0), true);
                 ((LivingEntity) ev.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 25, 1), true);
             } else {
                 attacker.getWorld().playSound(ev.getEntity().getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.5f, 1.2f);
-                attacker.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 70, 2), true);
+                attacker.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 80, 2), true);
             }
         }
 
@@ -105,7 +106,7 @@ public class Thief extends KomSystem {
         }
 
         if (ev.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK) || ev.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)) {
-            if (SkillMaster.temSkill(damaged, Thief.name, "Esquiva Perfeita")) {
+            if (SkillMaster.temSkill(damaged, Skills.Esquiva_Perfeita.skill)) {
                 if (Jobs.rnd.nextInt(201 - damaged.getLevel()) == 1) ev.setCancelled(true);
             }
         }
@@ -117,10 +118,22 @@ public class Thief extends KomSystem {
         Player damaged = (Player) ev.getEntity();
 
         if (ev.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK) || ev.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)) {
-            if (SkillMaster.temSkill(damaged, Thief.name, "Esquiva Perfeita")) {
+            if (SkillMaster.temSkill(damaged, Skills.Esquiva_Perfeita.skill)) {
                 if (Jobs.rnd.nextInt(351 - damaged.getLevel()) == 1) ev.setCancelled(true);
             }
         }
+
+    }
+
+    public static void onFlechada(EntityDamageByEntityEvent ev) {
+
+        //TODO MELHORAR ISSO AQUI NÉ
+
+        Player damager = DamageListener.getPlayerDamager(ev.getDamager());
+
+        if (Jobs.getPrimarias(damager).contains("Ladino")) ev.setDamage(ev.getDamage() * 2);
+        else if (Jobs.getPrimarias(damager).contains("Ladino")) ev.setDamage(ev.getDamage() * 1.3);
+        else ev.setDamage(ev.getDamage() * 0.75);
 
     }
 
@@ -525,7 +538,7 @@ public class Thief extends KomSystem {
             ev.setCancelled(true);
             return;
         }
-        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
+        if (ev.getPlayer().getWorld().getName().equalsIgnoreCase(CFG.mundoDungeon)) {
             ev.getPlayer().sendMessage(ChatColor.AQUA + Menu.getSimbolo("Ladino") + " " + ChatColor.GOLD + L.m("Aqui nao"));
             ev.setCancelled(true);
             return;
@@ -538,34 +551,39 @@ public class Thief extends KomSystem {
         }
     }
 
-    public static void bonusDanoDeLonge(final EntityDamageByEntityEvent event) {
-        if (!(((Projectile) event.getDamager()).getShooter() instanceof Player)) {
-            return;
-        }
-        if (event.getDamager().getType() != EntityType.ARROW) {
-            return;
-        }
-        Player p = ((Player) ((Projectile) event.getDamager()).getShooter());
+// !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=!
 
-        if (event.getEntity() instanceof Player) {
-            int nivel = Jobs.getJobLevel("Ladino", p);
-            if (p.getLocation().getWorld().getName().equalsIgnoreCase("NewDungeon") || p.getLocation().getWorld().getEnvironment() != Environment.NORMAL) {
-                return;
-            }
-            double distancia = ((Entity) ((Projectile) event.getDamager()).getShooter()).getLocation().distance(event.getEntity().getLocation());
-            if (distancia >= 18 && nivel == 1) {
-                event.setDamage(event.getDamage() + 15);
-                p.sendMessage(ChatColor.AQUA + Menu.getSimbolo("Ladino") + " " + ChatColor.BLUE + "Sniper Shot !");
-                event.getEntity().getWorld().playEffect(event.getEntity().getLocation(), Effect.SMOKE, 20);
-                event.getEntity().getWorld().playEffect(event.getEntity().getLocation(), Effect.SMOKE, 20);
-                GeneralListener.givePlayerExperience(5, p);
-            }
+    public static final List<Skill> skillList = Arrays.asList(
+            new Skill(classe,"Esquiva Perfeita", 2, false, new String[]{"§9Aumenta chance de esquiva a ataques."}),
+            new Skill(classe,"Pé de Cabra", 5, true, new String[]{"§9Permite arrombar e roubar items de baús inimigos"}),
+            new Skill(classe,"Caçador de Mobs", 6, false, new String[]{"§9Ganha mais XP ao matar Monstros"}),
+            new Skill(classe,"Ender Pearl", 7, true, new String[]{"§9Permite usar perolas do Ender."}),
+            new Skill(classe,"Sniper Shot", 9, true, new String[]{"§9Se atirar a longa distância causa grande dano"}),
+            new Skill(classe,"Mira com Arcos", 10, true, new String[]{"§9Aumenta a precisão com arcos.", "Aumentar o nível aumenta as chances."}),
+            new Skill(classe,"Backstab", 13, true, new String[]{"§9Pode atacar por traz para causar grande dano."}),
+            new Skill(classe,"Bomba de Fumaça", 15, false, new String[]{"§9Permite usar bomba de fumaça para ficar invisivel."}),
+            new Skill(classe,"Lockpick", 20, true, new String[]{"§9Pode espiar baús de guildas inimigas"})
+    );
+
+    public enum Skills {
+        Esquiva_Perfeita(skillList.get(0)),
+        Pe_de_Cabra(skillList.get(1)),
+        Cacador_de_Mobs(skillList.get(2)),
+        Ender_Pearl(skillList.get(3)),
+        Sniper_Shot(skillList.get(4)),
+        Mira_com_Arcos(skillList.get(5)),
+        Backstab(skillList.get(6)),
+        Bomba_de_Fumaca(skillList.get(7)),
+        Lockpick(skillList.get(8));
+
+        public Skill skill;
+
+        Skills(Skill skill) {
+            this.skill = skill;
         }
-        if (PlayerSpec.temSpec(p, PlayerSpec.Assassino)) {
-            event.setDamage(event.getDamage() * 0.8);
-        } else if (PlayerSpec.temSpec(p, PlayerSpec.Ranger)) {
-            event.setDamage(event.getDamage() * 1.2);
-        }
-        KoM.dano.mostraDano(p, event.getDamage(), Dano.BATI);
+
     }
+
+// !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=!
+
 }

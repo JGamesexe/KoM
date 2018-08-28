@@ -9,7 +9,8 @@ import me.fromgate.playeffect.PlayEffect;
 import me.fromgate.playeffect.VisualEffect;
 import nativelevel.Custom.CustomPotion;
 import nativelevel.Lang.L;
-import nativelevel.Listeners.GeneralListener;
+import nativelevel.Listeners.DamageListener;
+import nativelevel.Listeners.DeathEvents;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.*;
@@ -55,12 +56,10 @@ public class Explosion3 extends CustomPotion {
             }
             if (e instanceof LivingEntity) {
                 if ((e.getType() == EntityType.PLAYER || e instanceof Monster) && !e.hasMetadata("NPC")) {
-                    GeneralListener.ultimoDano.put(e.getUniqueId(), p.getUniqueId());
-                    ((LivingEntity) e).damage(damage);
-                    GeneralListener.ultimoDano.remove(e.getUniqueId());
+                    DamageListener.darDano(p, (double) damage, (LivingEntity) e, DamageCause.ENTITY_EXPLOSION);
                     Vector ve = e.getLocation().toVector();
                     Vector v = ve.subtract(ev.getPotion().getLocation().toVector()).normalize().multiply(1.5);
-                    v.setY(0.4);
+                    v.setY(0.5);
                     e.setVelocity(v);
                 }
             }

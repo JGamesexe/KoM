@@ -119,7 +119,7 @@ public class Lobo implements CommandExecutor {
                         ev.getPlayer().sendMessage(ChatColor.GREEN + "Altere ele pelo /lobo !");
                         w.setCollarColor(DyeColor.YELLOW);
                         w.setOwner(ev.getPlayer());
-                        w.setCustomName("Lobo");
+                        w.setCustomName("Lobo de " + ev.getPlayer().getName());
                         ev.getPlayer().playSound(ev.getPlayer().getLocation(), Sound.ENTITY_WOLF_PANT, 1, 1);
                         PlayEffect.play(VisualEffect.HEART, ev.getPlayer().getLocation(), "num:5");
                         w.setCustomNameVisible(true);
@@ -314,4 +314,7 @@ public class Lobo implements CommandExecutor {
         ss.setItemMeta(meta);
         return ss;
     }
+
+
+
 }

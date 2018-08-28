@@ -5,6 +5,7 @@
  */
 package nativelevel.mercadinho;
 
+import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.MetaShit;
@@ -229,12 +230,14 @@ public class MenuMercado extends KomSystem {
                         int vendas = MercadoSQL.getRetorno(p);
                         if (vendas == 0) {
                             p.sendMessage(ChatColor.RED + "Voce nao tem nada a receber");
-                            if (!ClanLand.econ.has(p.getName(), 30)) {
+                            if (!ClanLand.econ.has(p, 30)) {
                                 if (p.getLevel() <= 30 && !p.hasMetadata("recebeu")) {
                                     MetaShit.setMetaObject("recebeu", p, true);
-                                    p.sendMessage(ChatColor.GREEN + "Mas ei, eu tenho coração... estou vendo que voce está em uma situação difícil.");
-                                    p.sendMessage(ChatColor.GREEN + "Tome essas esmeraldas, acho que vão te ajudar...");
-                                    p.getInventory().addItem(new ItemStack(Material.EMERALD, 10));
+                                    if (Jobs.dado(6) == 1) {
+                                        p.sendMessage(ChatColor.GREEN + "Mas ei, eu tenho coração... estou vendo que voce está em uma situação difícil.");
+                                        p.sendMessage(ChatColor.GREEN + "Tome essas esmeraldas, acho que vão te ajudar...");
+                                        p.getInventory().addItem(new ItemStack(Material.EMERALD, 10));
+                                    }
                                 }
                             }
                         } else {

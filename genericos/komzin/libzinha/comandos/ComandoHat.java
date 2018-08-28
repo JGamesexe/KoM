@@ -38,7 +38,7 @@ import org.bukkit.inventory.ItemStack;
 /* 27 */
         if (!(cs instanceof Player)) {
 /* 28 */
-            cs.sendMessage("Este Comando Apenas Funciona com o JogadorDAO.");
+            cs.sendMessage("Este Comando Apenas Funciona com o Jogador.");
 /* 29 */
             return false;
 /*    */

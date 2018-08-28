@@ -6,7 +6,7 @@
 package nativelevel.Harvesting;
 
 import nativelevel.KoM;
-import nativelevel.config.ConfigManager;
+import pixelmc.utils.ConfigManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -77,14 +77,14 @@ public class HarvestConfig {
     public static void remove(Harvestable h) {
         String node = h.classe + "." + h.m.name() + "-" + h.data;
         ConfigFile.getConfig().set(node, null);
-        ConfigFile.SaveConfig();
+        ConfigFile.saveConfig();
     }
 
     public static void add(Harvestable h) {
         String node = h.classe + "." + h.m.name() + "-" + h.data;
         ConfigFile.getConfig().set(node + ".MinSkill", h.difficulty);
         ConfigFile.getConfig().set(node + ".ExpRatio", h.expRatio);
-        ConfigFile.SaveConfig();
+        ConfigFile.saveConfig();
         HarvestCache.add(h);
     }
 
@@ -92,7 +92,7 @@ public class HarvestConfig {
         if (!ConfigFile.getConfig().contains(node)) {
             ConfigFile.getConfig().set(node, value);
         }
-        ConfigFile.SaveConfig();
+        ConfigFile.saveConfig();
     }
 
 }

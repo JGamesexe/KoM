@@ -1,7 +1,18 @@
 package nativelevel.Listeners;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import nativelevel.KoM;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.*;
+
+import java.util.List;
+import java.util.Random;
 
 /*
 import com.comphenix.protocol.Packets;
@@ -21,12 +32,29 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
  */
 
 // commented as it bugged chat a little
-public class ProtocolListener /* implements PacketListener */ {
+public class ProtocolListener {
 
-    //@Override
-    public Plugin getPlugin() {
-        return KoM._instance;
-    }
+    public static PacketAdapter changePlayerHealth = new PacketAdapter(KoM._instance, ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_METADATA) {
+            public void onPacketSending(PacketEvent event) {
+                try {
+                    Player observer = event.getPlayer();
+                    StructureModifier<Entity> entityModifer = event.getPacket().getEntityModifier(observer.getWorld());
+                    Entity entity = entityModifer.read(0);
+                    if (entity != null && observer != entity && entity instanceof Player) {
+                        event.setPacket(event.getPacket().deepClone());
+                        StructureModifier<List<WrappedWatchableObject>> watcher = event.getPacket().getWatchableCollectionModifier();
+                        for (WrappedWatchableObject watch : watcher.read(0)) {
+                            if (watch.getIndex() == 7) {
+                                if ((Float) watch.getValue() > 0) {
+                                    watch.setValue((float) ((Player) entity).getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }};
 
     
 /*

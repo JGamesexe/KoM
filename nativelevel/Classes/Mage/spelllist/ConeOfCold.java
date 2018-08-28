@@ -37,7 +37,7 @@ public class ConeOfCold extends MageSpell {
 
     @Override
     public void cast(Player p) {
-        double magia = EquipManager.getPlayerAttribute(Atributo.Magia, p);
+        double magia = EquipManager.getPlayerAttribute(Atributo.Dano_Magico, p);
         List<Vector> blocos = Tralhas.getPositionsInCone(p.getLocation().toVector(), 5, 45, p.getLocation().getDirection());
         // Location loc = null;
         ClanPlayer eu = ClanLand.manager.getClanPlayer(p);

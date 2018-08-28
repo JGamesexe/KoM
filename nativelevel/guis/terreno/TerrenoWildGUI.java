@@ -1,6 +1,10 @@
 package nativelevel.guis.terreno;
 
+import me.blackvein.quests.CustomObjective;
+import me.blackvein.quests.Quest;
+import me.blackvein.quests.Quester;
 import nativelevel.Comandos.Terreno;
+import nativelevel.KoM;
 import nativelevel.Lang.L;
 import nativelevel.sisteminhas.ClanLand;
 import nativelevel.utils.GUI;
@@ -65,7 +69,7 @@ public class TerrenoWildGUI extends GUI {
             lore.add("§8 - §71 Poder");
             lore.add("§8 - §7" + ClanLand.priceOfTerreno(clanPlayer.getTag()) + " Esmeraldas");
             lore.add("");
-            lore.add("§7Clique com o 'Q' para conquistar");
+            lore.add("§7Clique com o botão de DROP para conquistar");
         } else {
             lore.add("§7Apenas lideres de guildas");
             lore.add("§7podem conquistar terrenos");
@@ -91,17 +95,22 @@ public class TerrenoWildGUI extends GUI {
         Player player = (Player) event.getWhoClicked();
         int slot = event.getSlot();
 
+        if (slot == 15) {
 
-        if (slot == 6) {
-
-            ArrayList<String> emvolta = Terreno.getGuildasPerto(location);
-
-            if (Terreno.temGuildaPerto(player, location, false)) {
-                ClanLand.msg(player, L.m("Um terreno que não pertence a sua guilda está muito proximo para conquistar este terreno."));
+            if (ClanLand.getMobLevel(location) < 2) {
+                ClanLand.msg(player, "Você está numa zona muito baixa para conquistar terrenos, vá para uma zona no mínimo nível 10");
                 return;
             }
 
-            if (emvolta.get(1).equalsIgnoreCase(clanPlayer.getTag()) || emvolta.get(2).equalsIgnoreCase(clanPlayer.getTag()) ||
+            if (Terreno.temGuildaPerto(player, location, false)) {
+                ClanLand.msg(player, L.m("Um terreno que não pertence a sua guilda está muito proximo para este terreno ser conquistado."));
+                return;
+            }
+
+            ArrayList<String> emvolta = Terreno.getGuildasPerto(location);
+
+            if (ClanLand.getQtdTerrenos(clanPlayer.getTag()) == 0 ||
+                    emvolta.get(1).equalsIgnoreCase(clanPlayer.getTag()) || emvolta.get(2).equalsIgnoreCase(clanPlayer.getTag()) ||
                     emvolta.get(3).equalsIgnoreCase(clanPlayer.getTag()) || emvolta.get(4).equalsIgnoreCase(clanPlayer.getTag())) {
 
                 int poder = ClanLand.getPoder(clanPlayer.getTag());
@@ -109,9 +118,11 @@ public class TerrenoWildGUI extends GUI {
                 if (poder > 0) {
                     int preco = ClanLand.priceOfTerreno(clanPlayer.getTag());
                     if (ClanLand.econ.has(player, preco)) {
+                        player.closeInventory();
 
                         if (preco == 0) {
                             ClanLand.setClanAt(location, clanPlayer.getTag());
+                            clanPlayer.getClan().setHomeLocation(player.getLocation());
                             ClanLand.msg(player, L.m("Terreno conquistado, como este é o primeiro terreno de sua guilda, ele foi colocado como Terreno Primário, os proximos terrenos vão precisar de uma melhoria para torna-los Terrenos Primários"));
                         } else {
                             ClanLand.setClanAt(location, "#" + clanPlayer.getTag());
@@ -121,9 +132,9 @@ public class TerrenoWildGUI extends GUI {
 
                         ClanLand.msg(player, L.m("Para modificicar este terreno utilize, /terreno"));
                         ClanLand.setPoder(clanPlayer.getTag(), poder - 1);
+                        doObjective(player);
                         if (location.getChunk().equals(player.getLocation().getChunk()))
                             ClanLand.update(player, location);
-
                     } else {
                         ClanLand.msg(player, L.m("Você não possui " + preco + " esmeraldas"));
                     }
@@ -136,6 +147,22 @@ public class TerrenoWildGUI extends GUI {
 
         }
 
+    }
+
+    private void doObjective(Player player) {
+        Quester quester = KoM.quests.getQuester(player.getUniqueId());
+        if (quester == null) return;
+        for (Quest quest : quester.currentQuests.keySet())
+            if (quester.hasCustomObjective(quest, "Conquistar Terreno"))
+                CustomObjective.incrementObjective(player, objective, 1, quest);
+    }
+
+    private static final CustomObjective objective = makeCustomObjective();
+
+    private static CustomObjective makeCustomObjective() {
+        CustomObjective objective = new CustomObjective() {};
+        objective.setName("Conquistar Terreno");
+        return objective;
     }
 
 }

@@ -57,13 +57,10 @@ STAFF:
  */
 package nativelevel;
 
+import com.comphenix.protocol.ProtocolLibrary;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import genericos.komzin.libzinha.InstaMCLibKom;
-import genericos.komzin.libzinha.comandos.ComandoChatbb;
-import genericos.komzin.libzinha.comandos.ComandoL;
-import genericos.komzin.libzinha.comandos.ComandoR;
-import genericos.komzin.libzinha.comandos.ComandoTell;
 import io.lumine.xikage.mythicmobs.MythicMobs;
 import me.blackvein.quests.Quests;
 import me.dpohvar.powernbt.PowerNBT;
@@ -75,6 +72,7 @@ import nativelevel.ArenaGuilda2x2.CmdArena;
 import nativelevel.ArenaGuilda2x2.Eventos;
 import nativelevel.Attributes.Mana;
 import nativelevel.Attributes.MenuAtributos;
+import nativelevel.Attributes.Stamina;
 import nativelevel.Auras.Aura;
 import nativelevel.Classes.Blacksmithy.RecipeLoader;
 import nativelevel.Comandos.*;
@@ -84,6 +82,7 @@ import nativelevel.Crafting.CraftConfig;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.ItemLoader;
 import nativelevel.Custom.Items.*;
+import nativelevel.Custom.Mobs.IncursionIronTotem;
 import nativelevel.Custom.PotionLoader;
 import nativelevel.DataBase.SQL;
 import nativelevel.Equipment.Generator.PreSet;
@@ -101,6 +100,8 @@ import nativelevel.bencoes.TipoBless;
 import nativelevel.config.Config;
 import nativelevel.config.ConfigKom;
 import nativelevel.gemas.SocketListener;
+import nativelevel.guis.BancoGUI;
+import nativelevel.karma.Criminoso;
 import nativelevel.komquista.KomQuista;
 import nativelevel.lojaagricola.ConfigLoja;
 import nativelevel.lojaagricola.LojaAgricola;
@@ -119,18 +120,16 @@ import nativelevel.sisteminhas.*;
 import nativelevel.skills.SkillMaster;
 import nativelevel.spec.PlayerSpec;
 import nativelevel.titulos.*;
-import nativelevel.utils.ConfigManager;
-import nativelevel.utils.EntityHelp;
-import nativelevel.utils.LogsKom;
+import nativelevel.utils.*;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.NBTTagList;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
+import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.command.CommandMap;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
@@ -142,13 +141,17 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
+import pixelmc.HoldMute;
+import pixelmc.ServerReboot;
+import pixelmc.utils.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -202,7 +205,7 @@ import java.util.logging.Logger;
  */
 public class KoM extends JavaPlugin {
 
-    public static NBTManager nbtManager = PowerNBT.getApi();
+    public static boolean serverIniciado = false;
 
     public static final String tag = "§7§l[§6§lK§e§lo§6§lM§7§l]";
     public static String camila = "camila"; // S2
@@ -230,13 +233,16 @@ public class KoM extends JavaPlugin {
     public static KomAjuda ajuda;
     public static KomQuista komq;
     public static ConversationFactory conversationFactory = new ConversationFactory(_instance);
+    public static ConsoleCommandSender console = Bukkit.getConsoleSender();
+    public static StructureAPI structureAPI = new StructureAPI();
+    public static NBTManager nbtManager = PowerNBT.getApi();
+    public static ScoreBoard sb;
 
     // items custom
     public static HashMap<Block, Material> rewind = new HashMap<Block, Material>();
-//    IpLog iplog = new IpLog();
-    //
 
     public static void debug(String m) {
+        //TODO Logar em arquivo do KoM
         if (KoM.debugMode) {
             log.info("[DEBUG] " + m);
         }
@@ -250,7 +256,6 @@ public class KoM extends JavaPlugin {
             }
         }
     }
-
 
     public static ItemStack addGlow(ItemStack item) {
         net.minecraft.server.v1_12_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
@@ -278,10 +283,17 @@ public class KoM extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        SkillMaster.load();
-        ENABLE_TIME = System.currentTimeMillis() / 1000;
         _instance = this;
+        ENABLE_TIME = System.currentTimeMillis() / 1000;
         log = getLogger();
+        database = new SQL(this);
+
+
+        new Whitelist();
+        Bukkit.getPluginManager().registerEvents(new LoginEvent(), _instance);
+
+        SkillMaster.load();
+
         String path = new File(".").getAbsolutePath();
         if (path.contains("testes")) {
             KoM.serverTestes = true;
@@ -309,7 +321,7 @@ public class KoM extends JavaPlugin {
 
                 camila = config.getConfig().getString("database.pass");
             }
-            config.SaveConfig();
+            config.saveConfig();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -324,37 +336,6 @@ public class KoM extends JavaPlugin {
         new HarvestConfig().onEnable();
         new CraftConfig().onEnable();
         new PlantConfig().onEnable();
-        // aways night in dungeon world
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                World dun = Bukkit.getWorld("NewDungeon");
-                if (dun != null) {
-                    dun.setTime(18500L);
-                }
-                World vila = Bukkit.getWorld("vila");
-                if (vila != null) {
-                    vila.setTime(16000L);
-                }
-                //vila.setTime(3000L);
-            }
-        };
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, r, 20 * 60 * 60, 20 * 60 * 60);
-        /*
-         Runnable r2 = new Runnable() {
-         @Override
-         public void run() {
-         for (Player p : Bukkit.getOnlinePlayers()) {
-         int[] temMax = database.getAlmasEMax(p.getUniqueId().toString());
-         if (temMax != null && temMax[0] < 5)//temMax[1])
-         {
-         database.setAlmas(p.getUniqueId().toString(), temMax[0] + 1);
-         p.sendMessage(ChatColor.GREEN + L.m("Sua alma se fortalece, e voce agora tem % pontos de alma", "" + (temMax[0] + 1)));
-         }
-         }
-         }
-         };
-         */
 
         Runnable r4 = new Runnable() {
             @Override
@@ -364,29 +345,14 @@ public class KoM extends JavaPlugin {
         };
         Bukkit.getScheduler().scheduleSyncRepeatingTask(this, r4, 20 * 60 * 60 * 2, 20 * 60 * 60 * 2);
 
-        // Bukkit.getScheduler().scheduleSyncRepeatingTask(this, r2, 20 * 60 * 30, 20 * 60 * 30);
-        Runnable r3 = new Runnable() {
-            @Override
-            public void run() {
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    int[] temMax = database.getAlmasEMax(p.getUniqueId().toString());
-                    if (temMax != null && temMax[0] < temMax[1]) {
-                        database.setAlmas(p.getUniqueId().toString(), temMax[0] + 1);
-                        p.sendMessage(ChatColor.GREEN + L.m("Sua alma se fortalece, e voce agora tem % pontos de alma", (temMax[0] + 1) + ""));
-                    }
-                }
-            }
-        };
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, r3, 20 * 60 * 60, 20 * 60 * 60);
-        database = new SQL(this);
-        //iplog.onEnable();
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new RecoveryAlma(), 20 * 60 * 60, 20 * 60 * 60);
 
         // LOADERS
         ItemLoader.load();
         SystemLoader.load();
         PotionLoader.load();
         RecipeLoader.load();
-        loadCommands();
+        CommandLoader.load();
         PreSet.load();
         //
 
@@ -395,7 +361,6 @@ public class KoM extends JavaPlugin {
         pl.reloadConfig();
 
         Mana.startRegenTimer();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(this, r3, 20 * 60);
         new Principal(); // recompensas do lko
         LojaAgricola agricola = new LojaAgricola();
 
@@ -403,14 +368,13 @@ public class KoM extends JavaPlugin {
 
         eventos = new GeneralListener(this);
         new ConfigLoja();
+
         Bukkit.getServer().getPluginManager().registerEvents(new PlayerEvents(), _instance);
         Bukkit.getServer().getPluginManager().registerEvents(new InteractEvents(), _instance);
-
+        Bukkit.getServer().getPluginManager().registerEvents(new ArvoreCresce(), _instance);
         Bukkit.getServer().getPluginManager().registerEvents(new BlockListener(), _instance);
         Bukkit.getServer().getPluginManager().registerEvents(new DamageListener(), _instance);
-
         Bukkit.getServer().getPluginManager().registerEvents(new DeathEvents(), _instance);
-
         Bukkit.getServer().getPluginManager().registerEvents(new InventoryEvents(), _instance);
         Bukkit.getServer().getPluginManager().registerEvents(new Tesouros(), _instance);
         Bukkit.getServer().getPluginManager().registerEvents(new MenuAtributos(), _instance);
@@ -427,12 +391,6 @@ public class KoM extends JavaPlugin {
         ajuda = new KomAjuda();
         ajuda.onEnable();
 
-        Bukkit.getPluginCommand("l").setExecutor(new ComandoL());
-        Bukkit.getPluginCommand("tell").setExecutor(new ComandoTell());
-        Bukkit.getPluginCommand("r").setExecutor(new ComandoR());
-
-        Bukkit.getPluginCommand("chatbb").setExecutor(new ComandoChatbb());
-        Bukkit.getPluginCommand("anuncio").setExecutor(new CmdAnuncio());
         Bukkit.getPluginCommand("like").setExecutor(new ComandoLike());
         Bukkit.getPluginCommand("dislike").setExecutor(new ComandoDislike());
         Bukkit.getPluginCommand("komx").setExecutor(new Kom());
@@ -449,8 +407,8 @@ public class KoM extends JavaPlugin {
         Bukkit.getPluginCommand("doar").setExecutor(new Doar());
         Bukkit.getPluginCommand("lobo").setExecutor(new Lobo());
         Bukkit.getPluginCommand("spawn").setExecutor(new Spawn());
-        Bukkit.getPluginCommand("guilda").setExecutor(new Guilda());
         Bukkit.getPluginCommand("lobby").setExecutor(new CmdHub());
+
         Bukkit.getPluginCommand("limpaitem").setExecutor(new Cmdlimpaitem());
         Bukkit.getPluginCommand("f").setExecutor(new Guilda());
         Bukkit.getPluginCommand("kompaste").setExecutor(new Botaschem());
@@ -475,7 +433,7 @@ public class KoM extends JavaPlugin {
         }
         generator.onEnable();
         msgBonitinha();
-        timerBrilhos();
+//      timerBrilhos();
         startTasks();
         arena = new Arena2x2();
         arena.onEnable();
@@ -503,27 +461,184 @@ public class KoM extends JavaPlugin {
         RankCache.loadTops();
 
         EntityHelp.separaMobs();
+        ArvoreCresce.pegaArvores();
+        IncursionIronTotem.register();
+        IncursionIronTotem.reloadRuins();
 
-    }
+        ProtocolLibrary.getProtocolManager().addPacketListener(ProtocolListener.changePlayerHealth);
 
-    private static CommandMap cmap;
+        new HoldMute(_instance);
+        new ServerReboot(_instance);
 
-    public void loadCommands() {
-        try {
-            if (Bukkit.getServer() instanceof CraftServer) {
-                final Field f = CraftServer.class.getDeclaredField("commandMap");
-                f.setAccessible(true);
-                cmap = (CommandMap) f.get(Bukkit.getServer());
+        sb = new ScoreBoard(_instance) {
+
+            @Override
+            public void addToTeam(Player observer, Player player, String teamName) {
+
+                Scoreboard board = observer.getScoreboard();
+
+                Team team = board.getEntryTeam(player.getName());
+                if (team != null) team.unregister();
+
+                ClanPlayer cp1 = ClanLand.manager.getClanPlayer(player);
+                ClanPlayer cp2 = ClanLand.manager.getClanPlayer(observer);
+
+                if (cp1 != null && cp2 != null) {
+
+                    int value = 40;
+
+                    if (player.hasPermission("pixel.ajudante")) value -= 1;
+                    if (player.hasPermission("kom.lord")) value -= 3;
+                    if (player.hasPermission("kom.marques")) value -= 2;
+                    if (player.hasPermission("kom.vip")) value -= 1;
+
+                    if (cp1.getTag().equals(cp2.getTag())) teamName = (value - 3) + "FRD";
+                    else if (cp1.getClan().isAlly(cp2.getTag())) teamName = (value - 2) + "ALI";
+                    else if (cp1.getClan().isRival(cp2.getTag())) teamName = (value - 1) + "ENY";
+
+                }
+
+                int rank = 100 - player.getLevel();
+                if (rank > 100) rank = 99;
+                else if (rank < 0) rank = 0;
+
+                teamName += String.format("%02d", rank);
+                teamName += player.getUniqueId().toString().substring(0, 8);
+
+                team = board.getTeam(teamName);
+                if (team == null) team = board.registerNewTeam(teamName);
+
+                if (teamName.contains("FRD")) team.setColor(ChatColor.GREEN);
+                else if (teamName.contains("ALI")) team.setColor(ChatColor.AQUA);
+                else if (teamName.contains("ENY")) team.setColor(ChatColor.RED);
+
+                team.addEntry(player.getName());
+
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        CommandLoader.load();
+
+            @Override
+            public String mountCustomNick(Player observer, Player player, ForWhat forWhat) {
+
+                if (!pGroup.containsKey(player.getUniqueId())) return " §c§lEiTa" + "§r " + "§7§n" + player.getName() + "r ";
+
+                CustomGroup group = pGroup.get(player.getUniqueId());
+
+                String prefixo = forWhat != ForWhat.CHAT ? group.tabPrefix : group.prefix;
+                if (prefixo.length() > 2) prefixo += " ";
+
+                String nickColor = group.corNick;
+
+                if (forWhat != ForWhat.CHAT) {
+                    ClanPlayer cp1 = ClanLand.manager.getClanPlayer(observer);
+                    ClanPlayer cp2 = ClanLand.manager.getClanPlayer(player);
+
+                    if (cp1 != null && cp2 != null)
+                        if (cp1.getTag().equals(cp2.getTag())) nickColor = "§a";
+                        else if (cp1.getClan().isAlly(cp2.getTag())) nickColor = "§b";
+                        else if (cp1.getClan().isRival(cp2.getTag())) nickColor = "§c";
+                }
+
+                String crim = "";
+                if (Criminoso.isCriminoso(player)) crim = " §7[§c#§7]";
+
+                String level = "";
+                if (forWhat == ForWhat.TAB) {
+                    if (player.hasPermission("kom.staff")) level = "000";
+                    else level = "" + player.getLevel();
+
+                    int levelSize = level.length();
+
+                    if (levelSize == 1) level = "§e" + "  " + level + " ";
+                    else if (levelSize == 2) level = "§e" + " " + level + "§8.";
+                    else level = "§e" + level;
+
+                    level = " " + level + "  ";
+                }
+//                String icone = "";
+//                if (forWhat != ForWhat.CHAT) {
+//                    int karma = KoM.database.getKarma(player.getUniqueId());
+//                    icone = "§7ʘ";
+//                    if (karma < 0) {
+//
+//                        icone = "☠";
+//                        if (karma < -20000) icone = "§4" + icone;
+//                        else if (karma < -10000) icone = "§c" + icone;
+//                        else if (karma < -2000) icone = "§6" + icone;
+//                        else icone = "§e" + icone;
+//
+//                    } else if (karma > 0) {
+//
+//                        icone = "☺";
+//                        if (karma > 20000) icone = "§9" + icone;
+//                        else if (karma > 10000) icone = "§b" + icone;
+//                        else if (karma > 2000) icone = "§a" + icone;
+//                        else icone = "§2" + icone;
+//
+//                    }
+//
+//                    icone += " ";
+//
+//                }
+                String suffix = "";
+                if (forWhat == ForWhat.TAB) {
+                    TituloDB.PData pData = TituloDB.getPlayerData(player);
+                    if (pData != null) {
+                        String type = pData.getSexo() == Sexo.MULHER ? " a " : " o ";
+                        if (pData.getTitulo().length() > 2) suffix = pData.getCortitulo() + type + pData.getTitulo();
+                    }
+                }
+
+                String before = level +
+                        prefixo +
+                        ((forWhat == ForWhat.CHAT && ClanLand.manager.getClanPlayer(player) != null) ? ClanLand.manager.getClanPlayer(player).getTagLabel() : "") +
+                        nickColor;
+
+                String after = crim + suffix + ((forWhat == ForWhat.TAB) ? " " : "");
+
+                if (forWhat == ForWhat.NICK) {
+                    if (before.length() > 16) {
+                        player.sendMessage("§cFaz um favor e manda isso pro JGamesexe #763\n§8" + before.replaceAll(" ", "_"));
+                        before = before.substring(0, 16);
+                    }
+                    if (after.length() > 16) {
+                        player.sendMessage("§cFaz um favor e manda isso pro JGamesexe #764\n§8" + after.replaceAll(" ", "_"));
+                        after = after.substring(0, 16);
+                    }
+                }
+
+                return before + player.getName() + after;
+
+            }
+
+            @Override
+            public String translate(String string, Player player) {
+
+                if (string.contains("%mana%")) string = string.replaceAll("%mana%", "" + Mana.getMana(player).mana);
+                if (string.contains("%maxmana%")) string = string.replaceAll("%maxmana%", "" + Mana.getMax(player));
+
+                if (string.contains("%stamina%")) string = string.replaceAll("%stamina%", "" + Stamina.getStamina(player).stamina);
+                if (string.contains("%maxstamina%")) string = string.replaceAll("%maxstamina%", "" + Stamina.getMax(player));
+
+                if (string.contains("%quests%")) string = string.replaceAll("%quests%", "" + quests.getQuester(player.getUniqueId()).completedQuests.size());
+                if (string.contains("%questspct%"))
+                    string = string.replaceAll("%questspct%", "" + ((100 * quests.getQuester(player.getUniqueId()).completedQuests.size()) / (quests.getQuests().size() - 2)));
+                if (string.contains("%maxquests%")) string = string.replaceAll("%maxquests%", "" + (quests.getQuests().size() - 2));
+
+                if (string.contains("%reinicio%")) string = string.replace("%reinicio%", CoisasDeTempo.millesToTempoDecente(ServerReboot.reinicio - System.currentTimeMillis()));
+
+                return super.translate(string, player);
+            }
+
+        };
+        new ChatChannels(_instance, sb);
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this, () -> KoM.serverIniciado = true, 100);
+
     }
 
     public static void addCommand(Comando cmd) {
-        cmap.register(cmd.getName(), cmd);
-        cmd.setExecutor(KoM._instance);
+        CommandRegister.register(cmd.cmd, cmd);
+        cmd.setExecutor(_instance);
     }
 
     public static boolean reiniciando = false;
@@ -531,9 +646,9 @@ public class KoM extends JavaPlugin {
     public static boolean inventoryContains(Inventory inventory, ItemStack item) {
         int count = 0;
         ItemStack[] items = inventory.getContents();
-        for (int i = 0; i < items.length; i++) {
-            if (items[i] != null && items[i].getType() == item.getType() && items[i].getDurability() == item.getDurability()) {
-                count += items[i].getAmount();
+        for (ItemStack itemx : items) {
+            if (itemx != null && itemx.getType() == item.getType() && itemx.getDurability() == item.getDurability()) {
+                count += itemx.getAmount();
             }
             if (count >= item.getAmount()) {
                 return true;
@@ -546,7 +661,7 @@ public class KoM extends JavaPlugin {
         ItemStack esponja = new ItemStack(Material.SPONGE, qtas);
         ItemMeta meta = esponja.getItemMeta();
         meta.setDisplayName("§5♦ §6" + L.m("Moeda Magica"));
-        List<String> lore = new ArrayList<String>();
+        List<String> lore = new ArrayList<>();
         lore.add(0, "§9- " + L.m("Uma antiga moeda magica."));
         lore.add(1, "§9" + L.m("Pode ser usada para comprar diversos items especiais."));
         lore.add(2, "§9Season 1, por PixelMC");
@@ -575,23 +690,14 @@ public class KoM extends JavaPlugin {
             KoM.database.setLoot(u, ss);
         }
 
-        for (Player pl : Bukkit.getOnlinePlayers()) {
-            if (pl.getItemOnCursor() != null && pl.getItemOnCursor().getType() != Material.AIR) {
-                pl.setItemOnCursor(new ItemStack(Material.AIR));
-            }
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getVehicle() != null) p.getVehicle().eject();
+            p.kickPlayer("Server ReInIcIaNdO...");
         }
 
         for (Block b : rewind.keySet()) {
-            if (!b.getChunk().isLoaded()) {
-                b.getChunk().load();
-            }
+            if (!b.getChunk().isLoaded()) b.getChunk().load();
             b.setType(rewind.get(b));
-        }
-
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.getVehicle() != null) {
-                p.getVehicle().eject();
-            }
         }
 
         for (World w : Bukkit.getWorlds()) {
@@ -602,28 +708,27 @@ public class KoM extends JavaPlugin {
             }
         }
 
-        pl.onDisable();
-        log.info("FEXANDO AS TAKS !!!!!!!!!!!!!!!!!!!!!!!!!!");
-        log.info("FEXANDO AS TAKS !!!!!!!!!!!!!!!!!!!!!!!!!!");
-        log.info("FEXANDO AS TAKS !!!!!!!!!!!!!!!!!!!!!!!!!!");
-        for (BukkitTask task : Bukkit.getScheduler().getPendingTasks()) {
-            try {
-                if ((task.getOwner() == this || task.getOwner().getName().equalsIgnoreCase("KoM")) && task instanceof Runnable) {
-                    ((Runnable) task).run();
-                    log.info("Fexando task : " + task.getTaskId());
-                }
-            } catch (Exception e) {
-                log.info("Deu pau pra fexar uma task ae...");
-                e.printStackTrace();
-            }
-        }
-        t.onDisable();
-        //AutoDispenser.finaliza();
+        database.disposicaoToBanco();
+        BancoGUI.onDisable();
+        IncursionIronTotem.cacheRuins();
 
-//        iplog.onDisable();
-        if (arena != null) {
-            arena.onDisable();
-        }
+        pl.onDisable();
+
+        log.info("FEXANDO AS TAKS !!!!!!!!!!!!!!!!!!!!!!!!!!");
+        log.info("FEXANDO AS TAKS !!!!!!!!!!!!!!!!!!!!!!!!!!");
+        log.info("FEXANDO AS TAKS !!!!!!!!!!!!!!!!!!!!!!!!!!");
+
+        //THREE TIMES TO CERTIFY
+        closeTasks();
+        closeTasks();
+        closeTasks();
+
+        t.onDisable();
+//      AutoDispenser.finaliza();
+
+//      iplog.onDisable();
+        if (arena != null) arena.onDisable();
+
         pvp.onDisable();
         TipoBless.save.Save();
         RankDB.saveAll();
@@ -633,18 +738,19 @@ public class KoM extends JavaPlugin {
         AutoUpdate.CheckUpdade("KomQuista.jar");
         AutoUpdate.CheckUpdade("ArenaKom.jar");
 
-
     }
 
-    public static void dealTrueDamage(LivingEntity p, double qto) {
-        double v = p.getHealth();
-        if (v - qto <= 0) {
-            p.setHealth(0);
-        } else {
-            p.setHealth(v - qto);
-        }
-        if (p.getType() == EntityType.PLAYER) {
-            KoM.dano.mostraDano((Player) p, qto, Dano.TOMEI);
+    private static void closeTasks() {
+        for (BukkitTask task : Bukkit.getScheduler().getPendingTasks()) {
+            try {
+                if ((task.getOwner() == KoM._instance || task.getOwner().getName().equalsIgnoreCase("KoM")) && task instanceof Runnable) {
+                    ((Runnable) task).run();
+                    log.info("Fexando task : " + task.getTaskId());
+                }
+            } catch (Exception e) {
+                log.info("Deu pau pra fexar uma task ae...");
+                e.printStackTrace();
+            }
         }
     }
 
@@ -855,7 +961,7 @@ public class KoM extends JavaPlugin {
         recipe13.setIngredient('C', Material.WATCH);
         recipe13.setIngredient('D', Material.DETECTOR_RAIL);
         addReceita(recipe13);
-        ShapedRecipe recipe14 = new ShapedRecipe(TeleportScroll.createTeleportScroll(CFG.spawnTree, true, 3, "Pergaminho para Rhodes")); //Note: ABC is the bottom row, CBC is the middle row, BCB is the top row
+        ShapedRecipe recipe14 = new ShapedRecipe(CidadeScroll.makeItem(3)); //Note: ABC is the bottom row, CBC is the middle row, BCB is the top row
         recipe14.shape("AAA", "BCB", "ADA");
         recipe14.setIngredient('A', Material.SUGAR);
         recipe14.setIngredient('B', Material.SAND);
@@ -997,6 +1103,7 @@ public class KoM extends JavaPlugin {
 
         @Override
         public void run() {
+            if (!tox.getChunk().isLoaded()) tox.getChunk().load(true);
             PlayEffect.play(VisualEffect.FIREWORKS_SPARK, tox.getLocation().getBlock().getRelative(BlockFace.UP, 4).getLocation(), "num:8");
             tox.getLocation().getWorld().playEffect(tox.getLocation().getBlock().getRelative(BlockFace.UP, 4).getLocation(), Effect.FIREWORKS_SPARK, 1);
 
@@ -1027,6 +1134,7 @@ public class KoM extends JavaPlugin {
              }
              */
         }
+
     }
 
     public void delayFechar(final Block tocha) {
@@ -1069,27 +1177,27 @@ public class KoM extends JavaPlugin {
         return a.getTag().equals(b.getTag()) || a.isAlly(b.getTag());
     }
 
-    public static void timerBrilhos() {
-        /*
-         Runnable r = new Runnable() {
-         @Override
-         public void run() {
-         for (Player p : Bukkit.getOnlinePlayers()) {
-         if (p.hasPermission("kom.vip")) {
-         if (Kom.aurasJogadores.containsKey(p.getUniqueId())) {
-         String[] s = Kom.aurasJogadores.get(p.getUniqueId()).split("!");
-         if (KnightsOfMania.debugMode) {
-         KnightsOfMania.log.info("tocando |" + s[0].trim() + " " + s[1].trim() + "|");
-         }
-         PlayEffect.play(s[0], s[1] + " loc:" + p.getLocation().getWorld().getName() + "," + p.getLocation().getBlockX() + "," + p.getLocation().getBlockY() + "," + p.getLocation().getBlockZ());
-         }
-         }
-         }
-         }
-         };
-         Bukkit.getScheduler().scheduleSyncRepeatingTask(KnightsOfMania._instance, r, 5, 5);
-         */
-    }
+//    public static void timerBrilhos() {
+//        /*
+//         Runnable r = new Runnable() {
+//         @Override
+//         public void run() {
+//         for (Player p : Bukkit.getOnlinePlayers()) {
+//         if (p.hasPermission("kom.vip")) {
+//         if (Kom.aurasJogadores.containsKey(p.getUniqueId())) {
+//         String[] s = Kom.aurasJogadores.get(p.getUniqueId()).split("!");
+//         if (KnightsOfMania.debugMode) {
+//         KnightsOfMania.log.info("tocando |" + s[0].trim() + " " + s[1].trim() + "|");
+//         }
+//         PlayEffect.play(s[0], s[1] + " loc:" + p.getLocation().getWorld().getName() + "," + p.getLocation().getBlockX() + "," + p.getLocation().getBlockY() + "," + p.getLocation().getBlockZ());
+//         }
+//         }
+//         }
+//         }
+//         };
+//         Bukkit.getScheduler().scheduleSyncRepeatingTask(KnightsOfMania._instance, r, 5, 5);
+//         */
+//    }
 
     public static void TeleportarTPBG(final Player p, final String servidor) {
         Bukkit.getScheduler().runTask(KoM._instance, new Runnable() {
@@ -1101,14 +1209,45 @@ public class KoM extends JavaPlugin {
                     out.writeUTF("ConnectOther");
                     out.writeUTF(p.getName());
                     out.writeUTF(servidor);
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                 }
                 new PluginMessageTaskBungee(b, p).runTaskAsynchronously(KoM._instance);
             }
         });
     }
 
-    public void msgBonitinha() {
+    public class RecoveryAlma implements Runnable {
+
+        @Override
+        public void run() {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if (player.hasMetadata("recoverAlma")) {
+                    int chance = (int) MetaShit.getMetaObject("recoverAlma", player);
+                    MetaShit.setMetaObject("recoverAlma", player, ++chance);
+                    if (chance >= 2 && Jobs.dado(6 - chance) == 1) {
+                        MetaShit.setMetaObject("recoverAlma", player, 0);
+                        int[] temMax = database.getAlmasEMax(player.getUniqueId().toString());
+                        if (temMax != null && temMax[0] < temMax[1]) {
+                            database.setAlmas(player.getUniqueId().toString(), temMax[0] + 1);
+                            player.sendMessage("§aSua alma se fortalece, agora você tem " + (temMax[0] + 1) + " pontos de alma");
+                        }
+                    }
+                } else {
+                    MetaShit.setMetaObject("recoverAlma", player, 0);
+                }
+            }
+        }
+
+    }
+
+    public static void announce(String msg) {
+        console.sendMessage(msg);
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            p.sendMessage(msg);
+        }
+    }
+
+    private void msgBonitinha() {
         KoM.log.info("╭╮╭━╮╱╱╭━╮╭━╮╭━━━╮╱╱╭╮");
         KoM.log.info("┃┃┃╭╯╱╱┃┃╰╯┃┃┃╭━╮┃╱╱┃┃");
         KoM.log.info("┃╰╯╯╭━━┫╭╮╭╮┃┃┃╱┃┣━╮┃┃╭┳━╮╭━━╮");

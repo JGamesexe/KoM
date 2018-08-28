@@ -1,14 +1,13 @@
 package nativelevel.titulos;
 
+import nativelevel.KoM;
 import nativelevel.karma.KarmaFameTables;
-import nativelevel.mercadinho.Utils;
 import nativelevel.rankings.RankCache;
-import nativelevel.scores.ScoreboardManager;
+import nativelevel.scores.SBCoreListener;
 import nativelevel.titulos.TituloDB.PData;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import ru.tehkode.permissions.PermissionUser;
-import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.*;
 
@@ -20,7 +19,7 @@ public class Titulos {
     public static void setTitulo(Player p, String titulo, ChatColor cor) {
         PData pd = TituloDB.getPlayerData(p);
         pd.setTitulo(titulo, cor);
-        update(p, titulo, cor);
+        update(p);
     }
 
     public static TreeMap<String, List<ChatColor>> getTitulos(Player p) {
@@ -61,33 +60,8 @@ public class Titulos {
 
     }
 
-    public static void update(Player p, String title, ChatColor c) {
-        PermissionUser u = PermissionsEx.getPermissionManager().getUser(p);
-        String prefixo = u.getPrefix();
-        prefixo = ChatUtils.translateColorCodes(prefixo);
-        String name = p.getName();
-        if (title != null && !title.equals("")) {
-            title = trabalhaTitulo(title, p, c);
-        }
-        if (name.length() > 12) {
-            name = name.substring(0, 12);
-        }
-        name += Utils.randInt(1, 99);
-        String bonus = "";
-        if (p.hasPermission("kom.staff")) {
-            bonus = "a";
-        } else if (p.hasPermission("kom.vip")) {
-            bonus = "b";
-        } else {
-            bonus = "c";
-        }
-        name = bonus + name;
-        String r = "";
-        if (!(prefixo == null || ChatColor.stripColor(prefixo).equals(""))) {
-            r = "§f";
-        }
-        String sufix = (title != null && !title.equals("")) ? " " + title : "";
-        ScoreboardManager.addToTeam(p.getName(), name, prefixo + r, sufix, false);
+    public static void update(Player p) {
+        KoM.sb.updatePlayer(p);
     }
 
     static HashMap<UUID, ScoreCache> cache = new HashMap();
@@ -107,4 +81,5 @@ public class Titulos {
         }
 
     }
+
 }

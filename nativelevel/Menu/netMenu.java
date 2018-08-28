@@ -20,18 +20,22 @@ import nativelevel.Classes.Blacksmithy.recipes.Armas.Pedra.PaDePedra;
 import nativelevel.Classes.Mage.SpellLoader;
 import nativelevel.Classes.Mage.spelllist.Firebola;
 import nativelevel.Custom.CustomItem;
+import nativelevel.Custom.Items.Adaga;
 import nativelevel.Custom.Items.Pistola;
 import nativelevel.Custom.Items.RecipeBook;
 import nativelevel.Custom.PotionLoader;
 import nativelevel.Custom.Potions.Cure1;
 import nativelevel.Custom.Potions.Mana1;
+import nativelevel.DataBase.SQL;
 import nativelevel.Equipment.WeaponDamage;
 import nativelevel.Jobs;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
+import nativelevel.Listeners.DeathEvents;
 import nativelevel.RecipeBooks.BookTypes;
 import nativelevel.integration.BungeeCordKom;
 import nativelevel.rankings.RankDB;
+import nativelevel.scores.SBCore;
 import nativelevel.sisteminhas.XP;
 import nativelevel.spec.PlayerSpec;
 import nativelevel.utils.MetaUtils;
@@ -149,6 +153,9 @@ public class netMenu implements Listener {
                             player.removeMetadata("rebornGratiz", KoM._instance);
                         }
                         KoM.database.atualizaSpecs(player.getUniqueId().toString(), new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0});
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "questadmin reset " + player.getName());
+                        KoM.database.setDisposicao(player.getUniqueId(), 200, false);
+                        SBCore.AtualizaObjetivos(player);
 
                         if (!cadastrado) {
                             KoM.database.cadastra(player.getUniqueId().toString(), player.getName());
@@ -164,12 +171,7 @@ public class netMenu implements Listener {
                             player.getInventory().setItemInOffHand(WeaponDamage.checkForMods(new ItemStack(Material.SHIELD, 1)));
                             // Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "give " + player.getName() + " map 1 1000");
                             player.setBedSpawnLocation(null);
-                            BungeeCordKom.tp(player, CFG.localInicio);
-
-                            if (!KoM.ehOriginal(player)) {
-                                KoM.log.info("Transformando skin");
-                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "sync console bungee sr set " + player.getName() + " ZidenVentuinha");
-                            }
+                            player.teleport(CFG.localInicio);
 
                             XP.setaLevel(player, 1);
                             player.removeMetadata("tutorial", KoM._instance);
@@ -197,22 +199,24 @@ public class netMenu implements Listener {
                             player.getInventory().setItemInHand(new ItemStack(Material.COMPASS, 1));
                             player.removeMetadata("primeiraEscolha", KoM._instance);
                             if (Jobs.getJobLevel("Ferreiro", player) == 1) {
-                                player.getInventory().addItem(WeaponDamage.checkForMods(new ItemStack(Material.IRON_SPADE, 3)));
+                                player.getInventory().addItem(WeaponDamage.checkForMods(new ItemStack(Material.IRON_SPADE)));
                                 player.getInventory().addItem(RecipeBook.createBook(BookTypes.Ferraria));
                                 player.getInventory().addItem(RecipeLoader.customItemsClass.get(PaDePedra.class).generateRecipe().getItem());
                             }
 
                             if (Jobs.getJobLevel("Fazendeiro", player) == 1) {
-                                player.getInventory().addItem(new ItemStack(Material.FISHING_ROD, 1));
+                                player.getInventory().addItem(new ItemStack(Material.FISHING_ROD));
                                 player.getInventory().addItem(new ItemStack(Material.SEEDS, 10));
-                                player.getInventory().addItem(WeaponDamage.checkForMods(new ItemStack(Material.IRON_HOE, 1)));
+                                player.getInventory().addItem(WeaponDamage.checkForMods(new ItemStack(Material.IRON_HOE)));
                             }
 
                             if (Jobs.getJobLevel("Alquimista", player) == 1) {
+                                player.getInventory().addItem(WeaponDamage.checkForMods(new ItemStack(Material.IRON_HOE)));
                                 player.getInventory().addItem(new ItemStack(Material.GLASS_BOTTLE, 20));
-                                player.getInventory().addItem(new ItemStack(Material.CAULDRON_ITEM, 1));
-                                player.getInventory().addItem(new ItemStack(Material.NETHERRACK, 1));
-                                player.getInventory().addItem(new ItemStack(Material.NETHER_WARTS, 1));
+                                player.getInventory().addItem(new ItemStack(Material.CAULDRON_ITEM));
+                                player.getInventory().addItem(new ItemStack(Material.NETHERRACK));
+                                player.getInventory().addItem(new ItemStack(Material.BREWING_STAND_ITEM));
+                                player.getInventory().addItem(new ItemStack(Material.NETHER_WARTS));
                                 player.getInventory().addItem(new ItemStack(Material.SPIDER_EYE, 3));
                                 player.getInventory().addItem(RecipeBook.createBook(BookTypes.Alquimia));
                                 player.getInventory().addItem(PotionLoader.customItemsClass.get(Cure1.class).generateRecipe().getItem());
@@ -230,7 +234,8 @@ public class netMenu implements Listener {
                             }
 
                             if (Jobs.getJobLevel("Ladino", player) == 1) {
-                                player.getInventory().addItem(new ItemStack(Material.BOW, 1));
+                                player.getInventory().addItem(CustomItem.getItem(Adaga.class).generateItem(Adaga.Type.STONE));
+                                player.getInventory().addItem(new ItemStack(Material.BOW));
                                 player.getInventory().addItem(new ItemStack(Material.ARROW, 32));
                                 player.getInventory().addItem(new ItemStack(Material.CARROT, 3));
                             }

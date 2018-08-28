@@ -40,7 +40,7 @@ public class ChaveCadiado extends KomSystem {
                     if (mySkill > 25) {
                         mySkill = 25;
                     }
-                } else if (tipo == TipoClasse.SEGUNDARIA) {
+                } else if (tipo == TipoClasse.SECUNDARIA) {
                     if (mySkill > 70) {
                         mySkill = 70;
                     }

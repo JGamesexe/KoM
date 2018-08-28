@@ -22,7 +22,7 @@ public class Reflect extends MageSpell {
 
     @Override
     public void cast(final Player p) {
-        double magia = EquipManager.getPlayerAttribute(Atributo.Magia, p);
+        double magia = EquipManager.getPlayerAttribute(Atributo.Dano_Magico, p);
         int segundos = (int) Math.round(5 + (magia / 100));
         p.sendMessage(ChatColor.GREEN + L.m("Voce se protegeu com um escudo reflexor por " + segundos + " segundos"));
         MetaShit.setMetaString("shield", p, "1");

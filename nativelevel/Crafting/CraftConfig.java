@@ -8,7 +8,7 @@ package nativelevel.Crafting;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Jobs;
 import nativelevel.KoM;
-import nativelevel.config.ConfigManager;
+import pixelmc.utils.ConfigManager;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -77,7 +77,7 @@ public class CraftConfig {
     public static void remove(Craftable h) {
         String node = h.classe + "." + h.m.name() + "-" + h.data;
         ConfigFile.getConfig().set(node, null);
-        ConfigFile.SaveConfig();
+        ConfigFile.saveConfig();
     }
 
     public static void add(Craftable h) {
@@ -87,7 +87,7 @@ public class CraftConfig {
         if (h.customItem != null) {
             ConfigFile.getConfig().set(node + ".CustomItem", h.customItem.getName());
         }
-        ConfigFile.SaveConfig();
+        ConfigFile.saveConfig();
         CraftCache.add(h);
     }
 
@@ -95,7 +95,7 @@ public class CraftConfig {
         if (!ConfigFile.getConfig().contains(node)) {
             ConfigFile.getConfig().set(node, value);
         }
-        ConfigFile.SaveConfig();
+        ConfigFile.saveConfig();
     }
 
 }

@@ -18,6 +18,7 @@ import nativelevel.gemas.Raridade;
 import nativelevel.rankings.Estatistica;
 import nativelevel.rankings.RankDB;
 import nativelevel.sisteminhas.KomSystem;
+import nativelevel.skills.Skill;
 import nativelevel.spec.PlayerSpec;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -33,10 +34,15 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Blacksmith extends KomSystem {
 
-    public static void onHit(EntityDamageByEntityEvent ev) {
+    public static final Jobs.Classe classe = Jobs.Classe.Ferreiro;
+    public static final String name = "Ferreiro";
 
+    public static void onHit(EntityDamageByEntityEvent ev) {
         Player attacker = (Player) ev.getDamager();
         ItemStack weapon = attacker.getInventory().getItemInMainHand();
 
@@ -51,9 +57,10 @@ public class Blacksmith extends KomSystem {
     }
 
     public static void onDamaged(EntityDamageEvent ev) {
+        if (ev.getCause().equals(EntityDamageEvent.DamageCause.LAVA)) ev.setCancelled(true);
 
-        if (ev.getCause().equals(EntityDamageEvent.DamageCause.FIRE) || ev.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) || ev.getCause().equals(EntityDamageEvent.DamageCause.LAVA))
-            ev.setCancelled(true);
+        if (ev.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) || ev.getCause().equals(EntityDamageEvent.DamageCause.FIRE)) ev.setDamage(ev.getDamage() * 0.5);
+        if (ev.getCause().equals(EntityDamageEvent.DamageCause.FIRE_TICK) && Jobs.dado(3) == 1) ev.setCancelled(true);
 
         if (ev.getCause().equals(EntityDamageEvent.DamageCause.DROWNING)) ev.setDamage(ev.getDamage() * 2);
         else ev.setDamage(ev.getDamage() * 0.85);
@@ -135,14 +142,6 @@ public class Blacksmith extends KomSystem {
             }
         }
         return min;
-    }
-
-    public static void evitaFogo(EntityDamageEvent event, Player p) {
-        int nivel = Jobs.getJobLevel("Ferreiro", p);
-        if (nivel == 1) {
-            event.setDamage(0D);
-            event.setCancelled(true);
-        }
     }
 
     public static void criaItem(BeginCraftEvent ev) {
@@ -274,4 +273,39 @@ public class Blacksmith extends KomSystem {
         }
         return null;
     }
+
+// !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=!
+
+    public static final List<Skill> skillList = Arrays.asList(
+            new Skill(classe,"Forjar Equipamento", 3, false, new String[]{"§9Aumenta chances de sucesso ao forjar equips.", "§9Quanto maior seu nivel, maior a chance"}, true),
+            new Skill(classe,"Pele Queimada", 3, false, new String[]{"§9Não recebe dano por ataques de fogo."}),
+            new Skill(classe,"Especialização com Porretes", 4, false, new String[]{"§9Aumenta o dano usando Pás"}),
+            new Skill(classe,"Forjar Barras", 5, false, new String[]{"§9Aumenta chances de sucesso ao forjar barras.", "§9Quanto maior seu nivel, maior a chance"}, true),
+            new Skill(classe,"Pele Rígida", 6, false, new String[]{"§9Aumenta resistência contra ataques"}),
+            new Skill(classe,"Golpe Esmagador", 14, false, new String[]{"§9Permite um golpe esmagador", "§9Segurando shift ao bater"}),
+            new Skill(classe,"Reparar Itens", 25, false, new String[]{"§9Aumenta chances de sucesso ao reparar items.", "§9Quanto maior seu nivel, maior a chance"}, true),
+            new Skill(classe,"Usar Bigorna", 30, false, new String[]{"§9Forje com uma bigorna proxima para aumentar chance de sucesso"}, true),
+            new Skill(classe,"Brasão Flamejante", 35, false, new String[]{"§9Permite usar uma blaze rod", "§9para colocar inimigos no fogo"})
+    );
+
+    public enum Skills {
+        Forjar_Equipamento(skillList.get(0)),
+        Pele_Queimada(skillList.get(1)),
+        Especializacao_com_Porretes(skillList.get(2)),
+        Forjar_Barras(skillList.get(3)),
+        Pele_Rigida(skillList.get(4)),
+        Golpe_Esmagador(skillList.get(5)),
+        Reparar_Itens(skillList.get(6)),
+        Usar_Bigorna(skillList.get(7)),
+        Brasao_Flamejante(skillList.get(8));
+
+        public Skill skill;
+
+        Skills(Skill skill) {
+            this.skill = skill;
+        }
+    }
+
+// !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=! - !=- SKILLS AREA -=!
+
 }

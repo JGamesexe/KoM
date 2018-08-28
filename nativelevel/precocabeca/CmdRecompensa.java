@@ -69,7 +69,7 @@ public class CmdRecompensa implements CommandExecutor {
                             p.sendMessage(ChatColor.GOLD + L.m("Este jogador não existe!"));
                         }
                     } catch (NumberFormatException er) {
-                        sender.sendMessage(ChatColor.GOLD + L.m("Use /recompensa JogadorDAO Quantidade ou /recompensa listar"));
+                        sender.sendMessage(ChatColor.GOLD + L.m("Use /recompensa Jogador Quantidade ou /recompensa listar"));
                     }
 
                 } else if (args.length == 1) {
@@ -95,7 +95,7 @@ public class CmdRecompensa implements CommandExecutor {
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + L.m("Nenhum registro deste jogador!"));
                     }
                 } else {
-                    sender.sendMessage(ChatColor.GOLD + L.m("Use /recompensa JogadorDAO Quantidade ou /recompensa listar!"));
+                    sender.sendMessage(ChatColor.GOLD + L.m("Use /recompensa Jogador Quantidade ou /recompensa listar!"));
                 }
 
             }

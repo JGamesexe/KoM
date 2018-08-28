@@ -155,70 +155,30 @@ public class Menu {
     }
 
     public static int getId(String nome) {
-        if (nome.equals("Minerador")) {
-            return 0;
-        }
-        if (nome.equals("Ferreiro")) {
-            return 1;
-        }
-        if (nome.equals("Lenhador")) {
-            return 2;
-        }
-        if (nome.equals("Fazendeiro")) {
-            return 3;
-        }
-        if (nome.equals("Paladino")) {
-            return 4;
-        }
-        if (nome.equals(L.get("Classes.Alchemist"))) {
-            return 5;
-        }
-        if (nome.equals("Mago")) {
-            return 6;
-        }
-        if (nome.equals("Ladino")) {
-            return 7;
-        }
-        if (nome.equals("Engenheiro")) {
-            return 8;
-        }
-        if (nome.equals("Druida")) {
-            return 9;
-        }
-        return -1;
+        if (nome.equals("Minerador")) return 0;
+        else if (nome.equals("Ferreiro")) return 1;
+        else if (nome.equals("Lenhador")) return 2;
+        else if (nome.equals("Fazendeiro")) return 3;
+        else if (nome.equals("Paladino")) return 4;
+        else if (nome.equals(L.get("Classes.Alchemist"))) return 5;
+        else if (nome.equals("Mago")) return 6;
+        else if (nome.equals("Ladino")) return 7;
+        else if (nome.equals("Engenheiro")) return 8;
+        else if (nome.equals("Druida")) return 9;
+        else return -1;
     }
 
     public static Material getDesenho(int n) {
-        if (n == 0) {
-            return Material.DIAMOND_PICKAXE;
-        }
-        if (n == 1) {
-            return Material.ANVIL;
-        }
-        if (n == 2) {
-            return Material.GOLD_AXE;
-        }
-        if (n == 3) {
-            return Material.MONSTER_EGG;
-        }
-        if (n == 4) {
-            return Material.IRON_SWORD;
-        }
-        if (n == 5) {
-            return Material.POTION;
-        }
-        if (n == 6) {
-            return Material.BOOK;
-        }
-        if (n == 7) {
-            return Material.BOW;
-        }
-        if (n == 8) {
-            return Material.REDSTONE;
-        }
-        if (n == 9) {
-            return Material.DEAD_BUSH;
-        }
-        return null;
+        if (n == 0) return Material.DIAMOND_PICKAXE;
+        else if (n == 1) return Material.ANVIL;
+        else if (n == 2) return Material.GOLD_AXE;
+        else if (n == 3) return Material.MONSTER_EGG;
+        else if (n == 4) return Material.IRON_SWORD;
+        else if (n == 5) return Material.POTION;
+        else if (n == 6) return Material.BOOK;
+        else if (n == 7) return Material.BOW;
+        else if (n == 8) return Material.REDSTONE;
+        else if (n == 9) return Material.DEAD_BUSH;
+        else return Material.BARRIER;
     }
 }

@@ -6,6 +6,7 @@
 package nativelevel.config;
 
 import nativelevel.KoM;
+import pixelmc.utils.ConfigManager;
 
 /**
  * @author vntgasl
@@ -21,7 +22,7 @@ public class Config {
             if (!cfg.getConfig().contains("Doacoes")) {
                 cfg.getConfig().set("Doacoes", 0);
             }
-            cfg.SaveConfig();
+            cfg.saveConfig();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -29,10 +30,11 @@ public class Config {
 
     public static void setDoacao(int n) {
         cfg.getConfig().set("Doacoes", n);
-        cfg.SaveConfig();
+        cfg.saveConfig();
     }
 
     public static int getDoacoes() {
         return cfg.getConfig().getInt("Doacoes");
     }
+
 }

@@ -8,6 +8,8 @@ package nativelevel.Custom.Potions;
 import nativelevel.Custom.CustomPotion;
 import nativelevel.KoM;
 import nativelevel.Lang.L;
+import nativelevel.Listeners.DamageListener;
+import nativelevel.Listeners.DeathEvents;
 import nativelevel.Listeners.GeneralListener;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -54,7 +56,7 @@ public class Poison2 extends CustomPotion {
                 continue;
             if (e instanceof LivingEntity) {
                 if ((e.getType() == EntityType.PLAYER || e instanceof Monster) && !e.hasMetadata("NPC")) {
-                    GeneralListener.ultimoDano.put(e.getUniqueId(), p.getUniqueId());
+                    DamageListener.deiDano(p, (LivingEntity) e, 600);
                     ((LivingEntity) e).addPotionEffect(efeito);
                     KoM.efeitoBlocos(e, Material.EMERALD_BLOCK);
                 }

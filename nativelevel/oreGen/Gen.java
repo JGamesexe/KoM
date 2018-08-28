@@ -58,7 +58,7 @@ public class Gen {
         ores.add(Material.GLOWSTONE);
         ores.add(Material.SOUL_SAND);
         ores.add(Material.QUARTZ_ORE);
-        Gen.editBukkitMineralGeneration();
+//        Gen.editBukkitMineralGeneration();
     }
 
     public boolean isHidden(Block b) {
@@ -155,36 +155,36 @@ public class Gen {
          */
     }
 
-    public static void editBukkitMineralGeneration() {
-        /*
-         try {
-         BiomeBase [] biomesList = (BiomeBase[])Reflector.getStaticValue("net.minecraft.server.v1_6_R3.BiomeBase", "biomes");  
-         for(BiomeBase b : biomesList) {
-         if(b==null) continue;
-         NativeLevel.log.info("refletindo "+b.toString());
-         BiomeDecorator deco = b.I;
-         try {
-         Reflector.setInstanceValue(deco, "k", new WorldGenMinable(net.minecraft.server.v1_7_R3.Block..id, 16));
-         Reflector.setInstanceValue(deco, "l", new WorldGenMinable(net.minecraft.server.v1_7_R3.Block.STONE.id, 16));
-         Reflector.setInstanceValue(deco, "m", new WorldGenMinable(net.minecraft.server.v1_7_R3.Block.STONE.id, 16));
-         Reflector.setInstanceValue(deco, "n", new WorldGenMinable(net.minecraft.server.v1_7_R3.Block.STONE.id, 16));
-         Reflector.setInstanceValue(deco, "o", new WorldGenMinable(net.minecraft.server.v1_7_R3.Block.STONE.id, 16));
-         Reflector.setInstanceValue(deco, "p", new WorldGenMinable(net.minecraft.server.v1_7_R3.Block.STONE.id, 16));
-         } catch(Exception e) {
-         NativeLevel.log.info("biome "+b.toString()+" naum tomou patch !");
-         }
-         }
-         } catch(Exception e) {
-         NativeLevel.log.info("Error reflecting BIOME DATA !!!!");
-         NativeLevel.log.info(e.getMessage());
-         e.printStackTrace();
-         NativeLevel.log.info("Error reflecting BIOME DATA !!!!");
-            
-         }
-         */
-    }
+//    public static void editBukkitMineralGeneration() {
+//        /*
+//         try {
+//         BiomeBase [] biomesList = (BiomeBase[])Reflector.getStaticValue("net.minecraft.server.v1_6_R3.BiomeBase", "biomes");
+//         for(BiomeBase b : biomesList) {
+//         if(b==null) continue;
+//         NativeLevel.log.info("refletindo "+b.toString());
+//         BiomeDecorator deco = b.I;
+//         try {
+//         Reflector.setInstanceValue(deco, "k", new WorldGenMinable(net.minecraft.server.v1_7_R3.Block..id, 16));
+//         Reflector.setInstanceValue(deco, "l", new WorldGenMinable(net.minecraft.server.v1_7_R3.Block.STONE.id, 16));
+//         Reflector.setInstanceValue(deco, "m", new WorldGenMinable(net.minecraft.server.v1_7_R3.Block.STONE.id, 16));
+//         Reflector.setInstanceValue(deco, "n", new WorldGenMinable(net.minecraft.server.v1_7_R3.Block.STONE.id, 16));
+//         Reflector.setInstanceValue(deco, "o", new WorldGenMinable(net.minecraft.server.v1_7_R3.Block.STONE.id, 16));
+//         Reflector.setInstanceValue(deco, "p", new WorldGenMinable(net.minecraft.server.v1_7_R3.Block.STONE.id, 16));
+//         } catch(Exception e) {
+//         NativeLevel.log.info("biome "+b.toString()+" naum tomou patch !");
+//         }
+//         }
+//         } catch(Exception e) {
+//         NativeLevel.log.info("Error reflecting BIOME DATA !!!!");
+//         NativeLevel.log.info(e.getMessage());
+//         e.printStackTrace();
+//         NativeLevel.log.info("Error reflecting BIOME DATA !!!!");
+//
+//         }
+//         */
+//    }
 
-    public Material getOre(int y, Player p) {
+    private Material getOre(int y, Player p) {
 
         int chance = rnd.nextInt(10100);
 
@@ -274,19 +274,10 @@ public class Gen {
         return near;
     }
 
-    public void loga(PlayerJoinEvent ev) {
-        if (ev.getPlayer().hasMetadata("minerou")) {
-            ev.getPlayer().removeMetadata("minerou", KoM._instance);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
     public void breakBlock(BlockBreakEvent ev) {
         if (ev.getBlock().getType() == Material.STONE) {
 
-            if (ev.getBlock().hasMetadata("playerpois")) {
-                return;
-            }
+            if (ev.getBlock().hasMetadata("playerpois")) return;
 
             Minerador.axaItems(ev);
             String minedIn = MetaShit.getMetaString("MinedIn", ev.getPlayer());
@@ -299,10 +290,9 @@ public class Gen {
                     return;
                 }
             }
+
             Material thisOre = this.getOre(ev.getPlayer().getLocation().getBlockY(), ev.getPlayer());
-            if (thisOre == null && PlayerSpec.temSpec(ev.getPlayer(), PlayerSpec.Explorador)) {
-                thisOre = this.getOre(ev.getPlayer().getLocation().getBlockY(), ev.getPlayer());
-            }
+            if (thisOre == null && PlayerSpec.temSpec(ev.getPlayer(), PlayerSpec.Explorador)) thisOre = this.getOre(ev.getPlayer().getLocation().getBlockY(), ev.getPlayer());
             if (thisOre != null) {
                 HashSet<Block> near = getNearBlocks(ev.getBlock().getLocation());
                 for (Block b : near) {
@@ -324,7 +314,7 @@ public class Gen {
         }
     }
 
-    public void checaChunk(Entity p) {
+    private void checaChunk(Entity p) {
         for (Chunk c : p.getWorld().getLoadedChunks()) {
             for (Entity e : c.getEntities()) {
                 checaChunk(e);
@@ -332,7 +322,7 @@ public class Gen {
         }
     }
 
-    public void geraVeioDeMinerio(Block b, Material ore, int count, Player p) {
+    private void geraVeioDeMinerio(Block b, Material ore, int count, Player p) {
         HashSet<Block> near = getNearBlocks(b.getLocation());
         for (Block block : near) {
             if (isHidden(block)) {
@@ -345,4 +335,5 @@ public class Gen {
             }
         }
     }
+
 }

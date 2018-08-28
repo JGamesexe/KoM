@@ -40,21 +40,20 @@ public class DoubleXP extends CustomItem {
         } else {
             ativo = true;
             if (player.getInventory().getItemInMainHand().getAmount() == 1) {
-                player.setItemInHand(null);
+                player.getInventory().setItemInMainHand(null);
             } else {
                 player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount() - 1);
             }
             int ganhou = Config.getDoacoes();
-            int ganhout = ganhou;
 
-            ClanLand.econ.depositPlayer(player.getName(), ganhou);
+            ClanLand.econ.depositPlayer(player, ganhou);
             Config.setDoacao(0);
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (p != null) {
                     p.sendMessage(ChatColor.AQUA + L.m("-> % ativou um double XP !!!", player.getName()));
                     p.sendMessage(ChatColor.AQUA + L.m("-> Todos ganharao 2x EXP por MEIA HORA !! Aproveitem !"));
                     p.sendMessage(ChatColor.AQUA + L.m("-> Todos devem agradecer %", player.getName()));
-                    p.sendMessage(ChatColor.AQUA + L.m("-> Ele ganhou " + ganhout + " ativando o Double de Jabu"));
+                    p.sendMessage(ChatColor.AQUA + L.m("-> Ele ganhou " + ganhou + " ativando o Double de Jabu"));
                 }
             }
             Runnable termina = new Runnable() {

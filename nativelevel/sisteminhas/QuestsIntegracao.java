@@ -2,6 +2,7 @@ package nativelevel.sisteminhas;
 
 import me.blackvein.quests.Quest;
 import me.blackvein.quests.Quester;
+import nativelevel.CFG;
 import nativelevel.Custom.CustomItem;
 import nativelevel.Custom.Items.BussolaMagica;
 import nativelevel.KoM;
@@ -142,39 +143,32 @@ public class QuestsIntegracao extends KomSystem {
                     meta.setDisplayName(ChatColor.AQUA + q.getName());
                     List<String> lore = new ArrayList<String>();
 
-                    int nivel = 0;
+                    int xp = 0;
 
                     if (q.commands.size() > 0) {
                         for (String com : q.commands) {
                             if (com.contains("darxp")) {
-                                nivel = Integer.valueOf(com.split(" ")[2]);
+                                xp = Integer.valueOf(com.split(" ")[2]);
                             }
                         }
                     }
-
-                    int xp = XP.getExpPorAcao(nivel) * XP_MOD;
 
                     if (q.customRequirements != null && q.customRequirements.containsKey("Nivel KoM")) {
                         Map<String, Object> mapa = q.customRequirements.get("Nivel KoM");
                         if (mapa != null) {
                             KoM.debug("MAPA " + mapa.keySet().toString());
-                            nivel = Integer.valueOf((String) mapa.get("Level"));
+                            int nivel = Integer.valueOf((String) mapa.get("Level"));
                             lore.add(ChatColor.GREEN + "Nivel Minimo: " + ChatColor.YELLOW + nivel);
                         }
 
                     }
 
-                    lore.add(ChatColor.GREEN + "XP: " + ChatColor.YELLOW + xp);
-                    if (nivel == 0) {
-                        lore.add(ChatColor.RED + "[ Quest sem XP ]");
-                        //if (p.isOp()) {
-                        //    lore.add(ChatColor.RED + "Essa quest ta sem recompensa /darxp <mano> <nivel>");
-                        //}
-                    }
+                    if (xp == 0) lore.add("§c[ Quest sem XP]");
+                    else lore.add(ChatColor.GREEN + "XP: " + ChatColor.YELLOW + xp);
 
                     if (q.npcStart != null) {
                         // no mesmo mundo
-                        if (q.npcStart.getEntity() != null && q.npcStart.getEntity().getLocation().getWorld().getName().equalsIgnoreCase("NewDungeon")) {
+                        if (q.npcStart.getEntity() != null && !q.npcStart.getEntity().getLocation().getWorld().getName().equalsIgnoreCase(CFG.mundoGuilda)) {
                             lore.add(ChatColor.GREEN + "Local: " + ChatColor.YELLOW + " Algum lugar macabro por aí.");
                         } else {
                             if (q.npcStart.getEntity() != null && q.npcStart.getEntity().getLocation().getWorld().getName().equalsIgnoreCase(p.getWorld().getName())) {
@@ -187,7 +181,7 @@ public class QuestsIntegracao extends KomSystem {
                         }
                     } else {
                         if (q.blockStart != null) {
-                            if (q.blockStart.getWorld().getName().equalsIgnoreCase("NewDungeon")) {
+                            if (!q.blockStart.getWorld().getName().equalsIgnoreCase(CFG.mundoGuilda)) {
                                 lore.add(ChatColor.GREEN + "Local: " + ChatColor.YELLOW + " Algum lugar macabro por aí.");
                             } else {
                                 if (q.blockStart.getWorld().getName().equalsIgnoreCase(p.getWorld().getName())) {

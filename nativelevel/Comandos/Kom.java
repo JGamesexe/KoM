@@ -301,7 +301,7 @@ public class Kom implements CommandExecutor {
                         }
                         Player w = Bukkit.getPlayer(args[1]);
                         if (w == null) {
-                            p.sendMessage(ChatColor.RED + L.m("JogadorDAO nao encontrado !"));
+                            p.sendMessage(ChatColor.RED + L.m("Jogador nao encontrado !"));
                             return true;
                         }
                         mostraStats(w, p);
@@ -335,17 +335,6 @@ public class Kom implements CommandExecutor {
                             }
                         } else {
                             p.sendMessage(L.m("Poe um item na mao rapaiz !"));
-                        }
-                    } else if (args[0].equals("setlevel") && p.isOp()) {
-                        int lvl = -1;
-                        try {
-                            lvl = Integer.valueOf(args[1]);
-                        } catch (Exception e) {
-                        }
-                        if (lvl != -1) {
-                            p.sendMessage(L.m("Seu level agora eh " + lvl));
-                            //p.setLevel(lvl);
-                            XP.setaLevel(p, lvl);
                         }
                     } else if (args[0].equals("chunks") && p.isOp()) {
                         if (args[1].equalsIgnoreCase("safezone")) {
@@ -501,21 +490,6 @@ public class Kom implements CommandExecutor {
                                 p.sendMessage(ChatColor.RED + L.m("Bota o livro na mao rapaiz..."));
                             }
                         }
-                    } else if (args[0].equalsIgnoreCase("setlevel") && p.isOp()) {
-
-                        String nick = args[1];
-                        Player p2 = Bukkit.getPlayer(nick);
-                        if (p2 == null) {
-                            p.sendMessage(L.m("nao achei esse kra"));
-                            return true;
-                        }
-                        int lvl = Integer.valueOf(args[2]);
-                        XP.setaLevel(p2, lvl);
-                        KoM.database.resetPlayer(p2);
-                        KoM.database.changeMaxLevel(p2, p2.getLevel());
-                        int resets = KoM.database.getResets(p);
-                        p2.sendMessage(ChatColor.GREEN + L.m("Seu nivel foi alterado !"));
-                        p.sendMessage(ChatColor.GREEN + L.m("Nivel alterado !"));
                     } else if (args[0].equalsIgnoreCase("stat") && p.isOp()) {
                         /*
                          String stat = args[1];
@@ -656,14 +630,6 @@ public class Kom implements CommandExecutor {
                             MetaShit.setMetaString("mostra%", p, "");
                         }
 
-                    } else if (args[0].equalsIgnoreCase("mostraxp")) {
-                        if (!p.hasMetadata("mostraXp")) {
-                            MetaShit.setMetaObject("mostraXp", p, true);
-                            p.sendMessage(ChatColor.GREEN + L.m("Mostrando xp..."));
-                        } else {
-                            p.removeMetadata("mostraXp", KoM._instance);
-                            p.sendMessage(ChatColor.GREEN + L.m("Nao mostrando xp..."));
-                        }
                     } else if (args[0].equalsIgnoreCase("regenmundao") && p.isOp()) {
                         Reseter.regenMundo();
                     } else if (args[0].equals("bencao")) {
@@ -758,8 +724,6 @@ public class Kom implements CommandExecutor {
                         //p.sendMessage(ChatColor.GREEN + "---------- " + p.getName() + " ----------");
                         //p.sendMessage(ChatColor.GREEN + "Karma: " + ChatColor.YELLOW + KoM.database.getKarma(p.getUniqueId())+ "       "+ChatColor.GREEN + "Fama: " + ChatColor.YELLOW + KoM.database.getFama(p.getUniqueId()));
                         //p.sendMessage(ChatColor.GREEN + "XP: " +ChatColor.YELLOW+ p.getTotalExperience()+"        "+ChatColor.GREEN+"Próximo Lvl: "+XP.getExpProximoNivel(p.getLevel()));
-                    } else if (args[0].equalsIgnoreCase("skills")) {
-                        SkillMaster.abreSkills(p);
                     } else if (args[0].equalsIgnoreCase("testegolem")) {
                         IronGolem.spawn(p);
                     } else if (args[0].equalsIgnoreCase("cavaleiro")) {
@@ -826,7 +790,7 @@ public class Kom implements CommandExecutor {
                         p.setHealth(1D);
                         p.damage(30);
                     } else if (args[0].equalsIgnoreCase("veralmas")) {
-                        int almas = KoM.database.getAlmas(p.getUniqueId().toString());
+                        int almas = KoM.database.getAlmas(p.getUniqueId());
                         p.sendMessage(ChatColor.GREEN + L.m("Voce tem % almas !", almas));
                     } else if (args[0].equalsIgnoreCase("tirasafezones")) {
                         World w = p.getWorld();
@@ -858,9 +822,6 @@ public class Kom implements CommandExecutor {
                             return true;
                         }
                         ValeSorteio.fazSorteio();
-                    } else if (args[0].equalsIgnoreCase("verclasses")) {
-                        p.sendMessage(ChatColor.GREEN + L.m("Vendo suas classes !"));
-                        netMenu.mostraClasses(p);
                     } else if (args[0].equalsIgnoreCase("sethome")) {
                         ClanPlayer cp = ClanLand.manager.getClanPlayer(p);
                         if (cp == null) {
@@ -926,7 +887,7 @@ public class Kom implements CommandExecutor {
 
         double pct = xp * 100d / xpProx;
 
-        int almas = KoM.database.getAlmas(p.getUniqueId().toString());
+        int almas = KoM.database.getAlmas(p.getUniqueId());
 
         // b.setAlignment("l", "l", "l", "l");
         List<String> primarias = Jobs.getPrimarias(p);

@@ -33,8 +33,10 @@ public class CoisasDaVida extends KomSystem {
             public void run() {
                 if (!Bukkit.getServer().getOnlinePlayers().isEmpty()) {
                     Player random = (Player) Bukkit.getServer().getOnlinePlayers().toArray()[rnd.nextInt(Bukkit.getServer().getOnlinePlayers().toArray().length)];
-                    Acontecimento rolou = (Acontecimento) acontecimentos.get(rnd.nextInt(acontecimentos.size()));
-                    rolou.acontece(random);
+                    if (!random.hasMetadata("tutorial")) {
+                        Acontecimento rolou = (Acontecimento) acontecimentos.get(rnd.nextInt(acontecimentos.size()));
+                        rolou.acontece(random);
+                    }
                 }
             }
         };

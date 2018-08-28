@@ -6,6 +6,7 @@
 package nativelevel.Harvesting;
 
 import nativelevel.Jobs;
+import nativelevel.utils.JotaGUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -28,8 +29,10 @@ public class Harvestable {
     }
 
     public ItemStack getIcon(boolean op) {
-        ItemStack ss = new ItemStack(m, 1, data);
+        ItemStack ss = new ItemStack(Material.PAPER);
+        if (JotaGUtils.hasItem(m)) ss = new ItemStack(m, 1, data);
         ItemMeta meta = ss.getItemMeta();
+        if (ss.getType().equals(Material.PAPER)) meta.setDisplayName(m.name() + " [" + data + "]");
         List<String> lore = new ArrayList<String>();
         lore.add(ChatColor.YELLOW + classe.name());
         lore.add(ChatColor.GREEN + "Dificuldade: " + ChatColor.YELLOW + difficulty);

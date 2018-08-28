@@ -2,8 +2,10 @@ package nativelevel.Lang;
 
 import nativelevel.Custom.CustomItem;
 import nativelevel.KoM;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -217,6 +219,45 @@ public class LangMinecraft {
             }
         }
         return found;
+    }
+
+    public String getMobName(EntityType entityType, boolean monstro) {
+        if (monstro) {
+            if (entityType == EntityType.ZOMBIE) return "Zumbi";
+            else if (entityType == EntityType.SKELETON) return "Esqueleto";
+            else if (entityType == EntityType.CREEPER) return "Creeper";
+            else if (entityType == EntityType.SPIDER) return "Aranha";
+            else if (entityType == EntityType.ENDERMAN) return "Enderman";
+            else if (entityType == EntityType.WITCH) return "Bruxa";
+            else if (entityType == EntityType.HUSK) return "Zombie do Deserto";
+            else if (entityType == EntityType.ZOMBIE_VILLAGER) return "Aldeão Infectado";
+            else if (entityType == EntityType.STRAY) return "Esqueleto Vagante";
+            else if (entityType == EntityType.PIG_ZOMBIE) return "Porco Zombie";
+            else if (entityType == EntityType.BLAZE) return "Blaze";
+            else if (entityType == EntityType.MAGMA_CUBE) return "Cubo da Magma";
+            else if (entityType == EntityType.CAVE_SPIDER) return "Aranha da Caverna";
+            else if (entityType == EntityType.WITHER_SKELETON) return "Esqueleto Corrompido";
+            else if (entityType == EntityType.ENDERMITE) return "Endermite";
+            else if (entityType == EntityType.SILVERFISH) return "Traça";
+            else if (entityType == EntityType.GUARDIAN) return "Guardião do Mar";
+        } else {
+            if (entityType == EntityType.PIG) return "Porco";
+            else if (entityType == EntityType.SHEEP) return "Ovelha";
+            else if (entityType == EntityType.COW) return "Vaca";
+            else if (entityType == EntityType.CHICKEN) return "Galinha";
+            else if (entityType == EntityType.HORSE) return "Cavalo";
+            else if (entityType == EntityType.SLIME) return "Slime";
+            else if (entityType == EntityType.PARROT) return "Papagaio";
+            else if (entityType == EntityType.MULE) return "Mula";
+            else if (entityType == EntityType.DONKEY) return "Burro";
+            else if (entityType == EntityType.RABBIT) return "Coelho";
+            else if (entityType == EntityType.SQUID) return "Lula";
+            else if (entityType == EntityType.MUSHROOM_COW) return "Coguvaca";
+            else if (entityType == EntityType.WOLF) return "Lobo";
+            else if (entityType == EntityType.BAT) return "Morcego";
+        }
+
+        return "Not Found =V";
     }
 
     public String getLocalized(String path) {

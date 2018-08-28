@@ -1,22 +1,21 @@
 package nativelevel.utils;
 
 import nativelevel.KoM;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.EntityEffect;
-import org.bukkit.FireworkEffect;
+import org.bukkit.*;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 public class Fireworks {
 
-    public static void purpleFirework(Firework fw) {
+    public static void doFirework(Location location, FireworkEffect.Type type, Color color, Color fade, long ticksExplode) {
+        Firework fw = (Firework) location.getWorld().spawnEntity(location, EntityType.FIREWORK);
         FireworkMeta fwm = fw.getFireworkMeta();
         fwm.addEffect(FireworkEffect.builder()
                 .flicker(false)
-                .with(FireworkEffect.Type.BURST)
-                .withColor(Color.PURPLE)
-                .withFade(Color.AQUA)
+                .with(type)
+                .withColor(color)
+                .withFade(fade)
                 .build());
         fwm.setPower(0);
         fw.setFireworkMeta(fwm);
@@ -25,7 +24,7 @@ public class Fireworks {
         Bukkit.getScheduler().runTaskLater(KoM._instance, () -> {
             fw.playEffect(EntityEffect.FIREWORK_EXPLODE);
             fw.remove();
-        }, 2L);
+        }, ticksExplode);
     }
 
 }

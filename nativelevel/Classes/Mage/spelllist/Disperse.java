@@ -26,7 +26,7 @@ public class Disperse extends MageSpell {
 
     @Override
     public void cast(Player p) {
-        double magia = EquipManager.getPlayerAttribute(Atributo.Magia, p);
+        double magia = EquipManager.getPlayerAttribute(Atributo.Dano_Magico, p);
         PotionEffect ef1 = new PotionEffect(PotionEffectType.ABSORPTION, (int) (20 * 3 * (1 + magia / 100 / 2d)), (int) (1 + ((magia / 10d))));
         PotionEffect ef2 = new PotionEffect(PotionEffectType.BLINDNESS, (int) (20 * 3 * (1 + magia / 100 / 2d)), 1);
         PotionEffect ef3 = new PotionEffect(PotionEffectType.INVISIBILITY, (int) (20 * 3 * (1 + magia / 100 / 2d)), 1);

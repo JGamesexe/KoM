@@ -4,6 +4,7 @@ import nativelevel.KoM;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 
 /**
@@ -41,7 +42,7 @@ public class CleanupTask implements Runnable {
                         e.remove();
                     } else if (e instanceof Monster) {
                         LivingEntity monstro = (LivingEntity) e;
-                        if (!KoM.mm.getMobManager().isActiveMob(e.getUniqueId()) && monstro.getHealth() == monstro.getMaxHealth()) {
+                        if (!KoM.mm.getMobManager().isActiveMob(e.getUniqueId()) && monstro.getHealth() == monstro.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) {
                             e.remove();
                         }
                     }

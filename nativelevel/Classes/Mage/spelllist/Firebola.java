@@ -25,9 +25,8 @@ public class Firebola extends MageSpell {
 
     @Override
     public void cast(Player p) {
-        double magia = EquipManager.getPlayerAttribute(Atributo.Magia, p);
-        SmallFireball fb = null;
-        fb = p.launchProjectile(SmallFireball.class);
+        double magia = EquipManager.getPlayerAttribute(Atributo.Dano_Magico, p);
+        SmallFireball fb = p.launchProjectile(SmallFireball.class);
         fb.getVelocity().multiply(3);
         double ratio = 1 + (magia / 100);
         if (PlayerSpec.temSpec(p, PlayerSpec.Sacerdote)) {

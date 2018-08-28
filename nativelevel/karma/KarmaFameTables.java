@@ -27,7 +27,7 @@ public class KarmaFameTables {
          |
          */
             {"Digno", "Honrado", "Admiravel", "Glorioso", "Glorioso"},
-            {"Bondoso", "Estimado", "Extraordinario", "Grandioso", "Grandioso"},
+            {"Bondoso", "Estimado", "Grandioso", "Fenomenal", "Fenomenal"},
             {"Confiavel", "Respeitavel", "Veneravel", "Eminente", "Eminente"},
             {"Gentil", "Qualificado", "Nobre", "Ilustre", "Ilustre"},
             {"Correto", "Honesto", "Justo", "Probo", "Probo"},

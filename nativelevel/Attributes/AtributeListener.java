@@ -14,6 +14,7 @@ import nativelevel.utils.LocUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
+import org.bukkit.Particle;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -38,12 +39,9 @@ import java.util.List;
 public class AtributeListener extends KomSystem {
 
     /*
-    
      CALCULANDO DANO ARCO
-    
      */
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void dealDamage(EntityDamageByEntityEvent ev) {
+    public static void dealDamage(EntityDamageByEntityEvent ev) {
         if (ev.getDamager() instanceof Projectile) {
             Projectile pj = (Projectile) ev.getDamager();
             if (pj.getShooter() != null && pj.getShooter() instanceof Player) {
@@ -56,11 +54,9 @@ public class AtributeListener extends KomSystem {
     }
 
     /*
-    
      Stun
-    
      */
-    public static void stun(Player batendo, final LivingEntity tomando, EquipMeta metaBatendo) {
+    private static void stun(Player batendo, final LivingEntity tomando, EquipMeta metaBatendo) {
 
         double chanceStun = metaBatendo.getAttribute(Atributo.Chance_Stun);
         if (Jobs.rnd.nextInt(100) < chanceStun) {
@@ -89,22 +85,18 @@ public class AtributeListener extends KomSystem {
     }
 
     /*
-    
      Critico
-    
      */
-    public static void critico(Player batendo, EntityDamageByEntityEvent ev, EquipMeta meta) {
+    private static void critico(Player batendo, EntityDamageByEntityEvent ev, EquipMeta meta) {
         double chanceAcertoCritico = meta.getAttribute(Atributo.Chance_Critico);
         if (chanceAcertoCritico > 0) {
             KoM.debug("Chance Critico " + chanceAcertoCritico);
             if (Jobs.rnd.nextInt(100) < chanceAcertoCritico) {
                 batendo.sendMessage("§c§lVoce acertou um crítico !");
-                batendo.playEffect(ev.getEntity().getLocation(), Effect.CRIT, 1);
+                ev.getEntity().getWorld().spawnParticle(Particle.CRIT, ev.getEntity().getLocation(), 5);
                 double bonusCrit = 0.1;
                 bonusCrit += (meta.getAttribute(Atributo.Dano_Critico) + 1) / 500d;
-                if (bonusCrit < 0) {
-                    bonusCrit = 0;
-                }
+                if (bonusCrit < 0) bonusCrit = 0;
                 KoM.debug("Bonus Crit: " + bonusCrit);
                 ev.setDamage(ev.getDamage() + (ev.getDamage() * bonusCrit));
             }
@@ -112,7 +104,6 @@ public class AtributeListener extends KomSystem {
     }
 
     /*
-    
      REGEN VIDA
      */
     @EventHandler
@@ -141,7 +132,6 @@ public class AtributeListener extends KomSystem {
     /*
      Calculando dano físico e acerto crítico
      */
-
     public static void entityDamage(EntityDamageByEntityEvent ev) {
 
         if (ev.isCancelled()) return;
